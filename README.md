@@ -43,7 +43,7 @@ brew install ffmpeg imagemagick
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/your-username/Media_Studio.git
+   git clone https://github.com/JupyterJones/Media_Studio.git
    cd Media_Studio
    ```
 
