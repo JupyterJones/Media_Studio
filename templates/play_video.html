@@ -1,0 +1,51 @@
+<!-- play_video.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Play Video</title>
+    <style>
+        body {
+            background-color: #111;
+            color: #eee;
+            font-family: Arial, Helvetica, sans-serif;
+            text-align: center;
+            padding: 40px;
+        }
+
+        video {
+            max-width: 90%;
+            height: auto;
+            border: 3px solid #444;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.8);
+        }
+
+        a {
+            display: inline-block;
+            margin-top: 30px;
+            color: #66ccff;
+            text-decoration: none;
+            font-size: 18px;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Your Generated Video</h1>
+
+    <video controls autoplay>
+        <source src="{{ url_for('static', filename=video_file) }}" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+
+    <br>
+
+    <a href="/">HOME</a>
+
+</body>
+</html>

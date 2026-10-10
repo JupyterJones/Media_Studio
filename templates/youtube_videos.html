@@ -1,0 +1,119 @@
+<!-- demos_and_narratives.html -->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Embed YouTube Video</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+            background-color:black;
+            color:white;
+        }
+        iframe {
+            border: none; /* Removes the default border around the iframe */
+        }
+                body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+        }
+        input {
+            width: 300px;
+            padding: 10px;
+            font-size: 26px;
+            margin-bottom: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 26px;
+            cursor: pointer;
+        }
+        iframe {
+            margin-top: 20px;
+            border: none;
+        }
+                a {
+            text-decoration: none;
+            color: yellow;
+            font-weight: bold;
+            font-size: 26px;
+            
+        }
+    </style>
+</head>
+<body>
+    <h1>Embedding a YouTube Video</h1>
+            <h1>youtube_videos.html</h1>
+  
+    <a href="/">Home</a>&nbsp;&nbsp; | &nbsp;&nbsp;<a href="/edit_youtube_videos">Edit YouTube Video</a>
+    <p>Below is an example of a YouTube video embedded into this webpage:</p>
+    
+    <!-- Embed YouTube Video -->
+
+        <iframe 
+        width="840" 
+        height="472" 
+        src="https://www.youtube.com/embed/vF10VXeNGXQ" 
+        title="YouTube video player" 
+        frameborder="0" 
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+        allowfullscreen>
+    </iframe>
+
+<hr>
+   <h1>YouTube Video Manager</h1>
+    <p>Enter a YouTube video code (e.g., <strong>dQw4w9WgXcQ</strong>) to save and display videos:</p>
+    <input type="text" id="videoCode" placeholder="Enter YouTube video code" />
+    <button onclick="addVideo()">Add Video</button>
+
+    <h2>Saved Videos</h2>
+    <div id="videos">
+        {% for video_code in videos %}
+        <div class="video-container">
+            <iframe 
+                width="560" 
+                height="315" 
+                src="https://www.youtube.com/embed/{{ video_code }}" 
+                title="YouTube video player" 
+                frameborder="0" 
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                allowfullscreen>
+            </iframe>
+        </div>
+        {% endfor %}
+    </div>
+
+    <script>
+        function addVideo() {
+            const videoCode = document.getElementById("videoCode").value.trim();
+            if (!videoCode) {
+                alert("Please enter a valid video code.");
+                return;
+            }
+
+            // Send the video code to the server
+            fetch('/add_youtube_video', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ video_code: videoCode })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                } else {
+                    alert(data.message);
+                    // Reload the page to see the updated video list
+                    location.reload();
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    </script>
+
+    

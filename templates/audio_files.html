@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>List Audio Files</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dark.css') }}" />
+    <style>
+      .media-container {
+        display: flex;
+        flex-wrap: wrap; /* Allow wrapping to the next row */
+        gap: 10px; /* Space between items */
+        justify-content: space-between; /* Space items evenly */
+      }
+
+      .mediaitem {
+        flex: 1 1 20%; /* Flex-basis is 20%, and items can shrink or grow */
+        box-sizing: border-box; /* Ensure padding/border is included in width */
+        margin: 5px; /* Space around each item */
+        text-align: center; /* Center text and audio controls */
+        border: 1px solid #ccc; /* Optional: border for visibility */
+        border-radius: 8px; /* Optional: rounded corners */
+        padding: 10px; /* Padding for better spacing inside */
+        box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1); /* Optional: shadow effect */
+      }
+
+      audio {
+        width: 100%; /* Ensure audio controls fit within the container */
+      }
+
+      button {
+        width: 100%; /* Make buttons stretch to container width */
+        padding: 10px; /* Add consistent padding */
+        margin-bottom: 5px; /* Add space below the button */
+      }
+      a {
+       color: orange;
+       background-color: black;
+       text-decoration: none; 
+       font-weight: bold;
+       font-size: 2em;
+       text-align: center;
+       padding: 10px;
+       margin-bottom: 5px;
+       border-radius: 8px;
+      }
+    </style>
+  </head>
+  <body>
+    <a href="{{ url_for('index') }}">Home</a><br /><br />
+    <div class="media-container">
+      {% for audio in audio_files %}
+      <div class="mediaitem">
+        <button onclick="document.getElementById('Play_{{ loop.index }}').play()">
+          {{ audio }}
+        </button>
+        <audio id="Play_{{ loop.index }}" controls>
+          <source
+            src="{{ url_for('static', filename='text2audio/' + audio) }}"
+            type="audio/mpeg"
+          />
+          Your browser does not support the audio element.
+        </audio>
+      </div>
+      {% endfor %}
+    </div>
+  </body>
+</html>

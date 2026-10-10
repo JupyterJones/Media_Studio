@@ -1,0 +1,26 @@
+Wav2Lip reacts to audio frequency shapes and amplitudes, meaning it cannot differentiate between a human singing
+and a loud guitar, piano, or drum beat playing at the same time. If the instrumentals are loud, the model mistakes
+those audio frequencies for mouth movements, making your avatar's mouth twitch or "sing" the backing track.
+To fix this on Linux, you must use a two-step audio pipeline: feed Wav2Lip an isolated, vocal-only track
+for the lip-syncing step, then stitch the full song back into the final video.
+Step 1: Extract a Vocals-Only Track
+You need to separate your song into an acapella/vocal stem. You can do this completely offline on 
+Linux using open-source tools:Option A: Demucs (Recommended for Linux CLI)
+Demucs is a powerful deep-learning tool by Meta that splits audio into stems (vocals, drums, bass, etc.).
+Open your terminal and run:bashpip install demucs
+demucs --two-stems=vocals your_song.mp3
+Use code with caution.This will generate a clean vocals.wav file in a separated folder.
+Option B: Web ToolsIf you do not want to install python libraries locally, you can upload your track to free
+AI stem splitters like Vocal Remover and Isolation [AI] or Audio.com Vocal Remover and download the
+isolated Acapella / Vocal file.Step 2: Run Wav2Lip with the Isolated VocalsWhen you execute your Wav2Lip command,
+pass the isolated vocals file to the --audio argument instead of the full song. This forces the model to track
+only the human voice.
+bash python inference.py --checkpoint_path checkpoints/wav2lip_gan.pth --face your_avatar.mp4
+--audio path/to/isolated_vocals.wav
+Use code with caution.Step 3: Mux the Full Audio Back to the VideoThe output video in your results/ directory
+will now have perfectly synced lips, but it will only play the vocal track with no music.
+You need to use ffmpeg to swap the silent or vocal-only audio out for your original full-instrumental song:
+bash ffmpeg -i results/result_voice.mp4 -i your_song.mp3 -c:v copy -map 0:v:0 -map 1:a:0 finished_music_video.mp4
+Use code with caution.
+If you are using a wrapper like Easy-Wav2Lip, what specific repository or GUI fork are you using?
+Let me know so I can help you adjust its config.ini or settings script!

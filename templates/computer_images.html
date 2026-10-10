@@ -1,0 +1,67 @@
+<-- computer_images.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Select Video Order</title>
+    <style>
+        body { background: black; color: white; font-family: sans-serif; }
+        img { width: 300px; display: block; margin-bottom: 10px; }
+        .grid { display: flex; flex-wrap: wrap; }
+        .box { margin: 10px; padding: 10px; border: 1px solid #555; background: #222; width: 320px; }
+        .order-group { margin-top: 10px; }
+        .error { color: red; }
+        a{font-size: 30px; color: orange; }
+        .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.box {
+    background-color: #f7f7f7;
+    border: 1px solid #ccc;
+    border-radius: 12px;
+    text-align: center;
+    padding: 10px;
+    box-shadow: 2px 2px 6px rgba(0,0,0,0.1);
+}
+
+.box img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+}
+
+.box strong {
+    display: block;
+    margin-top: 6px;
+    font-size: 0.9em;
+    color: #333;
+    word-wrap: break-word;          /* ✅ allows long names to wrap */
+    overflow-wrap: break-word;      /* ✅ modern browsers */
+    white-space: normal;            /* ✅ ensures wrapping happens */
+}
+    </style>
+</head>
+<body>
+    <h1>Assign Join Order (1–4)</h1>
+            <a href="/">HOME</a><br />
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="error">{{ messages[0] }}</div>
+        {% endif %}
+    {% endwith %}
+
+    <div class="grid">
+            {% for image in image_files %}
+            <div class="box">
+                <img src="{{ url_for('static', filename='computer_images/' + image) }}" />
+                <strong>{{ image }}</strong>
+            </div>
+            {% endfor %}
+        </div>
+        <br>
+
+</body>
+</html>

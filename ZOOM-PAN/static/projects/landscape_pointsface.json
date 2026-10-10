@@ -1,0 +1,46 @@
+{
+  "project_name": "landscape_pointsface",
+  "image_filename": "4f540490-0da6-44c1-bf2c-c4dc613bb229frame_45_1785696595.jpg",
+  "image_url": null,
+  "image_width": 512,
+  "image_height": 768,
+  "timestamp": "2026-08-03 03:00:37",
+  "points": [
+    {
+      "id": "pt_1785696640625_105",
+      "x": 138,
+      "y": 294,
+      "label": "Point 3",
+      "zoom": 3.1,
+      "hold_duration": 1.5,
+      "transition_duration": 2
+    },
+    {
+      "id": "pt_1785696669210_247",
+      "x": 269,
+      "y": 285,
+      "label": "Point 2",
+      "zoom": 2.5,
+      "hold_duration": 1.5,
+      "transition_duration": 2
+    },
+    {
+      "id": "pt_1785696685110_460",
+      "x": 255,
+      "y": 401,
+      "label": "Point 3",
+      "zoom": 1,
+      "hold_duration": 1.5,
+      "transition_duration": 2
+    },
+    {
+      "id": "pt_1785696988967_380",
+      "x": 421,
+      "y": 624,
+      "label": "Point 4",
+      "zoom": 1.9,
+      "hold_duration": 1.5,
+      "transition_duration": 2
+    }
+  ]
+}

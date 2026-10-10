@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Captions</title>
+    <style>
+        body{
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 50px;
+        }
+        .ccaption-thumbnail {
+            display: inline-block;
+            vertical-align: top;
+            flex-shrink: 0;
+            width: 100px;  /* Set a smaller size for the thumbnails */
+            height: 100px;
+            margin: 10px;
+            margin-bottom: 20px;
+            cursor: pointer;
+            border: 1px solid #ccc;
+        }
+        .caption-thumbnail:hover {
+            opacity: 0.8;
+        }
+        .caption-details {
+            margin-top: 20px;
+            border-top: 1px solid #ccc;
+            padding-top: 10px;
+        }
+        .caption-gallery {
+            display: flex;
+            flex-direction: row;
+            width: 20%;
+            flex-wrap: wrap;
+            justify-content: space-between; /* Space between items */
+            gap: 20px; /* Space between items */
+            padding: 10px; /* Optional: Padding around the gallery */
+            box-sizing: border-box;
+        }
+
+        .caption-thumbnail {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            text-align: center;
+            max-width: 50%; /* Set a maximum width for images */
+            box-sizing: border-box;
+        }
+
+        .caption-thumbnail img {
+            min-width: 400px; /* Ensure the image fits within the container */
+            border: 1px solid #ccc; /* Optional: Add a border for better visuals */
+            border-radius: 5px; /* Optional: Rounded corners */
+            box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1); /* Optional: Add a subtle shadow */
+        }
+
+    </style>
+</head>
+<body>
+    <h1>View Captions</h1>
+    <div id="captions-container">
+        <!-- Thumbnails will be dynamically inserted here -->
+    </div>
+
+    <div id="caption-details" class="caption-details">
+        <!-- Caption metadata will be displayed here -->
+    </div>
+
+    <script>
+        // Fetch and display all caption thumbnails
+        fetch('/view_captions')
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const captionsContainer = document.getElementById('captions-container');
+                    data.captions.forEach(caption => {
+                        // Create an image element for each caption thumbnail
+                        const img = document.createElement('img');
+                        img.src = `/caption_images/${caption.filename}`;
+                        img.alt = 'Caption Thumbnail';
+                        img.classList.add('caption-thumbnail');
+                        img.dataset.id = caption.id;  // Store caption ID in the data-id attribute
+                        img.addEventListener('click', function() {
+                            // Fetch and display the metadata when the thumbnail is clicked
+                            fetchCaptionData(caption.id);
+                        });
+
+                        // Append the thumbnail to the container
+                        captionsContainer.appendChild(img);
+                    });
+                } else {
+                    alert('Failed to fetch captions: ' + data.error);
+                }
+            })
+            .catch(error => console.error('Error fetching captions:', error));
+
+        // Function to fetch and display caption metadata
+        function fetchCaptionData(captionId) {
+            fetch(`/get_caption_data/${captionId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const caption = data.caption;
+                        const detailsDiv = document.getElementById('caption-details');
+                        detailsDiv.innerHTML = `
+                            <h2>Caption ID: ${caption.id}</h2>
+                            <p><strong>Text:</strong> ${caption.text}</p>
+                            <p><strong>Font:</strong> ${caption.font}</p>
+                            <p><strong>Font Size:</strong> ${caption.font_size}</p>
+                            <p><strong>Background Color:</strong> ${caption.background_color}</p>
+                            <p><strong>Opacity:</strong> ${caption.opacity}</p>
+                            <p><strong>Padding:</strong> ${caption.padding}</p>
+                            <p><strong>Border Color:</strong> ${caption.border_color}</p>
+                            <p><strong>Border Thickness:</strong> ${caption.border_thickness}</p>
+                            <p><strong>Border Radius:</strong> ${caption.border_radius}</p>
+                            <img src="/caption_images/${caption.filename}" alt="Caption Image" style="max-width: 500px;">
+                        `;
+                    } else {
+                        alert('Failed to fetch caption data: ' + data.error);
+                    }
+                })
+                .catch(error => console.error('Error fetching caption data:', error));
+        }
+    </script>
+
+<!-- Display caption images -->
+<div class="caption-gallery">
+    {% for image in caption_images %}
+    <div class="caption-thumbnail">
+        <img src="{{ image }}" alt="Caption Image">
+        <p>{{ image }}</p>
+    </div>
+    {% endfor %}
+</div>
+</body>
+</html>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Extracted Frames</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .frames {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .frame {
+            border: 1px solid #ccc;
+            padding: 5px;
+            border-radius: 5px;
+        }
+        .frame img {
+            max-width: 100px; /* Adjust as needed */
+            max-height: 100px; /* Adjust as needed */
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <h1>Extracted Frames</h1>
+    <h2>Selected Video: {{ video_filename }}</h2>
+    
+    <div class="frames">
+        {% if frames %}
+            {% for frame in frames %}
+                <div class="frame">
+                    <img src="{{ url_for('static', filename='frames/' ~ frame) }}" alt="Frame {{ loop.index }}">
+                    <p>Frame {{ loop.index }}</p>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>No frames extracted.</p>
+        {% endif %}
+    </div>
+
+    <br>
+    <a href="{{ url_for('get_frames', page=1) }}">Back to Videos</a>
+</body>
+</html>

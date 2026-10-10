@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Processor</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dark.css') }}">
+    <style>
+        .refresh-button {
+            display: inline-block;
+            padding: 5px;
+            margin: 10px;
+            font-size: 2em;
+            background-color: orange;
+            color: rgb(0, 0, 0);
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 1px;
+        }
+        a {
+            color: orange;
+            text-decoration: none;
+            font-size: 3vw;
+        }
+        video {
+            width: 60%;
+            height: auto;
+            display: block;
+            margin-top: 20px;
+        }
+        .larger {
+            font-size: 2vw;
+            color: yellow;
+        
+        
+        }
+    </style>
+</head>
+<body>
+    <h1>Video Processor</h1>
+    <a href="{{ url_for('index') }}" class="refresh-button">HOME</a>
+    <a href="{{ url_for('ffmpeg') }}" class="refresh-button">REFRESH</a>
+
+    <form action="{{ url_for('process_ffmpeg') }}" method="POST">
+        <label class="larger" for="video_path">Select Video:</label>
+        <select name="video_path" id="video_path" onchange="updateVideoPlayer()">
+            <option value="">-- Select a Video --</option>
+            {% for video in videos %}
+                <option value="{{ video }}">{{ video.split('/')[-1] }}</option>
+            {% endfor %}
+        </select><br><br>
+        
+        <label  class="larger" for="start_time">Start Time (-ss):</label>
+        <input  class="larger" type="text" name="start_time" placeholder="e.g., 00:00:05"><br><br>
+
+        <label  class="larger" for="duration">Duration (-t):</label>
+        <input  class="larger" type="text" name="duration" placeholder="e.g., 00:00:10"><br><br>
+
+        <label class="larger" for="output_filename">Output Filename:</label>
+        <input type="text" name="output_filename" placeholder="e.g., output"><br><br>
+
+        <input type="submit" value="Process Video">
+    </form>
+
+    <h2>Preview Selected Video</h2>
+    <video id="videoPlayer" controls>
+        <source id="videoSource" src="" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+
+    <h2>Processed Videos</h2>
+    <ul>
+        {% for processed_video in processed_videos %}
+            <li><a href="{{ url_for('send_processed_video', filename=processed_video) }}">{{ processed_video }}</a></li>
+        {% endfor %}
+    </ul>
+
+    <script>
+        function updateVideoPlayer() {
+            const videoDropdown = document.getElementById('video_path');
+            const selectedVideo = videoDropdown.value;
+
+            // Update video player only if a video is selected
+            if (selectedVideo) {
+                const videoSource = document.getElementById('videoSource');
+                const videoPlayer = document.getElementById('videoPlayer');
+
+                // Set the source of the video player
+                videoSource.src = '/' + selectedVideo;  // Correct path for static video
+                videoPlayer.load();  // Reload the video player with the new source
+            }
+        }
+    </script>
+</body>
+</html>

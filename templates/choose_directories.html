@@ -1,0 +1,19 @@
+<!-- choose_directories.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Choose Directory </title>
+        <!-- static/css/dark.css-->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dark.css') }}">
+</head>
+<body>
+    <h1>Choose a Directory to Manage Files / choose_directories.html</h1>
+    <ul>
+        {% for directory in directories %}
+            <li><a href="{{ url_for('file_home', directory=directory) }}">{{ directory }}</a></li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

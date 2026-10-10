@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prompt Generator</title>
+</head>
+<body>
+    <div>
+        <h1>Prompt Generator</h1>
+        <ul>{{ top_text }}
+            {% for prompt in generated_prompts %}
+                {{ prompt }},
+            {% endfor %}
+            {% for prompt in random_prompt_selection %}
+            {{ prompt }},
+        {% endfor %}
+        {{ bottom_text }}
+        </ul>
+    </div>
+    <hr>
+    <h2>Generated Prompts</h2>
+    <p>{{ text[-1000:] }}</p>
+</body>
+</html>

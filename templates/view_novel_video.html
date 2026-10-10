@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Videos</title>
+    <style>
+        /* Styling to display videos side by side with wrapping */
+        .video-container {
+            display: flex;
+            flex-wrap: wrap; /* Allow videos to wrap onto the next line */
+            justify-content: space-between;
+            align-items: center;
+        }
+        .video-item {
+            margin: 10px;
+            flex: 1 1 200px; /* Each video item takes up at least 300px of space */
+        }
+        video {
+            width: 100%; /* Make sure each video takes the full width of its container */
+            height: auto;
+        }
+        .vid_container {
+            width: 20%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        a {
+            color: red;
+            font-size: 24px;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Select Videos to Concatenate</h1>
+    <a href="/">Home</a>
+    <form action="/concatenatem" method="POST">
+        <h2>Select 1st and 2nd Videos</h2>
+        <div class="video-container">
+            {% for video in videos %}
+                <div class="video-item">
+                    <video controls>
+                        <source src="{{ url_for('static', filename='temp_exp/' + video) }}" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                    <p>{{ video[-20:-4] }}</p>
+                    
+                    <!-- Radio buttons for 1st and 2nd video selection -->
+                    <label>
+                        <input type="radio" name="video1" value="{{ video }}" required>
+                        Select as 1st Video
+                    </label><br>
+                    <label>
+                        <input type="radio" name="video2" value="{{ video }}" required>
+                        Select as 2nd Video
+                    </label>
+                </div>
+            {% endfor %}
+        </div>
+        
+        <button type="submit">Concatenate Videos</button>
+    </form>
+
+    <h2>Concatenated Side by Side Video:</h2>
+    <div class="vid_container">
+        <video width="200" height="auto" controls>
+            <source src="{{ url_for('static', filename='temp_exp/novel.mp4') }}" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    </div>
+    
+</body>
+</html>

@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Talking Avatar Result | Media Studio</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/themed.css') }}">
+    <link rel="icon" href="/favicon.ico?v=1">
+    <style>
+        :root {
+            --bg-body: #080812;
+            --bg-card: rgba(18, 18, 35, 0.85);
+            --border-card: rgba(255, 255, 255, 0.1);
+            --accent: #00f0ff;
+            --accent-purple: #b800ff;
+            --text-main: #e2e8f0;
+            --text-muted: #8a8fba;
+            --success: #00e676;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            margin: 0;
+            padding: 24px;
+        }
+
+        .container {
+            max-width: 1150px;
+            margin: 0 auto;
+        }
+
+        .header-nav {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-card);
+        }
+
+        .header-nav a {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-card);
+            padding: 8px 16px;
+            border-radius: 8px;
+            color: var(--text-main);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .header-nav a:hover {
+            border-color: var(--accent);
+            background: rgba(0, 240, 255, 0.1);
+            color: #fff;
+        }
+
+        .header-nav a.active {
+            background: linear-gradient(135deg, rgba(0, 240, 255, 0.2), rgba(184, 0, 255, 0.2));
+            border-color: var(--accent);
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        .title-section {
+            margin-bottom: 24px;
+        }
+
+        .title-section h1 {
+            font-size: 1.9rem;
+            margin: 0 0 6px 0;
+            font-family: 'Outfit', sans-serif;
+            background: linear-gradient(135deg, #00f0ff, #c084fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .title-section p {
+            color: var(--text-muted);
+            margin: 0;
+            font-size: 0.95rem;
+        }
+
+        .grid-layout {
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: 24px;
+            align-items: start;
+        }
+
+        @media (max-width: 960px) {
+            .grid-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-card);
+            border-radius: 12px;
+            padding: 24px;
+            backdrop-filter: blur(14px);
+            margin-bottom: 24px;
+        }
+
+        .card h2 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.25rem;
+            margin-top: 0;
+            margin-bottom: 16px;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding-bottom: 10px;
+        }
+
+        .video-box {
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(0, 240, 255, 0.3);
+            border-radius: 12px;
+            padding: 16px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 0 30px rgba(0, 240, 255, 0.15);
+        }
+
+        video.avatar-player {
+            max-width: 100%;
+            max-height: 560px;
+            aspect-ratio: 512 / 768;
+            width: auto;
+            border-radius: 8px;
+            background: #000;
+            outline: none;
+            display: block;
+            margin: 0 auto;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.7);
+        }
+
+        .action-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            text-decoration: none;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #00f0ff, #7000ff);
+            color: #ffffff;
+            box-shadow: 0 4px 15px rgba(0, 240, 255, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 22px rgba(0, 240, 255, 0.5);
+            color: #ffffff;
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: #080812;
+            font-weight: 700;
+        }
+
+        .btn-success:hover {
+            filter: brightness(1.15);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 15px rgba(0, 230, 118, 0.4);
+            color: #080812;
+        }
+
+        .btn-outline {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-card);
+            color: var(--text-main);
+        }
+
+        .btn-outline:hover {
+            background: rgba(0, 240, 255, 0.1);
+            border-color: var(--accent);
+            color: #fff;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-live {
+            background: rgba(0, 240, 255, 0.15);
+            color: var(--accent);
+            border: 1px solid rgba(0, 240, 255, 0.3);
+        }
+
+        .badge-success {
+            background: rgba(0, 230, 118, 0.15);
+            color: var(--success);
+            border: 1px solid rgba(0, 230, 118, 0.3);
+        }
+
+        .asset-card {
+            background: rgba(10, 12, 22, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 8px;
+            padding: 14px;
+            margin-bottom: 14px;
+        }
+
+        .asset-title {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--accent);
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .asset-img-preview {
+            max-width: 120px;
+            border-radius: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            display: block;
+        }
+
+        .flash-msg {
+            background: rgba(0, 240, 255, 0.1);
+            border-left: 4px solid var(--accent);
+            padding: 12px 16px;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 20px;
+            color: #e2e8f0;
+            font-size: 0.95rem;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+            gap: 16px;
+            margin-top: 14px;
+        }
+
+        .gallery-item {
+            background: rgba(10, 12, 22, 0.75);
+            border: 1px solid var(--border-card);
+            border-radius: 10px;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+        }
+
+        .gallery-item:hover {
+            border-color: var(--accent);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 240, 255, 0.25);
+        }
+
+        .gallery-item video {
+            width: 100%;
+            aspect-ratio: 512 / 768; /* Portrait 2:3 */
+            object-fit: cover;
+            border-radius: 6px;
+            background: #000;
+            display: block;
+        }
+
+        .meta-text {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 6px;
+            word-break: break-all;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Header Navigation -->
+    <div class="header-nav">
+        <a href="/">🏠 Media Studio Home</a>
+        <a href="/upload_media">🎭 Avatar Studio Setup</a>
+        <a href="/text_to_mp3">🗣️ Kokoro Voice Synthesis</a>
+        <a href="/avatar" class="active">🎬 Avatar Video Result</a>
+        <a href="/mk_videos">🎬 Video Processing</a>
+        <a href="/remember" target="remember_app">💾 Remember DB</a>
+        <a href="/effects" target="effects_studio">🪄 Effects Studio</a>
+    </div>
+
+    <!-- Title Section -->
+    <div class="title-section">
+        <h1>🎭 Talking Avatar Result</h1>
+        <p>Wav2Lip neural lipsync synthesis generated from your staged face image and speech track.</p>
+    </div>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        {% for message in messages %}
+          <div class="flash-msg">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <div class="grid-layout">
+        <!-- Main Video Column -->
+        <div>
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                    <h2>🎬 Synthesized Lipsync Video</h2>
+                    <span class="badge badge-success">● Ready</span>
+                </div>
+
+                <div class="video-box">
+                    <video class="avatar-player" controls autoplay loop>
+                        <source src="/static/temp_exp/avatarX.mp4?t={{ range(1, 99999) | random }}" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+
+                <!-- Action Bar -->
+                <div class="action-bar">
+                    <a href="/static/temp_exp/avatarX.mp4" download="avatarX.mp4" class="btn btn-success">
+                        ⬇️ Download MP4
+                    </a>
+                    <a href="/make_avatar" class="btn btn-primary" id="btnRerender">
+                        🔄 Re-render Avatar (Wav2Lip)
+                    </a>
+                    <a href="/upload_media" class="btn btn-outline">
+                        ⚙️ Change Face / Audio
+                    </a>
+                    <a href="/mk_videos" class="btn btn-outline">
+                        🎞️ Send to Video Editor ↗
+                    </a>
+                </div>
+
+                <div style="margin-top: 18px; padding-top: 14px; border-top: 1px solid rgba(255, 255, 255, 0.08); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+                    <span class="meta-text">Output File: <code>static/temp_exp/avatarX.mp4</code></span>
+                    <span class="badge badge-live">Wav2Lip Checkpoint: wav2lip.pth</span>
+                </div>
+            </div>
+
+            <!-- Previous Rendered Avatars Gallery -->
+            {% if avatar_files %}
+            <div class="card">
+                <h2>📁 Archive of Rendered Avatars</h2>
+                <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: -8px;">Archived in <code>static/avatars/</code></p>
+                <div class="gallery-grid">
+                    {% for af in avatar_files %}
+                    <div class="gallery-item">
+                        <video controls preload="metadata" playsinline>
+                            <source src="/static/avatars/{{ af }}" type="video/mp4">
+                        </video>
+                        <div style="width: 100%; display: flex; justify-content: space-between; align-items: center; margin-top: 8px;">
+                            <span class="meta-text" title="{{ af }}">{{ af[:14] }}...mp4</span>
+                            <a href="/static/avatars/{{ af }}" download="{{ af }}" class="btn btn-outline" style="padding: 4px 8px; font-size: 0.75rem; text-decoration: none;" title="Download MP4">⬇️ MP4</a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Sidebar: Staged Inputs & Shortcuts -->
+        <div>
+            <!-- Staged Inputs Card -->
+            <div class="card">
+                <h2>📦 Staged Source Assets</h2>
+                <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: -8px; margin-bottom: 16px;">
+                    These files in <code>static/projects/</code> were used to generate this lipsync video:
+                </p>
+
+                <!-- Face Asset -->
+                <div class="asset-card">
+                    <div class="asset-title">
+                        <span>👤 Avatar Face</span>
+                        <code>use.jpg</code>
+                    </div>
+                    <div style="display: flex; gap: 14px; align-items: center;">
+                        <img class="asset-img-preview" src="/static/projects/use.jpg?t={{ range(1, 99999) | random }}" alt="Staged Face" onerror="this.src='/static/avatars/default.png';">
+                        <div style="font-size: 0.85rem; color: var(--text-muted);">
+                            <div>Resolution: <strong>512×768</strong></div>
+                            <div style="margin-top: 6px;">
+                                <a href="/upload_media" style="color: var(--accent);">Upload new face ↗</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Audio Asset -->
+                <div class="asset-card">
+                    <div class="asset-title">
+                        <span>🎙️ Speech Audio</span>
+                        <code>use.mp3</code>
+                    </div>
+                    <audio controls style="width: 100%; height: 36px; margin-top: 4px;">
+                        <source src="/static/projects/use.mp3?t={{ range(1, 99999) | random }}" type="audio/mpeg">
+                    </audio>
+                    <div style="margin-top: 8px; font-size: 0.85rem;">
+                        <a href="/text_to_mp3" style="color: var(--accent);">Synthesize new speech (Kokoro) ↗</a>
+                    </div>
+                </div>
+
+                <div style="margin-top: 16px;">
+                    <a href="/upload_media" class="btn btn-outline" style="width: 100%; justify-content: center; box-sizing: border-box;">
+                        🎭 Open Avatar Studio Setup
+                    </a>
+                </div>
+            </div>
+
+            <!-- Quick Navigation Card -->
+            <div class="card">
+                <h2>🚀 Workflow Shortcuts</h2>
+                <div style="display: flex; flex-direction: column; gap: 10px;">
+                    <a href="/text_to_mp3" class="btn btn-outline" style="justify-content: flex-start;">
+                        🗣️ Kokoro Voice Synthesis
+                    </a>
+                    <a href="/upload_media" class="btn btn-outline" style="justify-content: flex-start;">
+                        🎭 Avatar Media Setup
+                    </a>
+                    <a href="/mk_videos" class="btn btn-outline" style="justify-content: flex-start;">
+                        🎬 Join & Process Videos
+                    </a>
+                    <a href="/get_images" class="btn btn-outline" style="justify-content: flex-start;">
+                        🖼️ View Generated Images
+                    </a>
+                    <a href="/" class="btn btn-outline" style="justify-content: flex-start;">
+                        🏠 Media Studio Home
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Add visual feedback when re-rendering avatar
+    const btn = document.getElementById('btnRerender');
+    if (btn) {
+        btn.addEventListener('click', function() {
+            btn.innerHTML = '<span>⏳ Synthesizing Lipsync (Wav2Lip)...</span>';
+            btn.style.opacity = '0.75';
+            btn.style.pointerEvents = 'none';
+        });
+    }
+</script>
+
+</body>
+</html>

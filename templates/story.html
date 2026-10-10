@@ -1,0 +1,41 @@
+<!-- story.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stories</title>
+        <link rel="stylesheet" href="/static/css/dark.css">
+            <style>
+        
+video {
+    max-width: 200px;
+    height: auto;
+}
+
+    </style>
+</head>
+<body>
+    <h2>Select Video and Audio to Combine</h2>
+<a href="/">home</a>
+
+    <form id="video-audio-form" action="/combine" method="POST" onsubmit="return handleSubmit()">
+        <h3>Select Video: story.html</h3>
+        <div>
+            {% if video_files %}
+                {% for video in video_files %}
+                    <input type="radio" name="video" value="{{ video }}" id="{{ video }}">
+                          <video controls>
+                            <source src="{{ video }}" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    <label for="{{ video }}">{{ video }}</label><br>
+                {% endfor %}
+            {% else %}
+                <p>No videos available</p>
+            {% endif %}
+        </div>
+
+       
+</body>
+</html>

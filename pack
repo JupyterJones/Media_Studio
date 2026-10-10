@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Product pack — Kaazal Creators Brief #1</title>
+<meta name="description" content="The product pack for Kaazal Creators Brief #1: reference photos of 19 best-selling sofa covers, throws and cushion covers from The Sofa Cover Crafter. Reference for the product you will place in a scene of your own.">
+<link rel="canonical" href="https://creators.kaazal.com/pack">
+<meta property="og:title" content="Product pack — Kaazal Creators Brief #1">
+<meta property="og:image" content="https://creators.kaazal.com/pack/img/CONTACT-SHEET.jpg">
+<link rel="stylesheet" href="/style.css">
+<script>window.__KC={"pixelId":"558529611599949","round1Close":"2026-09-21","round2Close":"2026-09-28","turnstile":false,"turnstileSiteKey":"","packZips":{"full":{"filename":"kaazal-creators-pack.zip","size":126457462,"parts":[{"path":"/pack/parts/full/00.bin","size":20971520},{"path":"/pack/parts/full/01.bin","size":20971520},{"path":"/pack/parts/full/02.bin","size":20971520},{"path":"/pack/parts/full/03.bin","size":20971520},{"path":"/pack/parts/full/04.bin","size":20971520},{"path":"/pack/parts/full/05.bin","size":20971520},{"path":"/pack/parts/full/06.bin","size":628342}]},"web":{"filename":"kaazal-creators-pack-web.zip","size":48186790,"parts":[{"path":"/pack/parts/web/00.bin","size":20971520},{"path":"/pack/parts/web/01.bin","size":20971520},{"path":"/pack/parts/web/02.bin","size":6243750}]}}};</script>
+<!-- Meta Pixel -->
+<script>
+!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '558529611599949');
+fbq('track', 'PageView');
+
+</script>
+<noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=558529611599949&ev=PageView&noscript=1"/></noscript>
+</head>
+<body>
+<header class="wrap site-header">
+  <a class="brand" href="/">Kaazal <strong>Creators</strong></a>
+  <nav class="site-nav"><a href="/#brief">Brief</a><a href="/rules">Rules</a><a href="/#enter">Enter</a></nav>
+</header>
+
+<main class="wrap">
+  <section class="hero">
+    <span class="eyebrow">Product pack</span>
+    <h1 id="pack-title">Our best sellers, every angle. This is your reference, not your background.</h1>
+    <p class="lead" id="pack-intro">Reference photos of <span id="pack-count">19</span> products from The Sofa Cover Crafter (UK): velvet and woven-pattern sofa covers, throws, cushion covers. One folder per product, the hero shot first, then the rest in the order they appear on the product page.</p>
+    <div class="hero-actions" id="pack-zips">
+      <a class="btn" href="/pack/pack.zip" data-zip="full">Download the full pack · ZIP, 126 MB, full-resolution</a>
+      <a class="btn btn-ghost" href="/pack/pack-web.zip" data-zip="web">Web-size pack · ZIP, 48 MB, 2000 px</a>
+    </div>
+    <p class="muted mt-1" id="pack-zip-status" hidden></p>
+    <p class="muted mt-1">Use the photos for this brief only. Keep fabric, colour, pattern and fit true to these photos. The sofa shape may change; everything else is yours.</p>
+  </section>
+
+  <section id="contact-sheet">
+    <span class="eyebrow">At a glance</span>
+    <h2>The heroes on one sheet</h2>
+    <p class="measure">Every product’s first photo, side by side. Handy for picking the ones you want to work with before you download anything.</p>
+    <a href="/pack/img/CONTACT-SHEET.jpg" target="_blank" rel="noopener"><img class="contact-sheet" src="/pack/img/CONTACT-SHEET.jpg" width="2000" height="1918" alt="Contact sheet: hero photo of every product in the pack" loading="lazy"></a>
+  </section>
+
+  <section id="pack-products">
+    <span class="eyebrow">Products</span>
+    <h2>Pick any. Use as many as you like.</h2>
+    <p class="muted" id="pack-loading">Loading the pack…</p>
+    <div class="product-grid" id="product-grid"></div>
+  </section>
+
+  <section id="facts">
+    <h2>What the pack is for</h2>
+    <p class="measure">The pack is the reference for how each product looks: its fabric, colour, pattern and the way it fits. Keep that true and the rest is yours. Nothing else is prescribed.</p>
+    <a class="btn btn-ghost" href="/rules">Read the rules</a>
+    <a class="btn" href="/#enter">Enter the brief</a>
+  </section>
+</main>
+
+<footer class="wrap site-footer"><p>© KAAZAL TRADING LIMITED · <a href="/rules">Rules</a> · <a href="mailto:contact@kaazal.com">contact@kaazal.com</a></p></footer>
+
+<script>
+(function () {
+  var cfg = window.__KC || {};
+
+  // The zips are too big for one static file, so they ship as ≤ 20 MB parts (cfg.packZips) and
+  // the browser joins them: streamed straight to disk where the File System Access API exists,
+  // otherwise as one Blob. The href stays as the fallback (server-side stream) for old browsers.
+  var status = document.getElementById('pack-zip-status');
+  var say = function (text) { status.hidden = !text; status.textContent = text || ''; };
+  var joinZip = function (spec, onProgress) {
+    var picker = window.showSaveFilePicker
+      ? window.showSaveFilePicker({ suggestedName: spec.filename, types: [{ description: 'ZIP archive', accept: { 'application/zip': ['.zip'] } }] })
+          .then(function (handle) { return handle.createWritable(); }, function (err) { if (err && err.name === 'AbortError') throw err; return null; })
+      : Promise.resolve(null);
+    return picker.then(function (sink) {
+      var received = 0, chunks = [];
+      var next = function (i) {
+        if (i >= spec.parts.length) return Promise.resolve();
+        return fetch(spec.parts[i].path).then(function (res) {
+          if (!res.ok || !res.body) throw new Error('part ' + i + ' failed: ' + res.status);
+          var reader = res.body.getReader();
+          var pump = function () {
+            return reader.read().then(function (r) {
+              if (r.done) return;
+              received += r.value.byteLength;
+              onProgress(received / spec.size);
+              return (sink ? sink.write(r.value) : (chunks.push(r.value), Promise.resolve())).then(pump);
+            });
+          };
+          return pump();
+        }).then(function () { return next(i + 1); });
+      };
+      return next(0).then(function () {
+        if (received !== spec.size) throw new Error('short download: ' + received + ' of ' + spec.size);
+        if (sink) return sink.close();
+        var url = URL.createObjectURL(new Blob(chunks, { type: 'application/zip' }));
+        var link = document.createElement('a');
+        link.href = url; link.download = spec.filename;
+        document.body.appendChild(link); link.click(); link.remove();
+        setTimeout(function () { URL.revokeObjectURL(url); }, 60000);
+      }, function (err) { if (sink) sink.abort().catch(function () {}); throw err; });
+    });
+  };
+  var busy = false;
+  Array.prototype.forEach.call(document.querySelectorAll('#pack-zips a[data-zip]'), function (a) {
+    var spec = (cfg.packZips || {})[a.getAttribute('data-zip')];
+    if (!spec || !window.fetch || !window.ReadableStream || !window.Blob) return; // plain link
+    var label = a.textContent;
+    a.addEventListener('click', function (ev) {
+      ev.preventDefault();
+      if (busy) return;
+      busy = true;
+      say('Preparing ' + spec.filename + '…');
+      joinZip(spec, function (f) { a.textContent = 'Downloading… ' + Math.round(f * 100) + '%'; })
+        .then(function () { say(spec.filename + ' saved.'); }, function (err) {
+          if (err && err.name === 'AbortError') { say(''); return; }
+          say('Download failed (' + (err && err.message ? err.message : err) + '). Trying the direct link…');
+          window.location.href = a.href;
+        })
+        .then(function () { a.textContent = label; busy = false; });
+    });
+  });
+
+  var el = function (tag, attrs, children) {
+    var n = document.createElement(tag);
+    Object.keys(attrs || {}).forEach(function (k) { if (k === 'text') n.textContent = attrs[k]; else n.setAttribute(k, attrs[k]); });
+    (children || []).forEach(function (c) { n.appendChild(c); });
+    return n;
+  };
+  var IMG = '/pack/img/';
+  var typeLabel = function (t) {
+    t = String(t || '');
+    if (/corner/i.test(t)) return 'Corner sofa cover';
+    if (/cushion/i.test(t)) return 'Cushion cover';
+    if (/throw/i.test(t)) return 'Sofa throw';
+    if (/sofa cover/i.test(t)) return 'Sofa cover';
+    return t;
+  };
+  var joinList = function (a) { return (a || []).filter(Boolean).join(', '); };
+
+  fetch('/pack/pack.json', { cache: 'no-cache' }).then(function (r) { return r.json(); }).then(function (pack) {
+    var products = pack.products || [];
+    var grid = document.getElementById('product-grid');
+    document.getElementById('pack-loading').hidden = true;
+    document.getElementById('pack-count').textContent = String(products.length);
+
+    products.forEach(function (p) {
+      var facts = p.facts || {};
+      var photos = (p.images || []).filter(function (im) { return im.kind !== 'graphic'; });
+      var hero = IMG + (p.hero || (photos[0] && photos[0].file) || '');
+      var meta = [
+        el('span', { class: 'pill', text: typeLabel(facts.product_type || p.product_type) }),
+        el('span', { class: 'muted', text: photos.length + (photos.length === 1 ? ' photo' : ' photos') })
+      ];
+      var details = [];
+      if ((facts.colours || []).length) details.push(el('li', {}, [el('strong', { text: 'Colour: ' }), document.createTextNode(joinList(facts.colours))]));
+      if (facts.fabric) details.push(el('li', {}, [el('strong', { text: 'Fabric: ' }), document.createTextNode(facts.fabric)]));
+      if ((facts.sizes || []).length) details.push(el('li', {}, [el('strong', { text: 'Sizes: ' }), document.createTextNode(joinList(facts.sizes))]));
+      var pdp = facts.pdp_url ? el('a', { href: facts.pdp_url, target: '_blank', rel: 'noopener', text: 'Product page ↗' }) : null;
+
+      var all = el('div', { class: 'gallery all-photos' }, photos.map(function (im, i) {
+        var img = el('img', { src: IMG + im.file, alt: (p.title || '') + ' — photo ' + (i + 1), loading: 'lazy' });
+        return el('figure', {}, [el('a', { href: IMG + im.file, target: '_blank', rel: 'noopener' }, [img]), el('figcaption', { text: (i + 1) + ' / ' + photos.length })]);
+      }));
+      var expandable = el('details', { class: 'all-photos-toggle' }, [el('summary', { text: 'All ' + photos.length + ' photos' }), all]);
+
+      var card = el('article', { class: 'card product' }, [
+        el('a', { class: 'product-hero', href: hero, target: '_blank', rel: 'noopener' }, [el('img', { src: hero, alt: p.title || '', loading: 'lazy', width: '2000', height: '1333' })]),
+        el('div', { class: 'product-meta' }, meta),
+        el('h3', { text: p.title || p.handle || 'Product' }),
+        el('ul', { class: 'product-facts' }, details),
+        pdp ? el('p', {}, [pdp]) : el('span'),
+        expandable
+      ]);
+      grid.appendChild(card);
+    });
+    if (!products.length) grid.appendChild(el('p', { class: 'muted', text: 'The pack is being prepared. Check back shortly.' }));
+  }).catch(function () {
+    var l = document.getElementById('pack-loading'); l.hidden = false; l.textContent = 'Could not load the pack. Please refresh.';
+  });
+})();
+</script>
+</body>
+</html>

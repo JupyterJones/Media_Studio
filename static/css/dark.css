@@ -1,0 +1,33 @@
+/* =========================================================
+   MEDIA STUDIO - LATENT HORIZON DARK THEME
+   Dark Space Aesthetic // Glassmorphism & Neon Glow Accents
+   ========================================================= */
+
+@import url("themed.css");
+
+/* Container overrides */
+.container {
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: var(--radius) !important;
+  box-shadow: var(--shadow) !important;
+}
+
+/* Ensure no harsh maroon text */
+body, p, span, li, td {
+  color: var(--text-main);
+}
+
+/* Modern inputs */
+input[type="text"], select {
+  background: rgba(8, 8, 18, 0.85) !important;
+  color: var(--text-main) !important;
+  border: 1px solid var(--border-color) !important;
+}
+
+/* Glowing buttons */
+.btn, button, input[type="submit"] {
+  background: var(--accent-gradient) !important;
+  color: #080812 !important;
+  font-weight: 700 !important;
+}

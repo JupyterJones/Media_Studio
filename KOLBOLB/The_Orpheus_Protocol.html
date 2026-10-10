@@ -1,0 +1,1715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Orpheus Protocol // Weyland-Yutani Atmospheric Terminal</title>
+<style>
+  :root {
+    --bg-color: #080c10;
+    --amber-bright: #ffb400;
+    --amber-dim: #996c00;
+    --amber-glow: rgba(255, 180, 0, 0.35);
+    --green-bright: #33ff66;
+    --green-glow: rgba(51, 255, 102, 0.35);
+    --red-alert: #ff3333;
+    --blue-cobalt: #00b4ff;
+    --panel-bg: rgba(12, 18, 24, 0.88);
+    --panel-border: rgba(255, 180, 0, 0.3);
+    --slot-size: 150px;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    user-select: none;
+  }
+
+  body {
+    background-color: var(--bg-color);
+    background-image: url('orpheus_background.png'), radial-gradient(circle at center, rgba(16, 26, 36, 0.7) 0%, rgba(4, 7, 10, 0.95) 100%);
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    color: var(--amber-bright);
+    font-family: 'Courier New', Courier, monospace;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* CRT Scanline & Vignette Effect */
+  body::before {
+    content: " ";
+    position: fixed;
+    top: 0; left: 0; bottom: 0; right: 0;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.35) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.02), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.02));
+    background-size: 100% 3px, 6px 100%;
+    pointer-events: none;
+    z-index: 999;
+  }
+
+  body::after {
+    content: " ";
+    position: fixed;
+    top: 0; left: 0; bottom: 0; right: 0;
+    box-shadow: inset 0 0 100px rgba(0,0,0,0.85);
+    pointer-events: none;
+    z-index: 998;
+  }
+
+  /* TOP HEADER / TELEMETRY */
+  header {
+    background: rgba(8, 12, 16, 0.92);
+    border-bottom: 2px solid var(--panel-border);
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    letter-spacing: 1px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.7);
+    z-index: 10;
+  }
+
+  .title-group h1 {
+    font-size: 18px;
+    color: var(--amber-bright);
+    text-shadow: 0 0 8px var(--amber-glow);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .badge-live {
+    font-size: 10px;
+    background: var(--amber-bright);
+    color: #000;
+    padding: 2px 6px;
+    font-weight: bold;
+    border-radius: 2px;
+  }
+
+  .telemetry {
+    display: flex;
+    gap: 20px;
+    color: #aaa;
+  }
+  .telemetry span strong {
+    color: var(--amber-bright);
+  }
+
+  .controls-bar {
+    display: flex;
+    gap: 12px;
+  }
+
+  .hud-btn {
+    background: rgba(255, 180, 0, 0.1);
+    color: var(--amber-bright);
+    border: 1px solid var(--amber-dim);
+    padding: 6px 12px;
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 1px;
+  }
+  .hud-btn:hover {
+    background: var(--amber-bright);
+    color: #000;
+    box-shadow: 0 0 10px var(--amber-glow);
+  }
+  .hud-btn.active {
+    background: var(--green-bright);
+    color: #000;
+    border-color: var(--green-bright);
+    box-shadow: 0 0 10px var(--green-glow);
+  }
+
+  /* MAIN WORKSPACE: SPLIT SCREEN */
+  main {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 480px;
+    gap: 15px;
+    padding: 15px;
+    overflow: hidden;
+  }
+
+  /* STORY TERMINAL */
+  .terminal-panel {
+    background: var(--panel-bg);
+    border: 1px solid var(--panel-border);
+    backdrop-filter: blur(8px);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 0 20px rgba(0,0,0,0.8);
+    position: relative;
+  }
+
+  .terminal-header {
+    background: rgba(255, 180, 0, 0.08);
+    padding: 8px 15px;
+    font-size: 12px;
+    border-bottom: 1px solid var(--panel-border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .story-output {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #ffd27f;
+    text-shadow: 0 0 3px rgba(255, 180, 0, 0.2);
+    user-select: text;
+  }
+
+  .story-output p {
+    margin-bottom: 14px;
+  }
+
+  .story-output .speaker-esperanza {
+    color: var(--green-bright);
+    font-weight: bold;
+    text-shadow: 0 0 5px var(--green-glow);
+  }
+
+  .story-output .alert-text {
+    color: var(--red-alert);
+    font-weight: bold;
+    text-shadow: 0 0 5px rgba(255, 51, 51, 0.4);
+  }
+
+  .story-output .choice-box {
+    background: rgba(255, 180, 0, 0.05);
+    border-left: 3px solid var(--amber-bright);
+    padding: 10px 15px;
+    margin: 15px 0;
+  }
+
+  /* ACTION & INPUT AREA */
+  .terminal-footer {
+    border-top: 1px solid var(--panel-border);
+    background: rgba(10, 15, 20, 0.95);
+    padding: 12px 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .quick-choices {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    max-height: 120px;
+    overflow-y: auto;
+  }
+
+  .choice-btn {
+    background: rgba(255, 180, 0, 0.12);
+    border: 1px solid var(--amber-bright);
+    color: #ffda99;
+    padding: 8px 12px;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    flex: 1 1 calc(50% - 10px);
+    min-width: 250px;
+    text-align: left;
+    transition: all 0.2s;
+    border-radius: 2px;
+    line-height: 1.35;
+  }
+  .choice-btn:hover {
+    background: var(--amber-bright);
+    color: #000;
+    box-shadow: 0 0 12px var(--amber-glow);
+  }
+
+  .input-group {
+    display: flex;
+    gap: 10px;
+  }
+
+  .cmd-input {
+    flex: 1;
+    background: rgba(0, 0, 0, 0.6);
+    border: 1px solid var(--panel-border);
+    color: var(--amber-bright);
+    font-family: inherit;
+    font-size: 14px;
+    padding: 10px 14px;
+    outline: none;
+  }
+  .cmd-input:focus {
+    border-color: var(--amber-bright);
+    box-shadow: 0 0 8px var(--amber-glow);
+  }
+
+  .transmit-btn {
+    background: var(--amber-bright);
+    color: #000;
+    border: none;
+    font-family: inherit;
+    font-weight: bold;
+    padding: 0 20px;
+    cursor: pointer;
+    letter-spacing: 1px;
+    font-size: 13px;
+    transition: all 0.2s;
+  }
+  .transmit-btn:hover {
+    background: #fff;
+    box-shadow: 0 0 12px #fff;
+  }
+
+  /* RIGHT PANEL: 150x150 INVENTORY RIG */
+  .rig-panel {
+    background: var(--panel-bg);
+    border: 1px solid var(--panel-border);
+    backdrop-filter: blur(8px);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 0 20px rgba(0,0,0,0.8);
+  }
+
+  .rig-header {
+    background: rgba(255, 180, 0, 0.08);
+    padding: 10px 15px;
+    font-size: 12px;
+    border-bottom: 1px solid var(--panel-border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .hands-indicator {
+    background: rgba(255, 51, 51, 0.15);
+    border-left: 3px solid var(--red-alert);
+    padding: 8px 12px;
+    margin: 10px 15px 0 15px;
+    font-size: 12px;
+    color: #ff9999;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 2px;
+    transition: all 0.3s;
+  }
+
+  .hands-indicator.empty {
+    background: rgba(51, 255, 102, 0.08);
+    border-left: 3px solid var(--green-bright);
+    color: #a3ffc2;
+  }
+
+  .grid-container {
+    flex: 1;
+    overflow-y: auto;
+    padding: 15px;
+    display: grid;
+    grid-template-columns: repeat(2, var(--slot-size));
+    gap: 15px;
+    justify-content: center;
+  }
+
+  /* 150x150 INVENTORY SLOT */
+  .slot {
+    width: var(--slot-size);
+    height: var(--slot-size);
+    border: 2px solid var(--panel-border);
+    background: rgba(10, 15, 20, 0.9);
+    position: relative;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 6px;
+  }
+
+  .slot:hover {
+    border-color: var(--amber-bright);
+    box-shadow: 0 0 15px var(--amber-glow);
+    transform: translateY(-2px);
+  }
+
+  .slot.active-item {
+    border-color: var(--amber-bright);
+    background: rgba(255, 180, 0, 0.04);
+  }
+
+  .slot.locked {
+    border: 1px dashed rgba(255, 180, 0, 0.2);
+    background: rgba(0, 0, 0, 0.4);
+    cursor: not-allowed;
+    justify-content: center;
+    align-items: center;
+    color: rgba(255, 180, 0, 0.3);
+    font-size: 10px;
+    text-align: center;
+  }
+
+  .slot.locked:hover {
+    transform: none;
+    box-shadow: none;
+    border-color: rgba(255, 180, 0, 0.2);
+  }
+
+  .slot-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 9px;
+    letter-spacing: 0.5px;
+    color: #888;
+    z-index: 2;
+  }
+
+  .slot-tag {
+    font-weight: bold;
+    color: var(--amber-bright);
+  }
+
+  .slot-status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #555;
+  }
+  .slot-status-dot.green { background: var(--green-bright); box-shadow: 0 0 5px var(--green-glow); }
+  .slot-status-dot.amber { background: var(--amber-bright); box-shadow: 0 0 5px var(--amber-glow); animation: pulse 1.5s infinite; }
+  .slot-status-dot.red { background: var(--red-alert); box-shadow: 0 0 6px var(--red-alert); animation: pulse 0.8s infinite; }
+
+  .slot-image-wrap {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .slot-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 2px;
+    filter: contrast(1.1) brightness(0.95);
+  }
+
+  .slot-icon-fallback {
+    font-size: 32px;
+    filter: drop-shadow(0 0 5px var(--amber-glow));
+  }
+
+  .slot-footer {
+    font-size: 9px;
+    text-align: center;
+    background: rgba(0,0,0,0.7);
+    padding: 3px 0;
+    color: #fff;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    z-index: 2;
+  }
+
+  /* MODAL: CLICK-TO-ENLARGE INSPECT VIEW */
+  .modal-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(10px);
+    z-index: 2000;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+  }
+
+  .modal-overlay.open {
+    display: flex;
+  }
+
+  .inspect-card {
+    background: rgba(14, 20, 28, 0.97);
+    border: 2px solid var(--amber-bright);
+    box-shadow: 0 0 40px var(--amber-glow);
+    width: 580px;
+    max-width: 95vw;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    animation: zoomIn 0.2s ease-out;
+  }
+
+  @keyframes zoomIn {
+    from { transform: scale(0.9); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+
+  .inspect-header {
+    background: rgba(255, 180, 0, 0.15);
+    padding: 12px 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--panel-border);
+  }
+
+  .inspect-header h2 {
+    font-size: 16px;
+    color: var(--amber-bright);
+    letter-spacing: 1px;
+  }
+
+  .close-btn {
+    background: none;
+    border: none;
+    color: var(--amber-bright);
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .close-btn:hover { color: #fff; }
+
+  .inspect-body {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    gap: 20px;
+    padding: 20px;
+  }
+
+  .inspect-img-box {
+    width: 240px;
+    height: 240px;
+    border: 1px solid var(--panel-border);
+    background: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+  .inspect-img-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .inspect-details {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
+  .inspect-specs {
+    color: #ccc;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .inspect-specs strong {
+    color: var(--amber-bright);
+  }
+
+  .inspect-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 15px;
+  }
+
+  .action-btn {
+    background: rgba(255, 180, 0, 0.15);
+    border: 1px solid var(--amber-bright);
+    color: var(--amber-bright);
+    padding: 8px 12px;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.2s;
+  }
+  .action-btn:hover {
+    background: var(--amber-bright);
+    color: #000;
+    box-shadow: 0 0 10px var(--amber-glow);
+  }
+
+  @keyframes pulse {
+    0% { opacity: 0.3; }
+    50% { opacity: 1; }
+    100% { opacity: 0.3; }
+  }
+
+  /* Audio Visualizer Indicator */
+  .voice-indicator {
+    font-size: 11px;
+    color: var(--green-bright);
+    display: none;
+    align-items: center;
+    gap: 6px;
+  }
+  .voice-indicator.active {
+    display: flex;
+  }
+  .voice-wave {
+    width: 8px;
+    height: 8px;
+    background: var(--green-bright);
+    border-radius: 50%;
+    animation: pulse 0.5s infinite;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="title-group">
+    <h1>THE ORPHEUS PROTOCOL <span class="badge-live">RIG 09</span></h1>
+  </div>
+  <div class="telemetry">
+    <span>OPERATOR: <strong>JACK</strong></span>
+    <span>O2: <strong>18.2%</strong></span>
+    <span>ATMOSPHERE: <strong>SUB-ZERO / DE-CON SECURE</strong></span>
+    <span>STATUS: <strong style="color: var(--green-bright);">PRIMARY SPINE UNLOCKED</strong></span>
+  </div>
+  <div class="controls-bar">
+    <div id="voice-status" class="voice-indicator">
+      <div class="voice-wave"></div> ESPERANZA SPEAKING
+    </div>
+    <button id="btn-drone" class="hud-btn" onclick="toggleHum()">🔊 AMBIENT HUM: OFF</button>
+    <button id="btn-tts" class="hud-btn active" onclick="toggleTTS()">🎙️ HEADSET VOICE: ON</button>
+    <button id="btn-replay" class="hud-btn" onclick="replayLastAudio()">🔁 REPLAY AUDIO</button>
+    <button class="hud-btn" onclick="generateVisualPrompt()">🎨 GEN SCENE PIC</button>
+    <button id="btn-nav" class="hud-btn" onclick="openMissionNavigator()" style="border-color:var(--amber-bright); color:var(--amber-bright);">📜 FLIGHT LOG</button>
+    <button id="btn-rec" class="hud-btn active" onclick="toggleRecording()">🔴 REC: ON</button>
+    <button class="hud-btn" onclick="compileMissionVideo()" style="border-color:var(--blue-cobalt); color:var(--blue-cobalt);">🎬 COMPILE VIDEO</button>
+    <a href="LipSync_Avatar_Studio.html" target="_blank" class="hud-btn" style="text-decoration:none; display:inline-flex; align-items:center; border-color:#00f0ff; color:#00f0ff;">🎤 AVATAR</a>
+    <a href="Music_Studio.html" target="_blank" class="hud-btn" style="text-decoration:none; display:inline-flex; align-items:center; border-color:#818cf8; color:#818cf8;">🎵 MUSIC</a>
+    <a href="http://localhost:5200" target="_blank" class="hud-btn" style="text-decoration:none; display:inline-flex; align-items:center; border-color:#38bdf8; color:#38bdf8;">🎬 MEDIA STUDIO</a>
+    <button class="hud-btn" onclick="resetMissionDisk()" style="border-color:#555; color:#888; font-size:10px;">↺ RESET</button>
+  </div>
+</header>
+
+<main>
+  <!-- LEFT: STORY TERMINAL -->
+  <section class="terminal-panel">
+    <div class="terminal-header">
+      <span>TERMINAL // MU-TH-UR 6000 SUB-ROUTINE</span>
+      <span style="color: #aaa;">CYCLE: 03:18 // TIME-TO-VAPOR: 00:00</span>
+    </div>
+
+    <div class="story-output" id="story-log">
+      <p><span class="speaker-esperanza">[ESPERANZA // MISSION CONTROL]:</span> Jack, you are 5 feet below the airlock threshold! The 25-pound Diamond Rotary Drill is balanced in your arms. Ten feet below you on the frozen iron ladder, the Bio-Mechanical Stalker shudders up the rungs like a massive armored mantis, its triple-hinged jaw hissing cold vapor into the darkness!</p>
+      
+      <p class="alert-text">PROXIMITY RADAR: 2.8 METERS AND CLOSING RAPIDLY!</p>
+
+      <div class="choice-box">
+        <strong>CRITICAL ACTION REQUIRED:</strong>
+        <p>1. <strong>[DROP THE HAMMER]</strong>: Trip the drill's manual compressed-air release and ram the 4,000-RPM diamond bit straight down into its face!</p>
+        <p>2. <strong>[COLD-STRIKE FLARE]</strong>: Whip the Magnesium Flare from Slot 2, spark it to 2,000°C, and shove it down its throat to melt its sensory slits!</p>
+        <p>3. <strong>[AIRLOCK BREACH DIVE]</strong>: Heave the drill through the hatch, dive across the threshold, and slap the hydraulic slam-lock switch!</p>
+      </div>
+    </div>
+
+    <div class="terminal-footer">
+      <div class="quick-choices">
+        <button class="choice-btn" onclick="sendPlayerAction('1. Kick the drill compressed-air trigger and ram the 4,000-RPM diamond bit down into its face!')">[1] ENGAGE ROTARY DRILL</button>
+        <button class="choice-btn" onclick="sendPlayerAction('2. Cold-strike the Magnesium Flare (Slot 2) and drop it straight into its triple-hinged maw!')">[2] IGNITE MAGNESIUM FLARE</button>
+        <button class="choice-btn" onclick="sendPlayerAction('3. Heave the heavy drill into the airlock, dive through, and slam the emergency guillotine hatch shut!')">[3] DIVE & SLAM AIRLOCK</button>
+      </div>
+      <div class="input-group">
+        <input type="text" id="custom-input" class="cmd-input" placeholder="Type custom action or use inventory tool (e.g. scan stalker with Lydarette)..." onkeydown="if(event.key==='Enter') transmitCustomAction()">
+        <button class="transmit-btn" onclick="transmitCustomAction()">TRANSMIT</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- RIGHT: 150x150 SUIT HARNESS (EXPANDABLE GRID) -->
+  <aside class="rig-panel">
+    <div class="rig-header">
+      <span>MK-IV HARNESS GRID (150×150)</span>
+      <span style="color: var(--amber-bright);">6 OF 10 SLOTS ACTIVE</span>
+    </div>
+
+    <div class="hands-indicator empty" id="hands-box">
+      <span>CARRIED IN HANDS: <strong id="hands-label" style="color:var(--green-bright);">EMPTY (HANDS FREE)</strong></span>
+      <div id="hands-btn-wrap" style="display:flex;">
+        <span style="font-size: 10px; color: var(--green-bright); font-weight:bold;">UNENCUMBERED</span>
+      </div>
+    </div>
+
+    <div class="grid-container" id="grid-slots">
+      <!-- Slot 1: Lydarette -->
+      <div class="slot active-item" onclick="inspectItem(0)">
+        <div class="slot-header">
+          <span class="slot-tag">BAY 01</span>
+          <div class="slot-status-dot green"></div>
+        </div>
+        <div class="slot-image-wrap">
+          <img src="back/2569601-a_small_tablet_like_instrument_to_scan_objects_for_danger.png" class="slot-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+          <div class="slot-icon-fallback" style="display:none;">📟</div>
+        </div>
+        <div class="slot-footer">LYDARETTE SCANNER</div>
+      </div>
+
+      <!-- Slot 2: Flare -->
+      <div class="slot active-item" onclick="inspectItem(1)">
+        <div class="slot-header">
+          <span class="slot-tag">BAY 02</span>
+          <div class="slot-status-dot amber"></div>
+        </div>
+        <div class="slot-image-wrap">
+          <div class="slot-icon-fallback">🧨</div>
+        </div>
+        <div class="slot-footer">MAGNESIUM FLARE</div>
+      </div>
+
+      <!-- Slot 3: Ratchet Key -->
+      <div class="slot active-item" onclick="inspectItem(2)">
+        <div class="slot-header">
+          <span class="slot-tag">BAY 03</span>
+          <div class="slot-status-dot green"></div>
+        </div>
+        <div class="slot-image-wrap">
+          <div class="slot-icon-fallback">🔧</div>
+        </div>
+        <div class="slot-footer">MAGNETIC RATCHET</div>
+      </div>
+
+      <!-- Slot 4: Courier Case -->
+      <div class="slot active-item" onclick="inspectItem(3)">
+        <div class="slot-header">
+          <span class="slot-tag">BAY 04</span>
+          <div class="slot-status-dot amber"></div>
+        </div>
+        <div class="slot-image-wrap">
+          <div class="slot-icon-fallback">💼</div>
+        </div>
+        <div class="slot-footer">AEGIS-4 (SPECIMEN)</div>
+      </div>
+
+      <!-- Slot 5: Audio Tape -->
+      <div class="slot active-item" onclick="inspectItem(4)">
+        <div class="slot-header">
+          <span class="slot-tag">BAY 05</span>
+          <div class="slot-status-dot green"></div>
+        </div>
+        <div class="slot-image-wrap">
+          <div class="slot-icon-fallback">📼</div>
+        </div>
+        <div class="slot-footer">DR. MORALES TAPE</div>
+      </div>
+
+      <!-- Slot 6: D-Cell 900 -->
+      <div class="slot active-item" onclick="inspectItem(5)">
+        <div class="slot-header">
+          <span class="slot-tag">BAY 06</span>
+          <div class="slot-status-dot green"></div>
+        </div>
+        <div class="slot-image-wrap">
+          <div class="slot-icon-fallback">🔋</div>
+        </div>
+        <div class="slot-footer">D-CELL 900 (94%)</div>
+      </div>
+
+      <!-- Locked Slots 7-10 -->
+      <div class="slot locked">
+        <div>[ BAY 07 ]<br>LOCKED</div>
+      </div>
+      <div class="slot locked">
+        <div>[ BAY 08 ]<br>LOCKED</div>
+      </div>
+      <div class="slot locked">
+        <div>[ BAY 09 ]<br>LOCKED</div>
+      </div>
+      <div class="slot locked">
+        <div>[ BAY 10 ]<br>LOCKED</div>
+      </div>
+    </div>
+  </aside>
+</main>
+
+<!-- MODAL: CLICK-TO-ENLARGE INSPECT OVERLAY -->
+<div class="modal-overlay" id="inspect-modal" onclick="closeInspect(event)">
+  <div class="inspect-card" onclick="event.stopPropagation()">
+    <div class="inspect-header">
+      <h2 id="inspect-title">ITEM INSPECTION</h2>
+      <button class="close-btn" onclick="closeInspect()">✕</button>
+    </div>
+    <div class="inspect-body">
+      <div class="inspect-img-box" id="inspect-img-box">
+        <img id="inspect-img" src="" alt="Enlarged Visual">
+      </div>
+      <div class="inspect-details">
+        <div class="inspect-specs" id="inspect-specs">
+          <!-- Populated dynamically -->
+        </div>
+        <div class="inspect-actions" id="inspect-actions">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: MISSION FLIGHT NAVIGATOR & REWIND (READS FROM DISK JSON) -->
+<div class="modal-overlay" id="navigator-modal" onclick="closeNavigator(event)">
+  <div class="inspect-card" style="width: 820px; max-width: 95vw;" onclick="event.stopPropagation()">
+    <div class="inspect-header">
+      <h2 id="nav-title">FLIGHT LOG // DISK ARCHIVE</h2>
+      <div style="display:flex; gap:8px; align-items:center;">
+        <button class="hud-btn" onclick="navPrevScene()">◀ PREV</button>
+        <span id="nav-counter" style="font-size:12px; color:#fff; min-width:90px; text-align:center;">TURN 1 / 1</span>
+        <button class="hud-btn" onclick="navNextScene()">NEXT ▶</button>
+        <button class="close-btn" onclick="closeNavigator()">✕</button>
+      </div>
+    </div>
+    <div class="inspect-body" style="grid-template-columns: 320px 1fr;">
+      <div class="inspect-img-box" id="nav-img-box" style="width:320px; height:280px; position:relative;">
+        <img id="nav-img" src="orpheus_background.png" style="width:100%; height:100%; object-fit:cover;">
+        <div id="nav-img-badge" style="position:absolute; bottom:6px; right:6px; background:rgba(0,0,0,0.7); font-size:10px; padding:2px 6px; color:var(--amber-bright);">SCENE VISUAL</div>
+      </div>
+      <div class="inspect-details" style="height: 280px; display:flex; flex-direction:column; justify-content:space-between;">
+        <div id="nav-log-content" style="flex:1; overflow-y:auto; padding-right:8px; font-size:13px; color:#ffd27f; line-height:1.5;">
+          <!-- Populated dynamically -->
+        </div>
+        <div style="display:flex; gap:10px; margin-top:12px;">
+          <button id="nav-audio-btn" class="action-btn" style="flex:1;" onclick="navPlayAudio()">🔊 REPLAY NARRATION</button>
+          <button class="action-btn" style="flex:1; border-color:var(--red-alert); color:#ff9999;" onclick="rewindToCurrentNavScene()">⏪ REWIND TO THIS TURN</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ==========================================
+// 1. INVENTORY DATABASE
+// ==========================================
+const inventory = [
+  {
+    name: "Lydarette Hazard Scanner",
+    tag: "BAY 01",
+    img: "back/2569601-a_small_tablet_like_instrument_to_scan_objects_for_danger.png",
+    fallbackIcon: "📟",
+    specs: `
+      <p><strong>MANUFACTURER:</strong> Weyland Tactical Diagnostics</p>
+      <p><strong>FUNCTION:</strong> Environmental dielectric & bio-density scanner</p>
+      <p><strong>STATUS:</strong> Operational (Battery: 84%)</p>
+      <p><strong>READINGS:</strong> O2: 18.2% | Anomalous Stalker: 2.8m (Imminent)</p>
+    `,
+    actions: [
+      { label: "[SWEEP AREA FOR STRUCTURAL WEAKNESS]", cmd: "Use Lydarette to sweep the ladder and gantry for instant weak points!" },
+      { label: "[EMIT HIGH-FREQUENCY RADAR PULSE]", cmd: "Fire a concentrated lidar ping from the Lydarette directly into the creature's lateral sensory slits!" }
+    ]
+  },
+  {
+    name: "High-Pressure Magnesium Flare",
+    tag: "BAY 02",
+    img: "",
+    fallbackIcon: "🧨",
+    specs: `
+      <p><strong>TYPE:</strong> Cold-Ignition Pressurized Flare</p>
+      <p><strong>OUTPUT:</strong> 2,000°C Thermal Torch (Burn time: 90s)</p>
+      <p><strong>CHARGES:</strong> 1 Ready</p>
+    `,
+    actions: [
+      { label: "[IGNITE & DROP INTO STALKER]", cmd: "Ignite the Magnesium Flare and ram it straight into the bio-mechanical creature's throat!" },
+      { label: "[SLAP ON CATWALK TO CREATE BARRIER]", cmd: "Strike the flare and drop it across the ladder rungs to create a blazing thermal wall!" }
+    ]
+  },
+  {
+    name: "Heavy Magnetic Ratchet Key",
+    tag: "BAY 03",
+    img: "",
+    fallbackIcon: "🔧",
+    specs: `
+      <p><strong>ALLOY:</strong> Titanium-Vanadium Industrial Tool</p>
+      <p><strong>FEATURE:</strong> High-Gauss Neodymium Magnetic Clamping Head</p>
+      <p><strong>STATUS:</strong> Charged (Scorched from synthetic EMP feedback)</p>
+    `,
+    actions: [
+      { label: "[HOOK ONTO AIRLOCK LATCH TO PULL UP]", cmd: "Use the Magnetic Ratchet Key to latch onto the airlock frame and haul yourself up instantly!" },
+      { label: "[HURL AT STALKER'S CLAWS]", cmd: "Strike the creature's claw joint with the heavy ratchet key to break its grip on the ladder!" }
+    ]
+  },
+  {
+    name: "Aegis-4 Briefcase (Specimen 44-A)",
+    tag: "BAY 04",
+    img: "",
+    fallbackIcon: "💼",
+    specs: `
+      <p><strong>PAYLOAD:</strong> Helios-Pharma Research Specimen 44-A</p>
+      <p><strong>CONTAINER:</strong> Dual-solenoid magnesium ballistic case</p>
+      <p><strong>STATUS:</strong> Opened. Specimen warming (-3.9°C). Bioluminescent pulsing.</p>
+    `,
+    actions: [
+      { label: "[CONNECT D-CELL TO RE-FREEZE VIAL]", cmd: "Splice the Deuterium D-Cell into the Aegis case cryo-loop to freeze Specimen 44-A back to -40°C!" },
+      { label: "[EXAMINE BIOLUMINESCENT FILAMENT]", cmd: "Closely examine the twitching black organic filament inside the cryo-phial." }
+    ]
+  },
+  {
+    name: "Dr. Morales' Data Cassette",
+    tag: "BAY 05",
+    img: "",
+    fallbackIcon: "📼",
+    specs: `
+      <p><strong>FORMAT:</strong> High-Density Magnetic Audio Tape</p>
+      <p><strong>LABEL:</strong> TRANSIT TO REFINERY GERYON // LOG 14</p>
+      <p><strong>STATUS:</strong> Unplayed</p>
+    `,
+    actions: [
+      { label: "[INSERT INTO SUIT TAPE DECK]", cmd: "Slot Dr. Morales' cassette into the suit audio deck and play the recording into headset." }
+    ]
+  },
+  {
+    name: "Deuterium Power Cell (D-Cell 900)",
+    tag: "BAY 06",
+    img: "",
+    fallbackIcon: "🔋",
+    specs: `
+      <p><strong>ORIGIN:</strong> Salvaged from Mule-IV Heavy Synthetic</p>
+      <p><strong>OUTPUT:</strong> Military-grade nuclear direct-current cell</p>
+      <p><strong>CHARGE:</strong> 94% Operational</p>
+    `,
+    actions: [
+      { label: "[POWER UP DRILL FOR INSTANT FULL RPM]", cmd: "Connect the D-Cell 900 directly to the Diamond Rotary Drill's motor pins for devastating maximum torque!" },
+      { label: "[STOW SAFELY IN RIG]", cmd: "Keep the D-Cell 900 secured in Slot 6 as auxiliary station power." }
+    ]
+  }
+];
+
+// ==========================================
+// 2. AUDIO ENGINE (WEB AUDIO PROCEDURAL HUM)
+// ==========================================
+let audioCtx = null;
+let humOsc1 = null;
+let humOsc2 = null;
+let humFilter = null;
+let humNoise = null;
+let humGain = null;
+let isHumming = false;
+let isTTSActive = true;
+
+function initAudio() {
+  if (!audioCtx) {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  }
+}
+
+function playMechanicalClick() {
+  initAudio();
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.type = 'triangle';
+  osc.frequency.setValueAtTime(1400, audioCtx.currentTime);
+  osc.frequency.exponentialRampToValueAtTime(80, audioCtx.currentTime + 0.04);
+  gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.04);
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+  osc.start();
+  osc.stop(audioCtx.currentTime + 0.04);
+}
+
+function toggleHum() {
+  initAudio();
+  const btn = document.getElementById('btn-drone');
+  if (isHumming) {
+    humGain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.5);
+    setTimeout(() => {
+      humOsc1.stop();
+      humOsc2.stop();
+      isHumming = false;
+      btn.textContent = "🔊 AMBIENT HUM: OFF";
+      btn.classList.remove('active');
+    }, 500);
+  } else {
+    humGain = audioCtx.createGain();
+    humGain.gain.setValueAtTime(0.001, audioCtx.currentTime);
+    humGain.gain.exponentialRampToValueAtTime(0.35, audioCtx.currentTime + 1.0);
+
+    // Deep Sub-Bass Drone (55Hz and 110Hz)
+    humOsc1 = audioCtx.createOscillator();
+    humOsc1.type = 'sawtooth';
+    humOsc1.frequency.setValueAtTime(55, audioCtx.currentTime);
+
+    humOsc2 = audioCtx.createOscillator();
+    humOsc2.type = 'triangle';
+    humOsc2.frequency.setValueAtTime(110, audioCtx.currentTime);
+
+    // Resonant Lowpass Filter for that suffocating steel hull feel
+    humFilter = audioCtx.createBiquadFilter();
+    humFilter.type = 'lowpass';
+    humFilter.frequency.setValueAtTime(120, audioCtx.currentTime);
+    humFilter.Q.setValueAtTime(3.5, audioCtx.currentTime);
+
+    // Subtle LFO modulation
+    const lfo = audioCtx.createOscillator();
+    const lfoGain = audioCtx.createGain();
+    lfo.frequency.setValueAtTime(0.12, audioCtx.currentTime);
+    lfoGain.gain.setValueAtTime(25, audioCtx.currentTime);
+    lfo.connect(humFilter.frequency);
+    lfo.start();
+
+    humOsc1.connect(humFilter);
+    humOsc2.connect(humFilter);
+    humFilter.connect(humGain);
+    humGain.connect(audioCtx.destination);
+
+    humOsc1.start();
+    humOsc2.start();
+
+    isHumming = true;
+    btn.textContent = "🔊 AMBIENT HUM: ON";
+    btn.classList.add('active');
+  }
+}
+
+function toggleTTS() {
+  const btn = document.getElementById('btn-tts');
+  isTTSActive = !isTTSActive;
+  if (isTTSActive) {
+    btn.textContent = "🎙️ HEADSET VOICE: ON";
+    btn.classList.add('active');
+  } else {
+    btn.textContent = "🎙️ HEADSET VOICE: OFF";
+    btn.classList.remove('active');
+  }
+}
+
+// ==========================================
+// 2.5 BLACK BOX MISSION RECORDER & VIDEO
+// ==========================================
+let isRecording = true;
+let missionSceneId = 1;
+
+function toggleRecording() {
+  const btn = document.getElementById('btn-rec');
+  isRecording = !isRecording;
+  if (isRecording) {
+    btn.textContent = "🔴 REC: ON";
+    btn.classList.add('active');
+  } else {
+    btn.textContent = "⚪ REC: OFF";
+    btn.classList.remove('active');
+  }
+}
+
+async function compileMissionVideo() {
+  playMechanicalClick();
+  const log = document.getElementById('story-log');
+  const compId = 'compile-' + Date.now();
+  log.innerHTML += `
+    <div id="${compId}" style="margin: 14px 0; border: 2px solid var(--blue-cobalt); padding: 12px; background: rgba(0,180,255,0.08); border-radius: 4px;">
+      <p style="color:var(--blue-cobalt); font-weight:bold;">[🎬 BLACK BOX COMPILER: Stitching scenes & audio into Orpheus_Mission_Log.mp4...]</p>
+      <p style="color:#aaa; font-size:11px; margin-top:4px;">Applying cinematic Ken Burns slow-pan & AAC audio sync via ffmpeg on CPU...</p>
+    </div>
+  `;
+  log.scrollTop = log.scrollHeight;
+
+  try {
+    const res = await fetch('http://127.0.0.1:5005/render_video', { method: 'POST' });
+    const data = await res.json();
+    const elem = document.getElementById(compId);
+    if (data.status === 'success') {
+      elem.innerHTML = `
+        <div style="border: 2px solid var(--green-bright); padding: 10px; background: rgba(51,255,102,0.1); border-radius: 4px;">
+          <p style="color:var(--green-bright); font-weight:bold;">[🎬 MISSION VIDEO COMPILED SUCCESSFULLY!]</p>
+          <p style="color:#fff; font-size:12px; margin-top:6px;">${data.message}</p>
+          <p style="color:#aaa; font-size:11px; margin-top:4px;">Target Video: <strong>${data.video_path}</strong> (${data.scenes_compiled} scenes compiled)</p>
+        </div>
+      `;
+      log.scrollTop = log.scrollHeight;
+    } else {
+      elem.innerHTML = `<p class="alert-text">[COMPILE NOTICE: ${data.message}]</p>`;
+    }
+  } catch (err) {
+    const elem = document.getElementById(compId);
+    if (elem) {
+      elem.innerHTML = `<p class="alert-text">[RECORDER SERVER OFFLINE: Ensure blackbox_recorder.py is running on port 5005.]</p>`;
+    }
+  }
+}
+
+// ==========================================
+// 3. KOKORO TTS HEADSET INTEGRATION & REPLAY
+// ==========================================
+let lastAudio = null;
+let lastSpokenText = "";
+
+function replayLastAudio() {
+  playMechanicalClick();
+  if (lastAudio) {
+    const indicator = document.getElementById('voice-status');
+    indicator.classList.add('active');
+    lastAudio.currentTime = 0;
+    lastAudio.onended = () => indicator.classList.remove('active');
+    lastAudio.onerror = () => indicator.classList.remove('active');
+    lastAudio.play();
+  } else if (lastSpokenText) {
+    speakThroughHeadset(lastSpokenText);
+  } else {
+    // Initial scene narration fallback
+    const opening = "Jack, you are 5 feet below the airlock threshold! The 25-pound Diamond Rotary Drill is balanced in your arms. Ten feet below you on the frozen iron ladder, the Bio-Mechanical Stalker shudders up the rungs!";
+    speakThroughHeadset(opening);
+  }
+}
+
+function replayAudioFromUrl(url) {
+  playMechanicalClick();
+  const indicator = document.getElementById('voice-status');
+  indicator.classList.add('active');
+  const a = new Audio(url);
+  a.onended = () => indicator.classList.remove('active');
+  a.onerror = () => indicator.classList.remove('active');
+  a.play();
+}
+
+async function speakThroughHeadset(text) {
+  if (!isTTSActive) return;
+  const indicator = document.getElementById('voice-status');
+  indicator.classList.add('active');
+
+  // Strip action markers or tags for spoken narration
+  const cleanSpeech = text
+    .replace(/\[.*?\]/g, '')
+    .replace(/<.*?>/g, '')
+    .replace(/[*#]/g, '')
+    .trim();
+
+  lastSpokenText = cleanSpeech;
+
+  try {
+    const res = await fetch('http://localhost:5001/api/extra/tts', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        text: cleanSpeech,
+        voice: 'af_bella'
+      })
+    });
+
+    if (res.ok) {
+      const blob = await res.blob();
+      const audioUrl = URL.createObjectURL(blob);
+      const audio = new Audio(audioUrl);
+      lastAudio = audio;
+      audio.onended = () => indicator.classList.remove('active');
+      audio.onerror = () => indicator.classList.remove('active');
+      await audio.play();
+
+      // Attach replay button to the most recent story log item
+      const log = document.getElementById('story-log');
+      const lastEntry = log.lastElementChild;
+      if (lastEntry && !lastEntry.querySelector('.replay-turn-btn')) {
+        const wrap = document.createElement('div');
+        wrap.style.cssText = 'display:flex; justify-content:flex-end; margin-top:4px;';
+        wrap.innerHTML = `<button class="hud-btn replay-turn-btn" onclick="replayAudioFromUrl('${audioUrl}')" style="padding:2px 8px; font-size:10px; border-color:var(--amber-dim); color:var(--amber-bright);">🔊 REPLAY TURN AUDIO</button>`;
+        lastEntry.appendChild(wrap);
+      }
+
+      // If Black Box recording is active, send audio to recorder server
+      if (isRecording) {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          const currentId = 'scene_' + String(missionSceneId).padStart(3, '0');
+          fetch('http://127.0.0.1:5005/save_scene', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              audio_b64: reader.result,
+              text: cleanSpeech,
+              scene_id: currentId
+            })
+          }).then(() => {
+            missionSceneId++;
+          }).catch(e => console.warn("Record audio err:", e));
+        };
+        reader.readAsDataURL(blob);
+      }
+    } else {
+      indicator.classList.remove('active');
+    }
+  } catch (err) {
+    console.warn("TTS fetch error:", err);
+    indicator.classList.remove('active');
+  }
+}
+
+// ==========================================
+// 4. INSPECTION MODAL (CLICK-TO-ENLARGE)
+// ==========================================
+function inspectItem(index) {
+  playMechanicalClick();
+  const item = inventory[index];
+  if (!item) return;
+
+  document.getElementById('inspect-title').textContent = item.name.toUpperCase();
+  const imgBox = document.getElementById('inspect-img-box');
+  if (item.img) {
+    imgBox.innerHTML = `<img src="${item.img}" style="width:100%;height:100%;object-fit:cover;">`;
+  } else {
+    imgBox.innerHTML = `<div style="font-size:80px;">${item.fallbackIcon}</div>`;
+  }
+
+  document.getElementById('inspect-specs').innerHTML = item.specs;
+
+  const actionsDiv = document.getElementById('inspect-actions');
+  actionsDiv.innerHTML = '';
+  item.actions.forEach(act => {
+    const b = document.createElement('button');
+    b.className = 'action-btn';
+    b.textContent = act.label;
+    b.onclick = () => {
+      closeInspect();
+      sendPlayerAction(act.cmd);
+    };
+    actionsDiv.appendChild(b);
+  });
+
+  // Add option to equip this item to hands
+  const equipBtn = document.createElement('button');
+  equipBtn.className = 'action-btn';
+  equipBtn.style.borderColor = 'var(--blue-cobalt)';
+  equipBtn.style.color = 'var(--blue-cobalt)';
+  equipBtn.textContent = `[ ✋ EQUIP ${item.name.toUpperCase()} TO HANDS ]`;
+  equipBtn.onclick = () => {
+    equipToHands(item.name);
+  };
+  actionsDiv.appendChild(equipBtn);
+
+  document.getElementById('inspect-modal').classList.add('open');
+}
+
+function closeInspect(event) {
+  playMechanicalClick();
+  document.getElementById('inspect-modal').classList.remove('open');
+}
+
+// ==========================================
+// 4.5 HANDS & CARRIED ITEM MANAGEMENT
+// ==========================================
+let carriedItem = null; // Jack put down the drill; hands start free!
+
+function renderHands() {
+  const box = document.getElementById('hands-box');
+  const label = document.getElementById('hands-label');
+  const btnWrap = document.getElementById('hands-btn-wrap');
+  if (!box || !label || !btnWrap) return;
+
+  if (carriedItem) {
+    box.className = 'hands-indicator';
+    label.style.color = '#fff';
+    label.textContent = carriedItem.toUpperCase();
+    btnWrap.innerHTML = `
+      <span style="font-size:10px; color:#ff5555; margin-right:8px; font-weight:bold;">ENCUMBERED</span>
+      <button class="hud-btn" onclick="dropCarriedItem()" style="padding: 2px 8px; font-size: 10px; border-color: #ff3333; color: #ff9999;">DROP</button>
+    `;
+  } else {
+    box.className = 'hands-indicator empty';
+    label.style.color = 'var(--green-bright)';
+    label.textContent = 'EMPTY (HANDS FREE)';
+    btnWrap.innerHTML = `
+      <span style="font-size:10px; color:var(--green-bright); font-weight:bold;">UNENCUMBERED</span>
+    `;
+  }
+}
+
+function dropCarriedItem() {
+  playMechanicalClick();
+  if (carriedItem) {
+    const item = carriedItem;
+    carriedItem = null;
+    renderHands();
+    sendPlayerAction(`I place down the ${item} on the deck floor to keep both hands free.`);
+  }
+}
+
+function equipToHands(itemName) {
+  playMechanicalClick();
+  carriedItem = itemName;
+  renderHands();
+  closeInspect();
+  sendPlayerAction(`I take the ${itemName} into my hands ready for action.`);
+}
+
+// ==========================================
+// 5. DYNAMIC CHOICES & STORY ENGINE
+// ==========================================
+function updateDynamicChoices(storyText) {
+  const container = document.querySelector('.quick-choices');
+  if (!container) return;
+
+  const lines = storyText.split('\n');
+  const choices = [];
+
+  for (let rawLine of lines) {
+    const line = rawLine.trim();
+    if (!line) continue;
+    // Skip section headers like "Choices:", "**Choices:**", "Choose from:"
+    if (/^(\*\*|\#\#)?\s*(choices|choose from|options|what do you do|what will you do):?/i.test(line)) continue;
+
+    // Matches lines like: "1. Advance", "A) Scan", "[1] Strike", "1) Search", "- A. Retreat", "* 1. Do..."
+    const match = line.match(/^[-*•]?\s*(?:\(?([A-Da-d\d])[\.\)]|\[([A-Da-d\d])\])\s*(.+)$/);
+    if (match) {
+      const label = (match[1] || match[2]).toUpperCase();
+      let text = match[3].trim();
+      // Remove leading markdown bold markers or tags
+      text = text.replace(/^\*\*|\*\*$/g, '').replace(/^\*|\*$/g, '').trim();
+      if (text.length > 0) {
+        choices.push({ label, text });
+      }
+    }
+  }
+
+  // Only replace if we actually extracted new choices
+  if (choices.length > 0) {
+    container.innerHTML = '';
+    choices.forEach(c => {
+      const btn = document.createElement('button');
+      btn.className = 'choice-btn';
+      // Format text cleanly
+      const cleanDesc = c.text.replace(/\*\*/g, '').replace(/\[|\]/g, '').trim();
+      btn.innerHTML = `<strong style="color:var(--amber-bright);">[${c.label}]</strong> ${cleanDesc}`;
+      btn.onclick = () => {
+        sendPlayerAction(`${c.label}. ${cleanDesc}`);
+      };
+      container.appendChild(btn);
+    });
+  }
+}
+
+async function sendPlayerAction(playerCommand) {
+  playMechanicalClick();
+  const log = document.getElementById('story-log');
+
+  // Auto-detect dropping or putting down carried items
+  const lower = playerCommand.toLowerCase();
+  if (lower.includes('drop') || lower.includes('put down') || lower.includes('set down') || lower.includes('place down') || lower.includes('leave behind') || lower.includes('discard') || lower.includes('release')) {
+    if (lower.includes('drill') || lower.includes('carried') || lower.includes('hands') || lower.includes('tool')) {
+      carriedItem = null;
+      renderHands();
+    }
+  }
+
+  // Print player's move
+  log.innerHTML += `<p><strong style="color:var(--amber-bright);">> JACK:</strong> ${playerCommand}</p>`;
+  log.scrollTop = log.scrollHeight;
+
+  // Placeholder while AI thinks
+  const thinkingId = 'think-' + Date.now();
+  log.innerHTML += `<p id="${thinkingId}" style="color:#888; font-style:italic;">[Transmitting telemetry to Orpheus-9 Core...]</p>`;
+  log.scrollTop = log.scrollHeight;
+
+  // System Prompt for Orpheus Protocol
+  const systemPrompt = `### Instruction:
+You are the AI Game Master and the voice of Esperanza for "The Orpheus Protocol", a tense, tactile, retro-futuristic survival horror game aboard the derelict smelting rig Orpheus-9 (inspired by Alien and Alien: Isolation).
+The player is Jack, an engineer/scavenger equipped with an MK-IV chest harness (with 150x150 tool slots).
+Current Status:
+- Hands: ${carriedItem ? carriedItem + " (Holding in hands, encumbered)" : "EMPTY (Both hands are completely free, unencumbered)"}
+- Active Harness Slots: Lydarette scanner, magnetic ratchet key, magnesium flare, Aegis-4 courier case, deuterium cell.
+Style rules:
+1. Gritty, sensory, immediate industrial sci-fi (clanking iron, hissing hydraulics, cold frost, amber CRT glow).
+2. React logically to Jack's actions and acknowledge whether his hands are free or holding a tool. Describe the visceral physical outcome with tension and pacing.
+3. Keep the response to 2 punchy paragraphs, followed by 2 or 3 distinct choices for Jack's next move formatted clearly with 1, 2, 3 or A, B, C.
+4. If Esperanza speaks personally, prefix with [ESPERANZA]:
+
+Player action: ${playerCommand}
+### Response:
+`;
+
+  try {
+    const res = await fetch('http://localhost:5001/api/v1/generate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        prompt: systemPrompt,
+        max_length: 220,
+        temperature: 0.72,
+        top_p: 0.9,
+        rep_pen: 1.12,
+        stop_sequence: ["### Instruction:", "Player action:"]
+      })
+    });
+
+    const thinkElem = document.getElementById(thinkingId);
+    if (res.ok) {
+      const data = await res.json();
+      const storyText = data.results[0].text.trim();
+      
+      // Update quick-choice buttons above the prompt dynamically
+      updateDynamicChoices(storyText);
+
+      // Format text with styling
+      const formatted = storyText
+        .replace(/\[ESPERANZA.*?\]:/g, '<span class="speaker-esperanza">$&</span>')
+        .replace(/(Warning|Alert|Critical|Danger):/gi, '<span class="alert-text">$&</span>');
+
+      thinkElem.outerHTML = `<div style="margin-bottom:14px;">${formatted}</div>`;
+      log.scrollTop = log.scrollHeight;
+
+      // Save turn to disk JSON
+      currentTurnIndex++;
+      saveTurnToDisk({
+        turn_index: currentTurnIndex,
+        command: playerCommand,
+        story_text: storyText,
+        carried_item: carriedItem
+      });
+
+      // Speak aloud through headset
+      speakThroughHeadset(storyText);
+    } else {
+      thinkElem.outerHTML = `<p class="alert-text">[COMM LINK FLICKER: Local Core busy or offline. Retrying manual override...]</p>`;
+    }
+  } catch (err) {
+    const thinkElem = document.getElementById(thinkingId);
+    thinkElem.outerHTML = `<p class="alert-text">[SIGNAL FAILURE: Ensure KoboldCpp is running on port 5001.]</p>`;
+  }
+}
+
+function transmitCustomAction() {
+  const input = document.getElementById('custom-input');
+  const val = input.value.trim();
+  if (val) {
+    input.value = '';
+    sendPlayerAction(val);
+  }
+}
+
+// ==========================================
+// 6. HIGH-QUALITY SCENE IMAGE GENERATION (LCM)
+// ==========================================
+async function generateVisualPrompt() {
+  playMechanicalClick();
+
+  // 1. Automatically extract the current scene context from story log
+  const storyDiv = document.getElementById('story-log');
+  const paragraphs = storyDiv.querySelectorAll('p, div');
+  let recentContext = "";
+  for (let i = paragraphs.length - 1; i >= 0; i--) {
+    const txt = paragraphs[i].textContent.trim();
+    if (txt && !txt.startsWith('>') && !txt.startsWith('[IMAGE') && !txt.startsWith('[SIGNAL') && !txt.startsWith('[COMM') && !txt.includes('TRANSMIT')) {
+      recentContext = txt;
+      break;
+    }
+  }
+
+  let defaultPrompt = "dark atmospheric spaceship corridor, flickering warning lights, Alien sci-fi aesthetics";
+  if (recentContext) {
+    // Strip choices list and take the core scene narrative
+    const cleanSnippet = recentContext.replace(/(Choices|Choose from)[\s\S]*/i, '').trim().slice(0, 160);
+    if (cleanSnippet.length > 20) {
+      defaultPrompt = cleanSnippet.replace(/["']/g, '');
+    }
+  }
+
+  const promptText = prompt("🎨 Paint current scene with High-Quality LCM:\nCustomize prompt or press OK to paint your current location:", defaultPrompt);
+  if (!promptText) return;
+
+  const log = document.getElementById('story-log');
+  const genId = 'gen-' + Date.now();
+  log.innerHTML += `
+    <div id="${genId}" style="margin: 12px 0; border: 1px dashed var(--amber-bright); padding: 12px; background: rgba(255,180,0,0.06); border-radius: 4px;">
+      <p style="color:var(--amber-bright); font-weight:bold;">[🎨 IMAGE SYNTHESIS: Rendering high-quality scene visual on CPU...]</p>
+      <p style="color:#ffd27f; font-size:12px; margin-top:4px;">"${promptText}"</p>
+      <p style="color:#888; font-size:10px; margin-top:4px;">Applying cinematic lighting, volumetric fog & anti-distortion negative prompt...</p>
+    </div>
+  `;
+  log.scrollTop = log.scrollHeight;
+
+  // Rich positive aesthetic tags for authentic sci-fi film quality
+  const enhancedPrompt = `${promptText}, dark atmospheric retro-sci-fi, cinematic film still, volumetric lighting, photorealistic, 8k octane render, detailed metal textures, Alien Nostromo aesthetics, sharp focus, masterpiece`;
+
+  // Strong negative prompt to completely eliminate blur, flat cartoons, and distorted anatomy
+  const negativePrompt = "blurry, out of focus, low quality, deformed, disfigured, bad anatomy, cartoon, 3d render, doll, saturated, smooth, plastic, grainy, text, watermark, signature, oversaturated, amateur, sketch";
+
+  try {
+    const res = await fetch('http://localhost:5001/sdapi/v1/txt2img', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        prompt: enhancedPrompt,
+        negative_prompt: negativePrompt,
+        steps: 6,
+        cfg_scale: 1.8,
+        sampler_name: "Euler a",
+        width: 512,
+        height: 512
+      })
+    });
+
+    const genElem = document.getElementById(genId);
+    if (res.ok) {
+      const data = await res.json();
+      const b64 = data.images[0];
+      genElem.innerHTML = `
+        <div style="border: 2px solid var(--amber-bright); padding: 8px; background: rgba(0,0,0,0.85); box-shadow: 0 0 25px var(--amber-glow); border-radius: 4px;">
+          <img src="data:image/png;base64,${b64}" style="width: 100%; max-width: 512px; display: block; margin: 0 auto; border-radius: 2px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px; font-size:11px; color:var(--amber-bright);">
+            <span>📡 TELEMETRY VISUAL FEED // LOCATION CAPTURE</span>
+            <span style="color:#aaa;">512×512 // 6-STEP QUALITY LCM</span>
+          </div>
+        </div>
+      `;
+      log.scrollTop = log.scrollHeight;
+
+      // If Black Box recording is active, save image to recorder server
+      if (isRecording) {
+        const currentId = 'scene_' + String(missionSceneId).padStart(3, '0');
+        fetch('http://127.0.0.1:5005/save_scene', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            image_b64: b64,
+            scene_id: currentId
+          })
+        }).catch(e => console.warn("Record img err:", e));
+      }
+    } else {
+      genElem.innerHTML = `<p class="alert-text">[IMAGE SYNTH FAILED: Server returned error code.]</p>`;
+    }
+  } catch (err) {
+    const genElem = document.getElementById(genId);
+    if (genElem) {
+      genElem.innerHTML = `<p class="alert-text">[IMAGE SYNTH ERROR: Connection interrupted.]</p>`;
+    }
+  }
+}
+
+// ==========================================
+// 7. DISK-BASED MISSION HISTORY & NAVIGATOR
+// ==========================================
+let currentTurnIndex = 0;
+let missionHistory = [];
+let currentNavIndex = 0;
+
+async function initMissionFromDisk() {
+  try {
+    const res = await fetch('http://127.0.0.1:5005/history');
+    if (res.ok) {
+      const data = await res.json();
+      if (data.history && data.history.length > 0) {
+        missionHistory = data.history;
+        restoreMissionUI(missionHistory);
+        return;
+      }
+    }
+  } catch (e) {
+    console.warn("Could not load mission_history.json from disk:", e);
+  }
+
+  // If no previous history on disk, log opening state
+  saveTurnToDisk({
+    turn_index: 0,
+    command: "MISSION COMMENCED",
+    story_text: document.getElementById('story-log').innerText,
+    choices: [
+      { label: "1", text: "Kick the drill compressed-air trigger and ram the 4,000-RPM diamond bit down into its face!" },
+      { label: "2", text: "Cold-strike the Magnesium Flare (Slot 2) and drop it straight into its triple-hinged maw!" },
+      { label: "3", text: "Heave the heavy drill into the airlock, dive through, and slam the emergency guillotine hatch shut!" }
+    ],
+    carried_item: carriedItem
+  });
+}
+
+async function saveTurnToDisk(turnData) {
+  turnData.timestamp = Date.now();
+  turnData.carried_item = carriedItem;
+  try {
+    const res = await fetch('http://127.0.0.1:5005/save_turn', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(turnData)
+    });
+    if (res.ok) {
+      const respData = await res.json();
+      if (respData.total_turns) {
+        missionSceneId = respData.total_turns;
+      }
+    }
+  } catch (e) {
+    console.warn("Save turn to disk error:", e);
+  }
+}
+
+function restoreMissionUI(history) {
+  const log = document.getElementById('story-log');
+  log.innerHTML = '';
+
+  history.forEach(turn => {
+    if (turn.turn_index > 0 && turn.command) {
+      log.innerHTML += `<p><strong style="color:var(--amber-bright);">> JACK:</strong> ${turn.command}</p>`;
+    }
+    if (turn.story_text) {
+      const formatted = turn.story_text
+        .replace(/\[ESPERANZA.*?\]:/g, '<span class="speaker-esperanza">$&</span>')
+        .replace(/(Warning|Alert|Critical|Danger):/gi, '<span class="alert-text">$&</span>');
+      log.innerHTML += `<div style="margin-bottom:14px;">${formatted}</div>`;
+    }
+    if (turn.image_url) {
+      log.innerHTML += `
+        <div style="border: 2px solid var(--amber-bright); padding: 8px; background: rgba(0,0,0,0.85); margin: 10px 0; max-width: 512px; border-radius: 4px;">
+          <img src="${turn.image_url}" style="width: 100%; border-radius: 2px;">
+          <div style="display:flex; justify-content:space-between; margin-top:4px; font-size:10px; color:var(--amber-bright);">
+            <span>TELEMETRY ARCHIVE // SCENE REPLAY</span>
+          </div>
+        </div>
+      `;
+    }
+  });
+  log.scrollTop = log.scrollHeight;
+
+  // Restore latest state
+  const latest = history[history.length - 1];
+  if (latest) {
+    currentTurnIndex = latest.turn_index;
+    if (latest.story_text) updateDynamicChoices(latest.story_text);
+    carriedItem = latest.carried_item || null;
+    renderHands();
+  }
+}
+
+async function openMissionNavigator() {
+  playMechanicalClick();
+  try {
+    const res = await fetch('http://127.0.0.1:5005/history');
+    if (res.ok) {
+      const data = await res.json();
+      missionHistory = data.history || [];
+    }
+  } catch (e) {}
+
+  if (!missionHistory || missionHistory.length === 0) {
+    alert("No turns recorded on disk yet. Take a move first!");
+    return;
+  }
+
+  currentNavIndex = missionHistory.length - 1;
+  renderNavScene();
+  document.getElementById('navigator-modal').classList.add('open');
+}
+
+function closeNavigator(event) {
+  playMechanicalClick();
+  document.getElementById('navigator-modal').classList.remove('open');
+}
+
+function navPrevScene() {
+  playMechanicalClick();
+  if (currentNavIndex > 0) {
+    currentNavIndex--;
+    renderNavScene();
+  }
+}
+
+function navNextScene() {
+  playMechanicalClick();
+  if (currentNavIndex < missionHistory.length - 1) {
+    currentNavIndex++;
+    renderNavScene();
+  }
+}
+
+function renderNavScene() {
+  const turn = missionHistory[currentNavIndex];
+  if (!turn) return;
+
+  document.getElementById('nav-counter').textContent = `TURN ${currentNavIndex + 1} / ${missionHistory.length}`;
+  const imgElem = document.getElementById('nav-img');
+  const badge = document.getElementById('nav-img-badge');
+
+  if (turn.image_url) {
+    imgElem.src = turn.image_url;
+    badge.textContent = "SCENE CAPTURE";
+  } else {
+    imgElem.src = "orpheus_background.png";
+    badge.textContent = "STATION BULKHEAD";
+  }
+
+  const content = document.getElementById('nav-log-content');
+  content.innerHTML = `
+    <p style="color:var(--amber-bright); font-weight:bold; margin-bottom:6px;">> ACTION: ${turn.command || "MISSION DEPLOYMENT"}</p>
+    <div style="font-size:12px; line-height:1.45; color:#ffe3b3; white-space:pre-wrap;">${turn.story_text || "Awaiting sensor telemetry..."}</div>
+  `;
+}
+
+function navPlayAudio() {
+  const turn = missionHistory[currentNavIndex];
+  if (turn && turn.audio_url) {
+    replayAudioFromUrl(turn.audio_url);
+  } else if (turn && turn.story_text) {
+    speakThroughHeadset(turn.story_text);
+  } else {
+    replayLastAudio();
+  }
+}
+
+async function rewindToCurrentNavScene() {
+  playMechanicalClick();
+  const turn = missionHistory[currentNavIndex];
+  if (!turn) return;
+
+  if (!confirm(`Rewind mission back to Turn #${currentNavIndex + 1}? This will reset the timeline on your disk to this moment so you can choose a different path.`)) {
+    return;
+  }
+
+  try {
+    const res = await fetch('http://127.0.0.1:5005/rewind', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ target_turn_index: turn.turn_index })
+    });
+    if (res.ok) {
+      closeNavigator();
+      await initMissionFromDisk();
+    }
+  } catch (e) {
+    alert("Rewind failed: recorder service offline.");
+  }
+}
+
+async function resetMissionDisk() {
+  playMechanicalClick();
+  if (!confirm("Are you sure you want to completely RESET your mission on disk back to Turn 1?")) return;
+  try {
+    await fetch('http://127.0.0.1:5005/reset_mission', { method: 'POST' });
+  } catch (e) {}
+  window.location.reload();
+}
+
+// Initialize hands state and disk history on load
+renderHands();
+initMissionFromDisk();
+
+// Speak opening prompt on user first interaction
+window.addEventListener('click', function firstClick() {
+  initAudio();
+  window.removeEventListener('click', firstClick);
+}, { once: true });
+</script>
+
+</body>
+</html>

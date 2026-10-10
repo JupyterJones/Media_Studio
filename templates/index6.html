@@ -1,0 +1,203 @@
+<!-- index6.html  -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Captioner & Video Creator | MediaStudio.py</title>
+   <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/themed.css') }}"
+    />
+    <link rel="icon" href="/favicon.ico?v=1">
+</head>
+<body>
+    <h1>Image Captioner & Video Creator | Studio.py</h1>
+
+ <div class="nav-links">
+    <a href="/" class="refresh-button2">HOME</a>
+    <a href="{{ url_for('get_images') }}">View User Images</a>
+    <a href="{{ url_for('join_four') }}">Join Four Videos</a>
+    <a href="{{ url_for('upload_media') }}">Upload Avatar Files</a>
+    <a href="{{ url_for('make_avatar') }}">Make Avatar</a>
+    <a href="{{ url_for('convert') }}">Convert Audio to MP3</a>
+    <a href="{{ url_for('join_image_audio') }}">Join Audio to Image → MP4</a>
+    <a href="{{ url_for('trim') }}">Edit Video</a>
+    <a href="{{ url_for('text_to_mp3') }}">Text to MP3</a>
+    <a href="{{ url_for('size_paste') }}">Size Images for Captions</a>
+    <a href="{{ url_for('uploadmp4') }}">Upload MP4</a>
+    <a href="{{ url_for('joinmp3mp4') }}">Join MP3 & MP4</a>
+    <a href="{{ url_for('get_frames') }}">Get Images From MP4s</a>
+    <a href="{{ url_for('stitch') }}">Stitch 768x512</a>
+    <a href="{{ url_for('play_audio') }}" target="_blank">Play Audio</a>
+</div>
+
+<p class="notice">Resized images will be in static/project_files</p>
+
+    {% if error %} {# Consolidated error display #}
+        <p class="error"><strong>Notice:</strong> {{ error }}</p>
+    {% endif %}
+
+    <div class="container">
+        <div class="form-section">
+            <h2>Parameters</h2>
+            <form method="POST" action="{{ url_for('index2') }}" enctype="multipart/form-data">
+
+                <input type="hidden" name="current_base_image_for_form" value="{{ current_base_image_for_form | default(config.DEFAULT_IMAGE) }}">
+
+                <div class="parameter-group">
+                    <h3>Base Image</h3>
+                    <label for="image_file">Upload New Base Image (Optional):</label>
+                    <input type="file" id="image_file" name="image_file" accept="image/*">
+                    <small>If not provided, "{{ current_base_image_for_form | default(config.DEFAULT_IMAGE) }}" will be used.</small>
+                </div>
+                
+                <div class="parameter-group">
+                    <h3>Image Captioning</h3>
+                    <label for="caption_text">Caption Text:</label>
+                    <textarea id="caption_text" name="caption_text" required>{{ current_values.caption_text }}</textarea>
+
+                    <label for="font_name">Font:</label>
+                    <select id="font_name" name="font_name">
+                        {% if fonts %}
+                            {% for font in fonts %}
+                                <option value="{{ font }}" {% if font == current_values.font_name %}selected{% endif %}>{{ font }}</option>
+                            {% endfor %}
+                        {% else %}
+                            <option value="">No fonts found</option>
+                        {% endif %}
+                    </select>
+
+                    <label for="font_size">Font Size (px):</label>
+                    <input type="number" id="font_size" name="font_size" value="{{ current_values.font_size | default(20) }}" min="8">
+
+                    <label for="text_color">Text Color:</label>
+                    <input type="color" id="text_color" name="text_color" value="{{ current_values.text_color | default('#000000') }}">
+                
+                    <label for="box_color">Caption Box Color:</label>
+                    <input type="color" id="box_color" name="box_color" value="{{ current_values.box_color | default('#FFFFFF') }}">
+
+                    <label for="box_position">Caption Box Position:</label>
+                    <select id="box_position" name="box_position">
+                        <option value="top_left" {% if current_values.box_position == 'top_left' %}selected{% endif %}>Top Left</option>
+                        <option value="top_center" {% if current_values.box_position == 'top_center' %}selected{% endif %}>Top Center</option>
+                        <option value="top_right" {% if current_values.box_position == 'top_right' %}selected{% endif %}>Top Right</option>
+                        <option value="center_left" {% if current_values.box_position == 'center_left' %}selected{% endif %}>Center Left</option>
+                        <option value="center" {% if current_values.box_position == 'center' %}selected{% endif %}>Center</option>
+                        <option value="center_right" {% if current_values.box_position == 'center_right' %}selected{% endif %}>Center Right</option>
+                        <option value="bottom_left" {% if current_values.box_position == 'bottom_left' %}selected{% endif %}>Bottom Left</option>
+                        <option value="bottom_center" {% if current_values.box_position == 'bottom_center' %}selected{% endif %}>Bottom Center</option>
+                        <option value="bottom_right" {% if current_values.box_position == 'bottom_right' %}selected{% endif %}>Bottom Right</option>
+                    </select>
+                </div><hr>
+<input type="checkbox" name="transparent_box" id="transparent_box">
+<label for="transparent_box">Check box to use transparent background</label>
+<hr>
+                <button type="submit" name="action" value="generate_image">Generate/Update Image</button>
+                
+                <!-- Balacoon_db input removed -->
+
+                {% if result_image_filename %}
+                    <input type="hidden" name="generated_image_filename" value="{{ result_image_filename }}">
+                    <input type="hidden" name="caption_for_audio" value="{{ current_values.caption_text }}">
+
+                    <div class="parameter-group" style="margin-top:20px;">
+                        <h3>Create MP4 from Image</h3>
+                        <label for="speaker_voice">Select Speaker Voice (Name):</label>
+                        <select id="speaker_voice" name="speaker_voice">
+                            <option value="-1" {% if not current_values.speaker_voice or current_values.speaker_voice == "-1" or current_values.speaker_voice not in all_speakers %}selected{% endif %}>
+                                -- Use Application Default Speaker --
+                            </option>
+                            <p>['aew', 'ahw', 'aup', 'awb', 'axb', 'bdl', 'clb', 'eey', 'fem', 'gka', 'jmk', 'ksp', 'ljm', 'lnh', 'rms', 'rxr', 'slp', 'slt'].</p>
+                            {% if all_speakers %}
+                                {% for speaker_name_item in all_speakers %}
+                                    <option value="{{ speaker_name_item }}" {% if speaker_name_item == current_values.speaker_voice %}selected{% endif %}>
+                                        {{ speaker_name_item }}
+                                    </option>
+                                {% endfor %}
+                            {% else %}
+                                <option value="" disabled>No speakers available</option>
+                            {% endif %}
+                        </select>
+                        <small>If "-- Use Application Default --" is selected, the system's current default Kokoro voice will be used.</small>
+                    </div>
+                    <button type="submit" name="action" value="create_mp4" class="secondary">Create MP4</button>
+                {% endif %}
+            </form>
+
+            <hr style="margin-top:30px; margin-bottom:20px;">
+            <h3>Upload JPG to User Uploads</h3>
+             <form action="{{ url_for('upload_file_simple') }}" method="POST" enctype="multipart/form-data">
+                <label for="imageFileSimple">Select a JPG file:</label>
+                <input type="file" name="imageFile" accept=".jpg,.jpeg" id="imageFileSimple">
+                <button type="submit">Upload JPG</button>
+            </form>
+        </div>
+
+        <div class="display-section">
+            <h2>Preview / Result</h2>
+            <img id="displayed_image" src="{{ image_to_display }}" alt="Image Preview or Result">
+
+            {% if result_image_filename and not video_filename_to_display %}
+                <p class="success">Image processed: {{ result_image_filename }}</p>
+                <p><a href="{{ url_for('serve_result', filename=result_image_filename) }}" download>Download Image</a></p>
+            {% endif %}
+
+            {% if video_filename_to_display %}
+                <hr style="margin: 20px 0;">
+                <h3>Video Result:</h3>
+                <video controls width="400">
+                    <source src="{{ url_for('serve_result', filename=video_filename_to_display) }}" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+                <p class="success">Video generated: {{ video_filename_to_display }}</p>
+                <p><a href="{{ url_for('serve_result', filename=video_filename_to_display) }}" download>Download Video ({{ video_filename_to_display }})</a></p>
+            {% endif %}
+        </div>
+    </div>
+
+<script>
+    document.getElementById('image_file').addEventListener('change', function () {
+        const file = this.files[0];
+        const preview = document.getElementById('displayed_image');
+        if (file && file.type.startsWith('image/')) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                preview.src = e.target.result;
+            }
+            reader.readAsDataURL(file);
+        }
+    });
+</script>
+
+<pre>
+Choose an image to use that requires a caption.
+Upload New Base Image
+It will be viewable below immediately.
+Enter the desired caption in the text area:
+Choose:
+The Font Style:
+Font Size (px):
+Text Color:
+Caption Box Color:
+Caption Box Position:
+There is also a checkbox if you wish to place the 
+caption in a transparent box.
+Then press Generate/Update Image
+The updated Image will replace the existing image.
+The captioned image will be saved in static/results directory
+the name will have the twenty five leters if the text caption
+Example: Choose_an_image_to_use_that_eab2d3.png
+If you want a sound MP4 Select 
+Speaker Voice (Name): from the drop down list
+and press Create MP4
+</pre>
+
+<video class="vid" controls>
+    <source src="static/assets/Choose_an_image_to_use_that_f4a620.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+</video>
+
+
+</body>
+</html>

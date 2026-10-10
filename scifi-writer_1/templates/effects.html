@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JAVASCRIPT EFFECTS STUDIO // Mobile & Holographic Overlays</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800;900&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- CSS -->
+  <link rel="stylesheet" href="/static/effects/css/studio.css">
+</head>
+<body>
+
+  <!-- TOP TELEMETRY BAR -->
+  <header class="top-bar">
+    <div class="top-bar-left">
+      <a href="/" style="text-decoration: none; display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; font-family: var(--font-orbitron); font-size: 0.75rem; background: rgba(0, 240, 255, 0.1); border: 1px solid #00f0ff; border-radius: 4px; color: #00f0ff; margin-right: 12px; transition: all 0.2s;" onmouseover="this.style.background='rgba(0,240,255,0.25)'" onmouseout="this.style.background='rgba(0,240,255,0.1)'">
+        <span>⬅️</span> STORYBOARD STUDIO
+      </a>
+      <div class="logo-badge">
+        <div class="pulse-dot"></div>
+        <span>JS EFFECTS STUDIO</span>
+      </div>
+      <span class="stat-tag">SOURCE: <strong id="mediaStatusText">NO MEDIA LOADED</strong></span>
+    </div>
+    <div class="top-bar-right">
+      <span class="stat-tag">RESOLUTION: <strong id="resolutionDisplay">768 × 768</strong></span>
+      <span class="stat-tag">CANVAS: <strong id="fpsDisplay">60 FPS</strong></span>
+      <span class="stat-tag">ENGINE: <strong>HTML5 CANVAS 2D</strong></span>
+    </div>
+  </header>
+
+  <!-- MAIN STUDIO WORKSPACE -->
+  <main class="studio-layout">
+
+    <!-- LEFT CONTROLS SIDEBAR -->
+    <aside class="sidebar">
+
+      <!-- 1. MEDIA INPUT CARD -->
+      <section class="card">
+        <div class="card-title">
+          <span>SOURCE MEDIA</span>
+          <span class="icon">📁</span>
+        </div>
+        <div class="dropzone" id="dropzone" onclick="document.getElementById('mediaInput').click()">
+          <input type="file" id="mediaInput" accept="image/*,video/mp4,video/webm" style="display: none;">
+          <div class="dropzone-label">
+            <span style="font-size: 1.4rem;">📤</span>
+            <span>Click or Drag & Drop Image or Video (MP4/WebM)</span>
+          </div>
+        </div>
+
+        <!-- Sample Loaders -->
+        <div class="sample-btns">
+          <button class="btn-sample" data-sample="avatar">👤 Avatar</button>
+          <button class="btn-sample" data-sample="sentinel">⚡ Sentinel</button>
+          <button class="btn-sample" data-sample="crystals">💎 Crystals</button>
+          <button class="btn-sample" data-sample="video">🎬 Video</button>
+        </div>
+
+        <!-- Sci-Fi Studio Video Loaders -->
+        <div style="margin-top: 14px; border-top: 1px dashed var(--border-dim); padding-top: 10px;">
+          <div style="font-family: var(--font-orbitron); font-size: 0.70rem; color: var(--cyan-primary); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px;">
+            ⚡ Sci-Fi Writer Productions:
+          </div>
+          <div id="studioVideoBtns" style="display: flex; flex-direction: column; gap: 6px;">
+            <span style="font-size: 0.75rem; color: var(--text-muted);">Loading local videos...</span>
+          </div>
+        </div>
+
+        <!-- Video Player Bar (Shown when video is loaded) -->
+        <div id="videoControlsCard" style="display: none; margin-top: 14px;">
+          <div class="video-bar">
+            <button class="btn-icon" id="btnPlayPause">⏸</button>
+            <input type="range" class="seek-bar" id="videoSeekBar" min="0" max="100" value="0">
+            <button class="btn-icon" id="btnMute">🔇</button>
+            <button class="btn-icon" id="btnLoop" title="Toggle Loop">🔁</button>
+          </div>
+          <div style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-muted); margin-top: 6px; text-align: right;" id="videoTimeDisplay">
+            00:00 / 00:00
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. FRAMING & ASPECT RATIO -->
+      <section class="card">
+        <div class="card-title">
+          <span>CANVAS & FRAMING</span>
+          <span class="icon">📐</span>
+        </div>
+        <div class="control-row">
+          <label class="control-label" for="aspectSelector">Aspect Ratio:</label>
+          <select class="select-input" id="aspectSelector">
+            <option value="auto_match" selected>⛶ Auto Match Media Size (1:1 Exact)</option>
+            <option value="portrait_9_16">9:16 Mobile (512×768)</option>
+            <option value="landscape_16_9">16:9 Landscape (768×512)</option>
+            <option value="square_1_1">1:1 Square (768×768)</option>
+            <option value="portrait_4_5">4:5 Social (640×800)</option>
+            <option value="fhd_portrait">9:16 HD Mobile (1080×1920)</option>
+            <option value="fhd_landscape">16:9 Full HD (1920×1080)</option>
+          </select>
+        </div>
+        <button class="btn-secondary" id="btnMatchMedia" style="width: 100%; justify-content: center; margin-bottom: 12px;">
+          <span>⛶</span> Snap Canvas to Exact Media Size
+        </button>
+        <div class="control-row">
+          <label class="control-label" for="fitModeSelector">Fit Mode (Avatar Safe):</label>
+          <select class="select-input" id="fitModeSelector">
+            <option value="contain" selected>Contain (No Distortion / Letterbox)</option>
+            <option value="cover">Cover (Fill & Center Crop)</option>
+            <option value="fill">Fill (Stretch to Canvas)</option>
+          </select>
+        </div>
+      </section>
+
+      <!-- 3. PRESETS & JSON MANAGER -->
+      <section class="card">
+        <div class="card-title">
+          <span>FX PRESETS</span>
+          <span class="icon">✨</span>
+        </div>
+        <div class="control-row">
+          <select class="select-input" id="presetSelector" style="width: 100%;">
+            <option value="">-- Choose Preset --</option>
+          </select>
+        </div>
+        <div style="display: flex; gap: 8px; margin-top: 10px;">
+          <button class="btn-secondary" id="btnSavePreset" style="flex: 1; justify-content: center;">💾 Save JSON</button>
+          <button class="btn-secondary" id="btnLoadPreset" style="flex: 1; justify-content: center;">📂 Load JSON</button>
+          <input type="file" id="presetFileInput" accept=".json" style="display: none;">
+        </div>
+      </section>
+
+      <!-- 4. MASTER FX & COLOR GRADING -->
+      <section class="card">
+        <div class="card-title">
+          <span>MASTER FX & GRADING</span>
+          <span class="icon">🎛️</span>
+        </div>
+
+        <div class="slider-group">
+          <label for="masterOpacity">Master Opacity</label>
+          <input type="range" id="masterOpacity" min="0" max="100" value="100">
+          <span class="slider-val" id="masterOpacityVal">100%</span>
+        </div>
+
+        <div class="control-row">
+          <label class="control-label" for="blendMode">Blend Mode:</label>
+          <select class="select-input" id="blendMode">
+            <option value="source-over">Normal (Source Over)</option>
+            <option value="screen">Screen (Vibrant Glow)</option>
+            <option value="overlay">Overlay</option>
+            <option value="lighten">Lighten</option>
+            <option value="color-dodge">Color Dodge</option>
+            <option value="soft-light">Soft Light</option>
+          </select>
+        </div>
+
+        <div class="slider-group">
+          <label for="brightness">Brightness</label>
+          <input type="range" id="brightness" min="50" max="150" value="100">
+          <span class="slider-val" id="brightnessVal">100%</span>
+        </div>
+
+        <div class="slider-group">
+          <label for="contrast">Contrast</label>
+          <input type="range" id="contrast" min="50" max="180" value="100">
+          <span class="slider-val" id="contrastVal">100%</span>
+        </div>
+
+        <div class="slider-group">
+          <label for="saturation">Saturation</label>
+          <input type="range" id="saturation" min="0" max="200" value="100">
+          <span class="slider-val" id="saturationVal">100%</span>
+        </div>
+
+        <div class="slider-group">
+          <label for="hue">Hue Shift</label>
+          <input type="range" id="hue" min="0" max="360" value="0">
+          <span class="slider-val" id="hueVal">0°</span>
+        </div>
+      </section>
+
+      <!-- 5. INDIVIDUAL EFFECTS & OPACITY CONTROLS -->
+      <section class="card">
+        <div class="card-title">
+          <span>EFFECTS PALETTE (CHOOSE & TWEAK OPACITY)</span>
+          <span class="icon">🎨</span>
+        </div>
+
+        <!-- 1. Sparkles & Glitter -->
+        <div class="effect-item" id="effect-sparkles">
+          <div class="effect-header">
+            <label class="effect-title-wrap">
+              <input type="checkbox" class="effect-checkbox">
+              <span class="effect-title">✨ Sparkles & Glitter</span>
+            </label>
+            <input type="color" class="color-picker" value="#ffdf00" title="Sparkle Color">
+          </div>
+          <div class="slider-group">
+            <label>Opacity</label>
+            <input type="range" class="effect-opacity" min="0" max="100" value="85">
+            <span class="slider-val effect-opacity-val">85%</span>
+          </div>
+        </div>
+
+        <!-- 2. Bokeh Glow -->
+        <div class="effect-item" id="effect-bokeh">
+          <div class="effect-header">
+            <label class="effect-title-wrap">
+              <input type="checkbox" class="effect-checkbox">
+              <span class="effect-title">🔮 Soft Dreamy Bokeh</span>
+            </label>
+            <input type="color" class="color-picker" value="#ff66cc" title="Bokeh Color">
+          </div>
+          <div class="slider-group">
+            <label>Opacity</label>
+            <input type="range" class="effect-opacity" min="0" max="100" value="55">
+            <span class="slider-val effect-opacity-val">55%</span>
+          </div>
+        </div>
+
+        <!-- 3. Floating Hearts / Embers -->
+        <div class="effect-item" id="effect-hearts">
+          <div class="effect-header">
+            <label class="effect-title-wrap">
+              <input type="checkbox" class="effect-checkbox">
+              <span class="effect-title">💖 Floating Hearts / Embers</span>
+            </label>
+            <span class="effect-tag">Ambient</span>
+          </div>
+          <div class="slider-group">
+            <label>Opacity</label>
+            <input type="range" class="effect-opacity" min="0" max="100" value="75">
+            <span class="slider-val effect-opacity-val">75%</span>
+          </div>
+        </div>
+
+        <!-- 4. Atmospheric Rain -->
+        <div class="effect-item" id="effect-rain">
+          <div class="effect-header">
+            <label class="effect-title-wrap">
+              <input type="checkbox" class="effect-checkbox">
+              <span class="effect-title">🌧️ Atmospheric Rainfall</span>
+            </label>
+            <span class="effect-tag">Weather</span>
+          </div>
+          <div class="slider-group">
+            <label>Opacity</label>
+            <input type="range" class="effect-opacity" min="0" max="100" value="70">
+            <span class="slider-val effect-opacity-val">70%</span>
+          </div>
+        </div>
+
+        <!-- 5. Atmospheric Snow -->
+        <div class="effect-item" id="effect-snow">
+          <div class="effect-header">
+            <label class="effect-title-wrap">
+              <input type="checkbox" class="effect-checkbox">
+              <span class="effect-title">❄️ Winter Snowfall</span>
+            </label>
+            <span class="effect-tag">Weather</span>
+          </div>
+          <div class="slider-group">
+            <label>Opacity</label>
+            <input type="range" class="effect-opacity" min="0" max="100" value="75">
+            <span class="slider-val effect-opacity-val">75%</span>
+          </div>
+        </div>
+
+        <!-- 6. Cosmic Dust (Staacor) -->
+        <div class="effect-item" id="effect-dust">
+          <div class="effect-header">
+            <label class="effect-title-wrap">
+              <input type="checkbox" class="effect-checkbox" checked>
+              <span class="effect-title">🌌 Cosmic Floating Dust</span>
+            </label>
+            <input type="color" class="color-picker" value="#00f0ff" title="Dust Color">
+          </div>
+          <div class="slider-group">
+            <label>Opacity</label>
+            <input type="range" class="effect-opacity" min="0" max="100" value="70">
+            <span class="slider-val effect-opacity-val">70%</span>
+          </div>
+        </div>
+
+        <!-- 7. Volumetric Beams (Staacor Sentinel) -->
+        <div class="effect-item" id="effect-beams">
+          <div class="effect-header">
+            <label class="effect-title-wrap">
+              <input type="checkbox" class="effect-checkbox">
+              <span class="effect-title">🔦 Sweeping Light Beams</span>
+            </label>
+            <span class="effect-tag">Staacor</span>
+          </div>
+          <div class="slider-group">
+            <label>Opacity</label>
+            <input type="range" class="effect-opacity" min="0" max="100" value="80">
+            <span class="slider-val effect-opacity-val">80%</span>
+          </div>
+        </div>
+
+        <!-- 8. Holographic Orbit Rings (Staacor University) -->
+        <div class="effect-item" id="effect-hologram">
+          <div class="effect-header">
+            <label class="effect-title-wrap">
+              <input type="checkbox" class="effect-checkbox">
+              <span class="effect-title">🪐 Holographic 3D Rings</span>
+            </label>
+            <span class="effect-tag">Sci-Fi</span>
+          </div>
+          <div class="slider-group">
+            <label>Opacity</label>
+            <input type="range" class="effect-opacity" min="0" max="100" value="80">
+            <span class="slider-val effect-opacity-val">80%</span>
+          </div>
+        </div>
+
+        <!-- 9. Bioluminescent Crystals & Shield -->
+        <div class="effect-item" id="effect-crystals">
+          <div class="effect-header">
+            <label class="effect-title-wrap">
+              <input type="checkbox" class="effect-checkbox">
+              <span class="effect-title">💎 Bioluminescent Nodes</span>
+            </label>
+            <span class="effect-tag">Energy</span>
+          </div>
+          <div class="slider-group">
+            <label>Opacity</label>
+            <input type="range" class="effect-opacity" min="0" max="100" value="75">
+            <span class="slider-val effect-opacity-val">75%</span>
+          </div>
+        </div>
+
+        <!-- 10. Recon Drone Crosshair -->
+        <div class="effect-item" id="effect-crosshair">
+          <div class="effect-header">
+            <label class="effect-title-wrap">
+              <input type="checkbox" class="effect-checkbox">
+              <span class="effect-title">🎯 Recon Drone Crosshair</span>
+            </label>
+            <input type="color" class="color-picker" value="#00ffa3" title="Crosshair Color">
+          </div>
+          <div class="slider-group">
+            <label>Opacity</label>
+            <input type="range" class="effect-opacity" min="0" max="100" value="85">
+            <span class="slider-val effect-opacity-val">85%</span>
+          </div>
+        </div>
+
+        <!-- 11. Twin Celestial Suns -->
+        <div class="effect-item" id="effect-suns">
+          <div class="effect-header">
+            <label class="effect-title-wrap">
+              <input type="checkbox" class="effect-checkbox">
+              <span class="effect-title">☀️ Twin Celestial Suns</span>
+            </label>
+            <span class="effect-tag">Space</span>
+          </div>
+          <div class="slider-group">
+            <label>Opacity</label>
+            <input type="range" class="effect-opacity" min="0" max="100" value="80">
+            <span class="slider-val effect-opacity-val">80%</span>
+          </div>
+        </div>
+
+        <!-- 12. Retro VHS Camcorder 1994 -->
+        <div class="effect-item" id="effect-vhs">
+          <div class="effect-header">
+            <label class="effect-title-wrap">
+              <input type="checkbox" class="effect-checkbox">
+              <span class="effect-title">📼 Retro VHS Camcorder 1994</span>
+            </label>
+            <span class="effect-tag">Vintage</span>
+          </div>
+          <div class="slider-group">
+            <label>Opacity</label>
+            <input type="range" class="effect-opacity" min="0" max="100" value="90">
+            <span class="slider-val effect-opacity-val">90%</span>
+          </div>
+        </div>
+
+        <!-- 13. CRT Scanlines & Glitch -->
+        <div class="effect-item" id="effect-scanlines">
+          <div class="effect-header">
+            <label class="effect-title-wrap">
+              <input type="checkbox" class="effect-checkbox">
+              <span class="effect-title">📺 CRT Scanlines & Slice Glitch</span>
+            </label>
+            <span class="effect-tag">Cyber</span>
+          </div>
+          <div class="slider-group">
+            <label>Opacity</label>
+            <input type="range" class="effect-opacity" min="0" max="100" value="45">
+            <span class="slider-val effect-opacity-val">45%</span>
+          </div>
+        </div>
+
+        <!-- 14. Thermal Night Vision -->
+        <div class="effect-item" id="effect-thermal">
+          <div class="effect-header">
+            <label class="effect-title-wrap">
+              <input type="checkbox" class="effect-checkbox">
+              <span class="effect-title">🌡️ Thermal / Night Vision</span>
+            </label>
+            <span class="effect-tag">Optics</span>
+          </div>
+          <div class="slider-group">
+            <label>Opacity</label>
+            <input type="range" class="effect-opacity" min="0" max="100" value="65">
+            <span class="slider-val effect-opacity-val">65%</span>
+          </div>
+        </div>
+
+        <!-- 15. Live Broadcast HUD & Brackets -->
+        <div class="effect-item" id="effect-broadcast">
+          <div class="effect-header">
+            <label class="effect-title-wrap">
+              <input type="checkbox" class="effect-checkbox">
+              <span class="effect-title">📡 Live Broadcast HUD</span>
+            </label>
+            <span class="effect-tag">Staacor</span>
+          </div>
+          <div class="slider-group">
+            <label>Opacity</label>
+            <input type="range" class="effect-opacity" min="0" max="100" value="85">
+            <span class="slider-val effect-opacity-val">85%</span>
+          </div>
+        </div>
+
+        <!-- 16. Cinematic Vignette -->
+        <div class="effect-item" id="effect-vignette">
+          <div class="effect-header">
+            <label class="effect-title-wrap">
+              <input type="checkbox" class="effect-checkbox">
+              <span class="effect-title">🎬 Cinematic Vignette</span>
+            </label>
+            <span class="effect-tag">Lens</span>
+          </div>
+          <div class="slider-group">
+            <label>Opacity</label>
+            <input type="range" class="effect-opacity" min="0" max="100" value="50">
+            <span class="slider-val effect-opacity-val">50%</span>
+          </div>
+        </div>
+
+        <!-- 17. 3D Perspective Synthwave Grid -->
+        <div class="effect-item" id="effect-cybergrid">
+          <div class="effect-header">
+            <label class="effect-title-wrap">
+              <input type="checkbox" class="effect-checkbox">
+              <span class="effect-title">🌐 3D Perspective Cyber Grid</span>
+            </label>
+            <input type="color" class="color-picker" value="#ff007f" title="Grid Color">
+          </div>
+          <div class="slider-group">
+            <label>Opacity</label>
+            <input type="range" class="effect-opacity" min="0" max="100" value="65">
+            <span class="slider-val effect-opacity-val">65%</span>
+          </div>
+        </div>
+
+      </section>
+
+    </aside>
+
+    <!-- CENTER CANVAS VIEWPORT -->
+    <section class="viewport">
+      <div class="viewport-header">
+        <div>
+          <span style="color: var(--cyan-primary); font-weight: bold;">VIEWPORT:</span>
+          <span>REAL-TIME CANVAS COMPOSITOR</span>
+        </div>
+        <div id="exportsStatus" class="exports-badge">
+          Studio Ready
+        </div>
+      </div>
+
+      <div class="canvas-container">
+        <canvas id="studioCanvas"></canvas>
+      </div>
+
+      <!-- BOTTOM ACTION & EXPORT BAR -->
+      <footer class="action-bar">
+        <div class="action-group">
+          <!-- Snapshot PNG -->
+          <button class="btn-primary" id="btnSnapshot">
+            <span>📸</span> CAPTURE SNAPSHOT
+          </button>
+
+          <!-- Record Video -->
+          <button class="btn-record" id="btnRecord">
+            <span>⏺</span> RECORD VIDEO
+          </button>
+
+          <!-- Recording Timer -->
+          <div class="rec-timer" id="recTimer">
+            <span id="recTimerText">● REC 00:00</span>
+          </div>
+        </div>
+
+        <div class="action-group">
+          <label class="control-label" for="recDuration">Duration Limit:</label>
+          <select class="select-input" id="recDuration">
+            <option value="5">5 Seconds</option>
+            <option value="10" selected>10 Seconds</option>
+            <option value="15">15 Seconds</option>
+            <option value="30">30 Seconds</option>
+            <option value="0">Manual Stop</option>
+          </select>
+        </div>
+      </footer>
+    </section>
+
+  </main>
+
+  <!-- SCRIPTS -->
+  <script src="/static/effects/js/effects-engine.js"></script>
+  <script src="/static/effects/js/studio-ui.js"></script>
+</body>
+</html>

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Crop and Edit</title>
+    <style>
+        body {
+            background-color: #222;
+            color: #fff;
+            font-family: Arial, sans-serif;
+        }
+        .thumbnail {
+            display: inline-block;
+            margin: 10px;
+            text-align: center;
+        }
+        .thumbnail img {
+            display: block;
+            width: 150px;
+            height: auto;
+            border: 2px solid #fff;
+            margin-bottom: 5px;
+        }
+        .thumbnail input {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Select an Image to Edit</h1>
+    <form action="{{ url_for('processimage') }}" method="POST" enctype="multipart/form-data">
+        <div>
+            {% for image in images %}
+            <div class="thumbnail">
+                <!-- Reference the correct path in 'archived-store/' -->
+                <img src="{{ url_for('static', filename='archived_resources/' + image) }}" alt="{{ image }}">
+                <br>
+                <input type="radio" name="image_file" value="{{ image }}" required> Select
+            </div>
+            {% endfor %}
+        </div>
+        <br><br>
+        <label for="x1">Upper-Left X:</label>
+        <input type="number" name="x1" required>
+        <label for="y1">Upper-Left Y:</label>
+        <input type="number" name="y1" required>
+        <br><br>
+        <label for="x2">Lower-Right X:</label>
+        <input type="number" name="x2" required>
+        <label for="y2">Lower-Right Y:</label>
+        <input type="number" name="y2" required>
+        <br><br>
+        <button type="submit">Process Image</button>
+    </form>
+
+    {% if processed_image %}
+    <h2>Processed Image:</h2>
+    <img src="{{ url_for('static', filename='archived-store/' + processed_image) }}" alt="Processed Image">
+    <form action="{{ url_for('saveimage') }}" method="POST">
+        <input type="hidden" name="image_file" value="{{ processed_image }}">
+        <button type="submit">Save Image</button>
+    </form>
+    {% endif %}
+</body>
+</html>

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Review</title>
+    <!-- Add a link to the dark.css stylesheet -->
+    <!--link rel="stylesheet" href="{{ url_for('static', filename='css/dark.css') }}"-->
+    <style>
+        /* Dark Theme */
+        html,
+        body {
+            background-color: #282c34;
+            /* Dark blue/gray */
+            color: rgb(149, 4, 4);
+            /* Light gray text */
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            /* Ensure full width */
+        }
+
+        body {
+            padding: 20px;
+            box-sizing: border-box;
+            /* Include padding in width calculation */
+        }
+
+        /* Headers and links */
+        h1,
+        h2,
+        h3 {
+            color: #61afef;
+            /* Light blue */
+            font-size: 1.2em;
+        }
+
+        a {
+            color: #e06c75;
+            /* Salmon pink */
+            font-size: 1em;
+            font-weight: bold;
+        }
+
+        a:hover {
+            color: #be5046;
+            /* Darker salmon pink on hover */
+        }
+
+        .video-group {
+            margin-bottom: 20px;
+        }
+
+        .video-group h2 {
+            margin-bottom: 10px;
+        }
+
+        .video-group img {
+            margin-right: 10px;
+            width: 200px;
+            height: auto;
+        }
+
+        .corrupt-list {
+            color: red;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Review Video Frames / review_video.html</h1>
+
+    <form action="{{ url_for('delete_json') }}" method="POST">
+        <button type="submit">Delete videos.json</button>
+    </form>
+
+    {% if corrupt_videos %}
+    <div class="corrupt-list">
+        <h2>Corrupt Videos:</h2>
+        <ul>
+            {% for video in corrupt_videos %}
+            <li>{{ video }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
+    {% for video_name, frames in videos.items() %}
+    <div class="video-group">
+        <h2>{{ video_name }}</h2>
+        {% for frame in frames %}
+        <img src="{{ url_for('static', filename=frame.split('static/')[-1]) }}" alt="Frame from {{ video_name }}">
+        {% endfor %}
+    </div>
+    {% endfor %}
+
+</body>
+
+</html>

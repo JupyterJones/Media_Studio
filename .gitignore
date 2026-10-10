@@ -1,0 +1,142 @@
+# ==============================================================================
+# Media Studio - Comprehensive .gitignore
+# Excludes heavy AI model weights, virtual environments, rendered media,
+# databases, caches, and logs to keep the GitHub repository lightweight (~15MB).
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# 1. Virtual Environments
+# ------------------------------------------------------------------------------
+venv/
+.venv/
+*venv*/
+env/
+ENV/
+
+# ------------------------------------------------------------------------------
+# 2. AI Model Weights, Checkpoints, Embeddings & Large Binaries
+# ------------------------------------------------------------------------------
+models/
+*models/
+checkpoints/
+*.onnx
+*.bin
+*.pth
+*.pt
+*.ckpt
+*.safetensors
+*.gguf
+*.addon
+*.dat
+koboldcpp
+
+# ------------------------------------------------------------------------------
+# 3. Media Files (Videos, Audio, Generated & Captured Images)
+# ------------------------------------------------------------------------------
+# Videos
+*.mp4
+*.webm
+*.mov
+*.avi
+*.mkv
+*.flv
+*.wmv
+*.m4v
+
+# Audio
+*.mp3
+*.wav
+*.ogg
+*.flac
+*.m4a
+*.aac
+*.wma
+
+# Images (Generated art, outputs, snapshots)
+*.png
+*.jpg
+*.jpeg
+*.webp
+*.gif
+*.bmp
+*.tiff
+
+# ------------------------------------------------------------------------------
+# 4. Temporary Render Directories, Uploads & Working Buffers
+# ------------------------------------------------------------------------------
+temp/
+tempp/
+btemp/
+uploads/
+transforms.trf
+static/temp/
+static/temp_exp/
+static/convert_uploads/
+static/convert_results/
+static/uploads/*
+!static/uploads/.gitkeep
+static/voice/*
+!static/voice/.gitkeep
+effects_studio/exports/
+ZOOM-PAN/output/
+ZOOM-PAN/temp/
+scifi-writer_1/temp/
+scifi-writer_1/temp_*/
+scifi-writer_1/assets/
+
+# ------------------------------------------------------------------------------
+# 5. Databases, Vector Stores & Runtime Instances
+# ------------------------------------------------------------------------------
+*.db
+*.sqlite
+*.sqlite3
+instance/
+chroma_media_studio/
+
+# ------------------------------------------------------------------------------
+# 6. Python Bytecode, Build Artifacts & HuggingFace / Model Caches
+# ------------------------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+.cache/
+*/.cache/
+huggingface/
+
+# ------------------------------------------------------------------------------
+# 7. Logs, AI Transcripts & Large Conversation Dumps
+# ------------------------------------------------------------------------------
+*.log
+*.jsonl
+*transcript*
+*_log.txt
+app_log.txt
+REMEMBER_log.txt
+Media_Studio_Full.txt
+ALL_full_*.txt
+utilities/ALL_full_*.txt
+gravity_talk*.txt
+
+# ------------------------------------------------------------------------------
+# 8. Sensitive Credentials, Keys & Passwords
+# ------------------------------------------------------------------------------
+*.password
+*.key
+*.pem
+.env
+.env.*
+cookies.txt
+static/TEXTr/
+
+# ------------------------------------------------------------------------------
+# 9. Operating System & IDE Files
+# ------------------------------------------------------------------------------
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
+*~

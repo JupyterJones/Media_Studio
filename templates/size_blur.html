@@ -1,0 +1,153 @@
+<!DOCTYPE html>  
+<html lang="en">  
+<head>  
+    <meta charset="UTF-8">  
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+    <title>Audio and Video Combiner</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dark.css') }}">  
+    <style>  
+        .media-container {  
+            display: flex;  
+            flex-wrap: wrap;  
+            margin: 20px 0; /* Spacing above and below the section */  
+        }  
+
+        .media-item {  
+            margin: 10px; /* Spacing between items */  
+            padding: 10px;   
+            border: 1px solid #ccc; /* Optional: for visibility */  
+            border-radius: 8px; /* Optional: rounded corners */  
+            width: calc(30% - 20px); /* Adjust for responsive layout */  
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1); /* Optional: adds shadow effect */  
+            text-align: center; /* Centering text */  
+        }  
+
+        button {  
+            padding: 10px 15px; /* Consistent padding */  
+            font-size: 1.6vw; /* Better sizing */  
+            cursor: pointer;   
+            margin-bottom: 5px; /* Space below button */  
+        }  
+
+        .audio-label {  
+            display: block; /* Set to block for better spacing */  
+            margin-top: 5px; /* Add some space above the label */  
+            color: orange; /* Add color */  
+            word-wrap: break-word; /* Wrap text if too long */  
+        }  
+    </style>  
+</head>  
+<body>  
+    <a href="/size_blur"><button>Refresh</button></a><br/>  <a href="/"><button>Home</button></a>
+<h1>Audio and Video Combiner /size_blur.html</h1>
+    <p>This is a text sample to cut and paste. Here's how we can do it:</p>  
+
+    <form method="post">  
+        {% for spwaker in supported_speakers %}  
+        <input type="radio" name="bal_speaker" id="{{ spwaker }}" value="{{ spwaker }}" required>  
+        <span>{{ spwaker }}&nbsp;&nbsp;</span>  
+        {% endfor %}  
+        <textarea name="text" rows="10" cols="50" placeholder="Enter your text here..." required></textarea><br><br>  
+        <input type="submit" value="Convert to MP3">  
+        <a href="{{ url_for('balacoon_download_file', filename=file) }}">Download</a>  
+    </form>  
+
+    <hr>  
+    <p>The green numbers below represent different speakers.</p>  
+    <hr>  
+
+    <hr>  
+
+    <form id="video-audio-form" action="/add_sound_to_image" method="post">  
+        <label>Select Image:</label><br />  
+        <div class="media-container">  
+            {% for image in image_files %}  
+            <div class="media-item">  
+                <input type="radio" name="image_path" id="{{ image }}" value="{{ image }}"  
+                    onclick="previewImage('{{ image }}')" required>  
+                <label for="{{ image }}">  
+                    <img src="{{ image }}" class="image-preview" alt="{{ image }}" style="max-width: 100%; height: auto;">  
+                    {{ image }}  
+                </label>  
+            </div>  
+            {% endfor %}  
+        </div>  
+        <img id="image-preview" alt="Image Preview"><br /><br />  
+ <h2>Generated Audio Files:</h2>  
+<label>Select Audio:</label><br />  
+<div class="media-container">  
+    {% if audio_files %}  
+        {% for audio in audio_files %}  
+        <div class="media-item">  
+            <button type="button" onclick="playAudio('{{ loop.index }}')">Preview</button>  
+            <audio id="audio_{{ loop.index }}" style="display:none;">  
+                <source src="{{ audio }}" type="audio/mpeg">  
+                Your browser does not support the audio element.  
+            </audio>  
+            <input type="radio" name="audio_path" value="{{ audio }}" required>  
+            <span class="audio-label">{{ audio }}</span>   
+        </div>  
+        {% endfor %}  
+    {% endif %}  
+</div>  
+        <button type="button" id="create-video">Create Video</button>  
+    </form>  
+
+    <h2>Output Video</h2>  
+    <div id="output-video-section"></div>  
+
+    <script>  
+        document.getElementById('create-video').addEventListener('click', function () {  
+            const form = document.getElementById('video-audio-form');  
+            const formData = new FormData(form);  
+
+            const imageSelected = formData.get('image_path');  
+            const audioSelected = formData.get('audio_path');  
+
+            if (!imageSelected || !audioSelected) {  
+                alert("Please select both an image and audio before proceeding.");  
+                return;  
+            }  
+
+            fetch('/combine_b', {  
+                method: 'POST',  
+                body: formData  
+            })  
+            .then(response => response.json())  
+            .then(data => {  
+                if (data.success) {  
+                    document.getElementById('output-video-section').innerHTML = `  
+                        <h3>Combined Video:</h3>  
+                        <video width="200" controls>  
+                            <source src="${data.output_video}" type="video/mp4">  
+                            Your browser does not support the video tag.  
+                        </video>  
+                    `;  
+                } else {  
+                    alert(data.error);  
+                }  
+            })  
+            .catch(error => console.error('Error:', error));  
+        });  
+
+        function playAudio(audioId) {  
+            const audioElement = document.getElementById(`audio_${audioId}`);  
+            const audios = document.querySelectorAll('audio');  
+
+            // Pause and hide any currently playing audio  
+            audios.forEach(audio => {  
+                if (!audio.paused) {  
+                    audio.pause();  
+                    audio.currentTime = 0;  
+                    audio.style.display = 'none'; // Hide after stopping  
+                }  
+            });  
+
+            // Show and play the selected audio  
+            audioElement.style.display = 'block'; // Show the audio element  
+            audioElement.play();  
+        }  
+    </script>  
+</body>  
+</html>

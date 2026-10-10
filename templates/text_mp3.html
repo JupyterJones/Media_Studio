@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text to MP3</title>
+    <!-- CSS for the page static/dark.css-->
+    <link rel="stylesheet" href="{{ url_for('static', filename='dark.css') }}">
+<style>
+    h1 {
+        color: #f1f1f1;
+        text-align: center;
+    }
+
+    form {
+        text-align: center;
+    }
+
+    textarea {
+        width: 50%;
+    }
+
+    input[type="submit"] {
+        padding: 10px 20px;
+        background-color: #4CAF50;
+        font-size: 4vw;
+        
+        
+        color: white;
+        border: none;
+        cursor: pointer;
+    }
+
+    input[type="submit"]:hover {
+        background-color: #45a049;
+    }
+
+    audio {
+        width: 50%;
+    }
+
+    ul {
+        list-style-type: none;
+        padding: 0;
+    }
+
+    li {
+        margin-bottom: 10px;
+    }
+
+    a {
+        color: #4CAF50;
+        font-weight: bold;
+        font-size: 2.5em;
+        text-decoration: none;
+    }
+
+    a:hover {
+        text-decoration: underline;
+    }
+.bigger {
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    font-size: 4vw;
+    color: white;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    margin: 10px;
+}
+
+</style>
+</head>
+<body>
+    <h1>Convert Text to MP3</h1>
+    <a href="{{ url_for('index') }}" class="bigger">HOME</a><br><br>
+
+    <!-- Form to submit text for conversion to MP3 -->
+    <form method="POST" action="/text_mp3">
+        <label for="text">Enter text:</label><br>
+        <textarea id="text" name="text" rows="5" cols="40" required></textarea><br><br>
+        <input type="submit" value="Convert to MP3">
+    </form>
+
+    <!-- If MP3 file is generated, show the audio player -->
+    {% if filename %}
+    <h3>Here is your MP3:</h3>
+    <audio controls>
+        <source src="{{ url_for('static', filename=filename.split('static/')[1]) }}" type="audio/mp3">
+        Your browser does not support the audio element.
+    </audio>
+
+    <!-- Download link for the MP3 file -->
+    <br><br>
+    <a href="{{ url_for('static', filename=filename.split('static/')[1]) }}" download>Download MP3</a>
+    {% endif %}
+
+    <!-- List of all available MP3 files -->
+    <h2>Available MP3 Files</h2>
+    <ul>
+        {% for mp3_file in mp3_list %}
+        <li>
+            <a href="{{ url_for('static', filename='mp3s/' + mp3_file) }}">{{ mp3_file }}</a>
+        </li>
+        {% else %}
+        <li>No MP3 files available.</li>
+        {% endfor %}
+    </ul>
+
+</body>
+</html>

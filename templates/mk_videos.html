@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Processing Suite | Media Studio</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/themed.css') }}">
+    <link rel="icon" href="/favicon.ico?v=1">
+    <script src="{{ url_for('static', filename='js/theme.js') }}"></script>
+    <style>
+        .page-header {
+            text-align: center;
+            padding: 24px 0 16px;
+        }
+        .nav-bar {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 16px 0 24px;
+        }
+        .action-panel {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 24px;
+            margin: 20px auto;
+            max-width: 900px;
+            text-align: center;
+        }
+        .action-group {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin: 14px 0;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="page-header">
+        <h1>Video Processing Suite</h1>
+        <p style="color: var(--text-muted); margin-top: 6px;">Manage Transitions, Renders, and Multi-Clip Compositing</p>
+    </div>
+
+    <div class="nav-bar">
+        <a href="{{ url_for('index') }}" class="btn">🏠 Home</a>
+        <a href="{{ url_for('mk_novel') }}" class="btn">📖 Novel</a>
+        <a href="{{ url_for('mk_videos') }}" class="btn" style="border-color: var(--accent-primary);">🎬 Vid Process</a>
+        <a href="{{ url_for('img_processing_route') }}" class="btn">🖼️ Img Process</a>
+        <a href="{{ url_for('utilities') }}" class="btn">⚙️ Utilities</a>
+        <a href="{{ url_for('home2') }}" class="btn">📝 Blog</a>
+    </div>
+
+    <div class="action-panel">
+        <h2>Control Panel</h2>
+        <div class="action-group">
+            <a href="{{ url_for('convert_images_route') }}" class="btn">Convert Images</a>
+            <a href="{{ url_for('refresh_all_route') }}" class="btn">Refresh All (Create Title First)</a>
+            <a href="{{ url_for('video_edit') }}" class="btn">Trim Video</a>
+            <a href="{{ url_for('ffmpeg') }}" class="btn">Run Ffmpeg Cmd</a>
+            <a href="{{ url_for('png_overlay') }}" class="btn">PNG Overlay</a>
+            <a href="{{ url_for('add_novel_text') }}" class="btn">Add Text</a>
+            <a href="{{ url_for('title_route') }}" class="btn">Add Title Video</a>
+            <a href="{{ url_for('get_videos') }}" class="btn">View Video History</a>
+            <a href="{{ url_for('clean_storage_route') }}" class="btn btn-warn">Remove Unwanted Images</a>
+            <a href="{{ url_for('remove_images') }}" class="btn btn-warn">Remove Images from Store</a>
+        </div>
+
+        <div class="action-group" style="margin-top: 20px;">
+            <a href="{{ url_for('upload_form') }}" class="btn">Upload Form</a>
+            <a href="{{ url_for('upload_mp4_video') }}" class="btn">Upload MP4</a>
+            <a href="{{ url_for('delete_file') }}" class="btn btn-warn">Delete MP4</a>
+            <a href="{{ url_for('concat_videos') }}" class="btn">Concat Videos</a>
+            <a href="{{ url_for('mk_prompt_route') }}" class="btn">Create Text2Image Prompts</a>
+        </div>
+
+        <form action="/get_images" method="post" style="margin-top: 18px;">
+            <button type="submit" class="btn">🎲 Get Three Random Images</button>
+        </form>
+    </div>
+
+    <div style="margin-top: 36px;">
+        <h2>Video Gallery</h2>
+        {% include 'video_menu.html' %}
+    </div>
+</div>
+<script>
+  document.querySelectorAll("video source").forEach(source => {
+    const video = source.parentElement;
+    source.src = source.src + "?v=" + new Date().getTime();
+    video.load();
+  });
+</script>
+<button class="theme-switch-btn" onclick="toggleTheme()">
+    🎨 <span id="themeName">Theme</span>
+</button>
+</body>
+</html>
+

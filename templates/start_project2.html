@@ -1,0 +1,292 @@
+<!-- start_project.html-->
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>start_project2.html</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='dark.css') }}">
+    <style>
+        body {
+            background-color: var(--bg-card);
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+
+        .refresh-button {
+            display: inline-block;
+            padding: 5px;
+            margin: 10px;
+            font-size: 1em;
+            background-color: orange;
+            color: rgb(0, 0, 0);
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 1px;
+        }
+
+        .refresh-button:hover {
+            background-color: orange;
+        }
+
+        .sticky {
+            position: -webkit-sticky;
+            position: sticky;
+            top: 0;
+            background-color: orange;
+            padding: 10px 0;
+            z-index: 1000;
+        }
+
+        .video-gallery {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+        }
+
+        figure {
+            width: 20%;
+            height: auto;
+            margin: 10px;
+            text-align: center;
+        }
+
+        figcaption {
+            margin-top: 8px;
+            font-size: 1rem;
+            color: #cccccc;
+        }
+        pre {
+            color: white;
+            font-size: 24px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        p {
+            color: white;
+            font-size: 24px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+    img {
+        width: 200px;
+        height: auto;
+        display: block;
+        margin-bottom: 5px;
+        border-radius: 8px;
+    }
+        .sticky {
+        position: -webkit-sticky;
+        padding-top: 10px;
+        margin-left: auto;
+        margin-right: auto;
+        position: sticky;
+        height:auto;
+        top: 0;
+        text-align: center!important;
+        padding: 10px 0;
+        z-index: 1000;
+        width: 100%!important;
+        height:220px;
+    }   
+        .refresh-button2 {
+        display: inline-block;
+        padding: 2px;
+        margin: 10px;
+        font-size: 1em;
+        background-color: rgb(255, 225, 0);
+        color: rgb(0, 0, 0);
+        text-decoration: none;
+        border-radius: 5px;
+        margin: 1px;
+        }
+    a{
+        color:navy;
+    }
+    span {
+        background-color: yellow;
+        color: black;
+        padding: 2px;
+        border-radius: 5px;
+        font-size: 1em;
+    }
+.video-gallery {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    gap: 10px; /* Adds space between items */
+}
+
+.item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 20%; /* Adjust as needed for number of images per row */
+    max-width: 200px;
+    margin: 10px;
+    background-color: rgba(170, 160, 150, 0.5);
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    padding: 10px;
+}
+
+.item img {
+    width: 100%;
+    height: auto;
+    border-radius: 5px;
+    margin-bottom: 5px;
+}
+
+.item input {
+    width: 80%;
+    margin-top: 5px;
+    padding: 5px;
+    font-size: 1em;
+}
+
+    </style>
+       <script>
+        function findString(str) {
+            if (parseInt(navigator.appVersion) < 4) return;
+
+            if (window.find) {
+                var strFound = window.find(str);
+                if (!strFound) {
+                    window.find(str, 0, 1);
+                }
+                if (strFound) {
+                    var range = window.getSelection().getRangeAt(0);
+                    var span = document.createElement("span");
+                    span.style.backgroundColor = "yellow";
+                    range.surroundContents(span);
+                }
+            } else if (navigator.appName.indexOf("Microsoft") != -1) {
+                // Not implemented for brevity
+            } else if (navigator.appName == "Opera") {
+                alert("Opera browsers not supported, sorry...");
+                return;
+            }
+
+            if (!strFound) alert("String '" + str + "' not found!");
+        }
+
+        function moveToNextOccurrence() {
+            var search_str = document.getElementById("search_input").value;
+            findString(search_str);
+        }
+    </script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://code.jquery.com/ui/1.13.0/jquery-ui.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.13.0/themes/base/jquery-ui.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const videoGallery = document.querySelector('.video-gallery');
+    Sortable.create(videoGallery, {
+        animation: 150,  // Smooth animation for better UX
+        onEnd: function (evt) {
+            const sortedImages = [];
+            // Update the input fields based on the new order
+            document.querySelectorAll('.image-container').forEach((container, index) => {
+                const imgSrc = container.querySelector('img').getAttribute('src').split('/').pop();
+                container.querySelector('input[name="sequence[]"]').value = imgSrc;
+                sortedImages.push(imgSrc);
+            });
+            console.log("New Order:", sortedImages);  // Log to confirm order on mobile
+        }
+    });
+});
+</script>
+
+<style>
+.image-container {
+    cursor: move;
+    margin: 10px;
+    padding: 10px;
+    border: 1px solid #ccc;
+}
+video {
+    width: 350px;
+    height: auto;
+}   
+</style>
+</head>
+
+<body >
+    <header class="sticky">
+    <center>
+        <span>FlaskArchitect's start_project2.html</span>&nbsp;&nbsp;|&nbsp;&nbsp;
+        <a class="refresh-button2" href="{{ url_for('mk_novel') }}">mk_novel home</a>&nbsp;&nbsp;|&nbsp;&nbsp;
+        <a class="refresh-button" href="{{ url_for('search') }}">Search</a>&nbsp;&nbsp;|&nbsp;&nbsp;
+        
+            <a href="{{ url_for('readlog') }}">View Log</a>&nbsp;&nbsp;|&nbsp;&nbsp;
+            <input style="width:25%;" type="text" id="search_input" />
+            <button id="search_submit" onclick="moveToNextOccurrence()">
+                Find in page Next
+              </button>
+
+    <form action="{{ url_for('search') }}" method="post">
+    <label style="font-size:1em;color:yellow;" for="search_terms">Search for (comma-separated):</label>
+    <input style="font-size:1em;color:orange;width:50%" type="text" id="search_terms" name="search_terms" required>
+    <button style="font-size:1em;color:navy;"type="submit">Search</button>
+</form>          
+    </center>
+ </header>
+<main>
+<audio controls>
+    <source src="static/assets/Fprompt_narration.mp3" type="audio/mpeg">
+    Your browser does not support the audio element.
+</audio>
+
+<audio controls>
+    <source src="static/notebook_audio/002notebook.mp3" type="audio/mpeg">
+    Your browser does not support the audio element.
+</audio>
+<audio controls>
+    <source src="static/notebook_audio/003notebook.mp3" type="audio/mpeg">
+    Your browser does not support the audio element.
+</audio>
+<audio controls>
+    <source src="static/notebook_audio/004notebook.mp3" type="audio/mpeg">
+    Your browser does not support the audio element.
+</audio>
+<audio controls>
+    <source src="static/notebook_audio/005notebook.mp3" type="audio/mpeg">
+    Your browser does not support the audio element.
+</audio>
+
+
+
+
+
+
+
+
+
+ <form method="POST" action="{{ url_for('mk_flipnovel') }}">
+ <div class="video-gallery">
+    {% block content %}
+    {% for image in images %}
+    <div class="image-container">
+        <img src='static/novel_images/{{ image }}' alt="{{ image }}">
+        <input type="hidden" name="sequence[]" value="{{ image }}" />
+    </div>
+    {% endfor %}
+    {% endblock %}
+</div>
+    <button type="submit" class="refresh-button">Create Video</button>
+</form>
+
+
+
+
+    <video id="video" src="static/temp/final_novel_result.mp4" controls></video>&nbsp;&nbsp;&nbsp;<video id="video" src="static/temp_exp/novel_flipbookX.mp4" controls></video>
+</main>
+    <footer>
+        <p>&copy; 2024 FlaskArchitect Blog</p>
+    </footer>
+</body>
+</html>

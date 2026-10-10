@@ -1,0 +1,210 @@
+#!/home/jack/Desktop/Kokoro-TTS-Pause/venv/bin/python
+"""
+AI Model Prompt Sender - Tkinter GUI
+Fix included:
+Handles streaming JSON responses from the Ollama API.
+You can keep sending prompts repeatedly without restarting the app.
+"""
+import tkinter as tk
+from tkinter import ttk, scrolledtext
+import requests
+import json
+from icecream import ic
+'''
+ornith:9b                  a75697c14589    5.6 GB    5 weeks ago     
+qwen2.5-coder:7b           dae161e27b0e    4.7 GB    5 weeks ago     
+moondream:latest           55fc3abd3867    1.7 GB    7 weeks ago     
+llama2-uncensored:7b       44040b922233    3.8 GB    7 weeks ago     
+dolphin3:8b                d5ab9ae8e1f2    4.9 GB    7 weeks ago     
+codellama:13b              9f438cb9cd58    7.4 GB    4 months ago    
+qwen3:8b                   500a1f067a9f    5.2 GB    4 months ago    
+nomic-embed-text:latest    0a109f422b47    274 MB    4 months ago    
+deepseek-r1:1.5b           e0979632db5a    1.1 GB    4 months ago    
+llama3.2:3b                a80c4f17acd5    2.0 GB    4 months ago    
+LlaVa:latest               8dd30f6b0cb1    4.7 GB    4 months ago    
+mistral:7b-instruct        6577803aa9a0    4.4 GB    4 months ago 
+deepseek-coder:1.3b        3ddd2d3fc8d2    776 MB    4 months ago   
+(venv) jack@jack-A520MHP:~/Desktop$ 
+'''
+MODELS = [
+    "llama3.2:3b",
+    "llama2-uncensored:7b",
+    "qwen2.5-coder:7b",
+    "dolphin3:8b",
+    "moondream:latest",
+    "mistral:7b-instruct",
+    "ornith:9b",
+    "codellama:13b",
+    "qwen3:8b",
+    "deepseek-r1:1.5b",
+    "deepseek-coder:1.3b",
+    "LlaVa:latest",
+    
+]
+API_URL = "http://localhost:11434/api/generate"
+def send_prompt():
+    model = model_var.get()
+    prompt = prompt_entry.get("1.0", tk.END).strip()
+    if prompt == "":
+        output_text.insert(tk.END, "\nPlease enter a prompt.\n")
+        return
+    ic("MODEL:", model)
+    ic("PROMPT:", prompt)
+    output_text.insert(tk.END, "\n=============================\n")
+    output_text.insert(tk.END, f"MODEL: {model}\n")
+    output_text.insert(tk.END, f"PROMPT:\n{prompt}\n\n")
+    try:
+        payload = {
+            "model": model,
+            "prompt": prompt
+        }
+        response = requests.post(
+            API_URL,
+            json=payload,
+            stream=True,
+            timeout=800
+        )
+        full_text = ""
+        for line in response.iter_lines():
+            if line:
+                decoded = line.decode("utf-8")
+                data = json.loads(decoded)
+                ic(data)
+                if "response" in data:
+                    chunk = data["response"]
+                    full_text += chunk
+                    output_text.insert(tk.END, chunk)
+                    output_text.update()
+        output_text.insert(tk.END, "\n\n")
+        output_text.see(tk.END)
+    except Exception as e:
+        ic("ERROR:", e)
+        output_text.insert(tk.END, f"\nERROR:\n{e}\n")
+    prompt_entry.delete("1.0", tk.END)
+    prompt_entry.focus_set()
+def clear_output():
+    output_text.delete("1.0", tk.END)
+# Color Theme Tokens matching ZoomPan Studio
+BG_DARK = "#0f1319"
+PANEL_BG = "#161c26"
+BORDER_COLOR = "#263042"
+ACCENT_CYAN = "#00e5ff"
+ACCENT_BLUE = "#2563eb"
+ACCENT_GREEN = "#10b981"
+TEXT_MAIN = "#f3f4f6"
+TEXT_MUTED = "#9ca3af"
+
+FONT_MAIN = ("Inter", 10)
+FONT_BOLD = ("Inter", 10, "bold")
+FONT_TITLE = ("Inter", 11, "bold")
+
+root = tk.Tk()
+root.title("AI Model Experiment Console - ZoomPan Studio Theme")
+root.geometry("1000x750")
+root.configure(bg=BG_DARK)
+
+# Configure ttk Style
+style = ttk.Style()
+style.theme_use("clam")
+style.configure("TCombobox", 
+                fieldbackground=PANEL_BG, 
+                background=PANEL_BG, 
+                foreground=TEXT_MAIN, 
+                darkcolor=BORDER_COLOR, 
+                lightcolor=BORDER_COLOR, 
+                arrowcolor=ACCENT_CYAN)
+style.map("TCombobox", fieldbackground=[("readonly", PANEL_BG)], foreground=[("readonly", TEXT_MAIN)])
+
+# Header & Model Selector
+lbl_model = tk.Label(root, text="SELECT MODEL", bg=BG_DARK, fg=ACCENT_CYAN, font=FONT_TITLE)
+lbl_model.pack(anchor="w", padx=14, pady=(12, 4))
+
+model_var = tk.StringVar(value=MODELS[0])
+model_dropdown = ttk.Combobox(
+    root,
+    textvariable=model_var,
+    values=MODELS,
+    state="readonly",
+    font=FONT_MAIN
+)
+model_dropdown.pack(fill=tk.X, padx=14, pady=(0, 8))
+
+# Prompt Input
+lbl_prompt = tk.Label(root, text="ENTER PROMPT", bg=BG_DARK, fg=TEXT_MUTED, font=FONT_TITLE)
+lbl_prompt.pack(anchor="w", padx=14, pady=(8, 4))
+
+prompt_entry = scrolledtext.ScrolledText(
+    root,
+    wrap=tk.WORD,
+    height=5,
+    bg=PANEL_BG,
+    fg=TEXT_MAIN,
+    insertbackground=ACCENT_CYAN,
+    selectbackground=ACCENT_BLUE,
+    selectforeground="#ffffff",
+    relief="flat",
+    highlightbackground=BORDER_COLOR,
+    highlightthickness=1,
+    font=FONT_MAIN
+)
+prompt_entry.pack(fill=tk.BOTH, padx=14, pady=(0, 8))
+
+# Action Buttons Frame
+button_frame = tk.Frame(root, bg=BG_DARK)
+button_frame.pack(fill=tk.X, padx=14, pady=4)
+
+send_button = tk.Button(
+    button_frame,
+    text="▶ Send to AI",
+    command=send_prompt,
+    bg=ACCENT_BLUE,
+    fg="#ffffff",
+    activebackground="#1d4ed8",
+    activeforeground="#ffffff",
+    relief="flat",
+    font=FONT_BOLD,
+    width=16,
+    pady=6,
+    padx=8
+)
+send_button.pack(side=tk.LEFT, padx=(0, 8))
+
+clear_button = tk.Button(
+    button_frame,
+    text="🗑 Clear Output",
+    command=clear_output,
+    bg=PANEL_BG,
+    fg=TEXT_MAIN,
+    activebackground="#263042",
+    activeforeground="#ffffff",
+    relief="flat",
+    font=FONT_MAIN,
+    width=16,
+    pady=6,
+    padx=8
+)
+
+clear_button.pack(side=tk.LEFT)
+
+# AI Response Area
+lbl_output = tk.Label(root, text="AI RESPONSES", bg=BG_DARK, fg=ACCENT_CYAN, font=FONT_TITLE)
+lbl_output.pack(anchor="w", padx=14, pady=(12, 4))
+
+output_text = scrolledtext.ScrolledText(
+    root,
+    wrap=tk.WORD,
+    height=18,
+    bg=PANEL_BG,
+    fg=TEXT_MAIN,
+    insertbackground=ACCENT_CYAN,
+    selectbackground=ACCENT_BLUE,
+    selectforeground="#ffffff",
+    relief="flat",
+    highlightbackground=BORDER_COLOR,
+    highlightthickness=1,
+    font=("Consolas", 10)
+)
+output_text.pack(fill=tk.BOTH, padx=14, pady=(0, 14), expand=True)
+
+prompt_entry.focus_set()
+root.mainloop()

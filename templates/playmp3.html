@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MP3 Upload and Player</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        form {
+            margin: 20px 0;
+        }
+        textarea {
+            width: 80%;
+            height: 150px;
+            margin: 20px 0;
+        }
+        audio {
+            margin-top: 20px;
+        }
+        .refresh-button {
+            display: inline-block;
+            margin: 20px 0;
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        .refresh-button:hover {
+            background-color: #0056b3;
+        }
+        .error {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>MP3 Upload and Player</h1>
+    
+    <!-- Upload Form -->
+    <form action="/mp3_upload" method="post" enctype="multipart/form-data">
+        <label for="file">Upload MP3 File:</label>
+        <input type="file" name="file" accept=".mp3" required>
+        <button type="submit">Upload</button>
+    </form>
+    
+    <!-- Optional Error Message -->
+    {% if error %}
+    <p class="error">{{ error }}</p>
+    {% endif %}
+    
+    <!-- Text Area for Additional Input -->
+    <textarea id="textarea_content" name="textarea_content" placeholder="Enter additional information here..."></textarea><br><br>
+    
+    <!-- MP3 Player -->
+    {% if audio_file %}
+    <h2>Playing Uploaded MP3:</h2>
+    <audio controls>
+        <source src="{{ url_for('static', filename=audio_file) }}" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+    {% endif %}
+    
+    <a href="{{ url_for('index') }}" class="refresh-button">Home</a>
+</body>
+</html>

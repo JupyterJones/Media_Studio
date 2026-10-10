@@ -1,0 +1,49 @@
+{
+  "project_name": "demo",
+  "image_filename": "sample.jpg",
+  "image_url": null,
+  "image_width": 1376,
+  "image_height": 768,
+  "timestamp": "2026-08-03 04:02:05",
+  "points": [
+    {
+      "id": "pt_1785700712948_798",
+      "x": 316,
+      "y": 467,
+      "label": "Cabin Door",
+      "bubble_style": "speech",
+      "zoom_enabled": true,
+      "zoom": 2.3,
+      "hold_duration": 1.5,
+      "transition_duration": 2,
+      "x_ratio": 0.229651,
+      "y_ratio": 0.608073
+    },
+    {
+      "id": "pt_1785700712960_419",
+      "x": 688,
+      "y": 538,
+      "label": "Pier & Lake",
+      "bubble_style": "speech",
+      "zoom_enabled": true,
+      "zoom": 1.7,
+      "hold_duration": 1.5,
+      "transition_duration": 2,
+      "x_ratio": 0.5,
+      "y_ratio": 0.700521
+    },
+    {
+      "id": "pt_1785700712965_399",
+      "x": 894,
+      "y": 230,
+      "label": "Mountain Peak",
+      "bubble_style": "speech",
+      "zoom_enabled": true,
+      "zoom": 2.6,
+      "hold_duration": 1.5,
+      "transition_duration": 2,
+      "x_ratio": 0.649709,
+      "y_ratio": 0.299479
+    }
+  ]
+}

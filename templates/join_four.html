@@ -1,0 +1,52 @@
+<-- join_four.html -->
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Select Video Order</title>
+        <style>
+        body { background: black; color: white; font-family: sans-serif; }
+        video { width: 300px; display: block; margin-bottom: 10px; }
+        .grid { display: flex; flex-wrap: wrap; }
+        .box { margin: 10px; padding: 10px; border: 1px solid #555; background: #222; width: 320px; }
+        .order-group { margin-top: 10px; }
+        .error { color: red; }
+        a{font-size: 30px; color: orange; }
+        p, label, pre {
+        color: var(--text-main);
+        font-family: var(--font-mono);
+        font-size: 24px;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        }
+        .wrap {white-space: pre-wrap;word-wrap: break-word;}
+        </style>
+    </head>
+    <body>
+        <h1>Assign Join Order (1–4)</h1>
+        <a href="/">HOME</a><br />
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="error">{{ messages[0] }}</div>
+        {% endif %}
+    {% endwith %}
+    <form method="POST" action="/merge">
+        <div class="grid">
+            {% for video in video_files %}
+                <div class="box">
+                <video src="{{ url_for('static', filename='output/../results/' + video) }}" controls></video>
+                <strong class="wrap">{{ video }}</strong>
+                <div class="order-group wrap">
+                    {% for i in range(1, 5) %}
+                        <label>
+                            <input type="radio" name="order_{{ video }}" value="{{ i }}"> {{ i }}
+                        </label>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    <br>
+    <button type="submit">Create Merged Video</button>
+</form>
+</body>
+</html>

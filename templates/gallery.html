@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Gallery</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            text-align: center;
+        }
+        .gallery {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .gallery-item {
+            margin: 20px;
+        }
+        .gallery-item img {
+            max-width: 200px;
+            max-height: 240px;
+            display: block;
+            margin: 10px auto;
+        }
+        .sp {
+            display: block;
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 10px;
+            max-width: 300px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            
+        }
+
+        .spi {
+            display: block;
+            text-align: center;
+            color:yellow;
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 10px;
+            max-width: 300px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            
+        }        
+        a {
+            color: #3498db;
+            font-size: 3em;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Image Gallery / gallery.html </h1>
+    <a href="{{ url_for('home2') }}">Home2</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="{{ url_for('index') }}">Home</a>
+    <div class="gallery">
+        {% for item in gallery_data %}
+        <div class="gallery-item">
+            <h3 class='spi' >Directory: {{ item.directory }}</h3>
+            {% for image in item.images %}
+            <img src="{{ image }}" alt="Image">
+            <p class='sp'>{{ image }}</p>
+            {% endfor %}<hr>
+        </div><hr>
+        {% endfor %}
+    </div>
+</body>
+</html>

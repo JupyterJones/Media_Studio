@@ -1,0 +1,448 @@
+<!-- templates/system_monitor_widget.html -->
+<style>
+    /* System Resource Monitor HUD & Badge */
+    .sys-monitor-wrap {
+        display: inline-flex;
+        align-items: center;
+        position: relative;
+        font-family: inherit;
+        z-index: 1050;
+    }
+
+    .sys-pill-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(15, 23, 42, 0.85);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 24px;
+        padding: 6px 14px;
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: #e2e8f0;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+        user-select: none;
+    }
+
+    .sys-pill-btn:hover {
+        background: rgba(30, 41, 59, 0.95);
+        border-color: #38bdf8;
+        transform: translateY(-1px);
+        box-shadow: 0 6px 16px rgba(56, 189, 248, 0.25);
+    }
+
+    .sys-status-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background-color: #10b981;
+        display: inline-block;
+        box-shadow: 0 0 8px #10b981;
+        transition: background-color 0.3s, box-shadow 0.3s;
+    }
+
+    .dot-pulse {
+        animation: sysPulse 2s infinite ease-in-out;
+    }
+
+    @keyframes sysPulse {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0.4; transform: scale(0.85); }
+    }
+
+    /* HUD Dropdown Overlay */
+    .sys-hud-dropdown {
+        position: absolute;
+        top: calc(100% + 8px);
+        right: 0;
+        width: 330px;
+        background: rgba(14, 18, 34, 0.96);
+        backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        border-radius: 14px;
+        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6), 0 0 24px rgba(0, 240, 255, 0.15);
+        padding: 16px 18px;
+        display: none;
+        flex-direction: column;
+        gap: 14px;
+        text-align: left;
+        z-index: 2000;
+        animation: hudSlide 0.18s ease-out;
+    }
+
+    @keyframes hudSlide {
+        from { opacity: 0; transform: translateY(-6px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .sys-hud-dropdown.open {
+        display: flex;
+    }
+
+    .sys-hud-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-bottom: 8px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .sys-hud-title {
+        font-size: 0.95rem;
+        font-weight: 700;
+        color: #f8fafc;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .sys-hud-close {
+        background: none;
+        border: none;
+        color: #94a3b8;
+        font-size: 1.2rem;
+        cursor: pointer;
+        padding: 0 4px;
+        line-height: 1;
+    }
+
+    .sys-hud-close:hover {
+        color: #f8fafc;
+    }
+
+    /* Meter Bars */
+    .sys-meter-group {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .sys-meter-item {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .sys-meter-label-row {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.78rem;
+        color: #cbd5e1;
+    }
+
+    .sys-meter-track {
+        width: 100%;
+        height: 7px;
+        background: rgba(255, 255, 255, 0.08);
+        border-radius: 4px;
+        overflow: hidden;
+    }
+
+    .sys-meter-fill {
+        height: 100%;
+        width: 0%;
+        border-radius: 4px;
+        transition: width 0.4s ease, background-color 0.4s ease;
+    }
+
+    /* Warning Alert Banner */
+    .sys-busy-alert {
+        display: none;
+        padding: 8px 12px;
+        border-radius: 8px;
+        background: rgba(245, 158, 11, 0.15);
+        border: 1px solid rgba(245, 158, 11, 0.35);
+        color: #fbbf24;
+        font-size: 0.78rem;
+        line-height: 1.35;
+    }
+
+    .sys-busy-alert.overloaded {
+        background: rgba(239, 68, 68, 0.18);
+        border-color: rgba(239, 68, 68, 0.45);
+        color: #fca5a5;
+    }
+
+    /* Actions */
+    .sys-hud-actions {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        padding-top: 8px;
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .btn-clean-mem {
+        flex: 1;
+        background: linear-gradient(135deg, rgba(0, 240, 255, 0.15) 0%, rgba(56, 189, 248, 0.25) 100%);
+        border: 1px solid #38bdf8;
+        color: #38bdf8;
+        font-weight: 700;
+        font-size: 0.78rem;
+        padding: 6px 12px;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.18s ease;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+    }
+
+    .btn-clean-mem:hover {
+        background: #38bdf8;
+        color: #080812;
+        box-shadow: 0 0 12px rgba(56, 189, 248, 0.4);
+    }
+
+    .btn-hud-link {
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        color: #cbd5e1;
+        font-weight: 600;
+        font-size: 0.76rem;
+        padding: 6px 10px;
+        border-radius: 6px;
+        text-decoration: none;
+        transition: all 0.18s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        white-space: nowrap;
+    }
+
+    .btn-hud-link:hover {
+        background: rgba(255, 255, 255, 0.15);
+        color: #fff;
+        border-color: #38bdf8;
+    }
+</style>
+
+<div class="sys-monitor-wrap" id="sysMonitorWidget">
+    <!-- Live Badge Pill -->
+    <div class="sys-pill-btn" onclick="toggleSysHud()" title="Click to view full system load & diagnostics">
+        <span class="sys-status-dot dot-pulse" id="sysDot"></span>
+        <span id="sysStatusText">System: Checking...</span>
+    </div>
+
+    <!-- HUD Dropdown Panel -->
+    <div class="sys-hud-dropdown" id="sysHudDropdown">
+        <div class="sys-hud-header">
+            <div class="sys-hud-title">
+                <span>🖥️</span>
+                <span>System Resource Load</span>
+            </div>
+            <button class="sys-hud-close" onclick="toggleSysHud()" title="Close">&times;</button>
+        </div>
+
+        <!-- Warning / Busy Alert -->
+        <div class="sys-busy-alert" id="sysBusyAlert">
+            <span id="sysBusyAlertMsg">⚠️ System resources are heavily occupied.</span>
+        </div>
+
+        <!-- Meter Bars -->
+        <div class="sys-meter-group">
+            <!-- CPU Meter -->
+            <div class="sys-meter-item">
+                <div class="sys-meter-label-row">
+                    <span>CPU Usage</span>
+                    <span id="cpuValText">0%</span>
+                </div>
+                <div class="sys-meter-track">
+                    <div class="sys-meter-fill" id="cpuBarFill" style="background-color: #10b981;"></div>
+                </div>
+            </div>
+
+            <!-- RAM Meter -->
+            <div class="sys-meter-item">
+                <div class="sys-meter-label-row">
+                    <span>RAM Memory</span>
+                    <span id="ramValText">0 GB / 0 GB</span>
+                </div>
+                <div class="sys-meter-track">
+                    <div class="sys-meter-fill" id="ramBarFill" style="background-color: #10b981;"></div>
+                </div>
+            </div>
+
+            <!-- Swap Meter -->
+            <div class="sys-meter-item">
+                <div class="sys-meter-label-row">
+                    <span>Swap File Usage</span>
+                    <span id="swapValText">0 GB</span>
+                </div>
+                <div class="sys-meter-track">
+                    <div class="sys-meter-fill" id="swapBarFill" style="background-color: #38bdf8;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Active Tasks List -->
+        <div id="activeTasksSection" style="display: none; font-size: 0.78rem; color: #cbd5e1; background: rgba(0,0,0,0.25); padding: 6px 10px; border-radius: 6px;">
+            <div style="font-weight: 600; color: #f59e0b; margin-bottom: 3px;">Active Background Tasks:</div>
+            <div id="activeTasksList" style="font-family: monospace; font-size: 0.75rem; color: #e2e8f0;"></div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="sys-hud-actions">
+            <button class="btn-clean-mem" onclick="triggerFreeMemory(event)">
+                <span>🧹</span>
+                <span id="freeMemBtnText">Free RAM (GC)</span>
+            </button>
+            <a href="/gc_plot" target="_blank" class="btn-hud-link" title="Open GC Plot in new tab">📈 Plot</a>
+            <a href="/gc_logs" target="_blank" class="btn-hud-link" title="Open GC Logs in new tab">📜 Logs</a>
+        </div>
+    </div>
+</div>
+
+<script>
+(function() {
+    let hudOpen = false;
+
+    window.toggleSysHud = function() {
+        hudOpen = !hudOpen;
+        const hud = document.getElementById('sysHudDropdown');
+        if (hud) {
+            hud.classList.toggle('open', hudOpen);
+        }
+    };
+
+    // Close HUD on outside click
+    document.addEventListener('click', function(e) {
+        const widget = document.getElementById('sysMonitorWidget');
+        if (hudOpen && widget && !widget.contains(e.target)) {
+            hudOpen = false;
+            const hud = document.getElementById('sysHudDropdown');
+            if (hud) hud.classList.remove('open');
+        }
+    });
+
+    function getLoadColor(percent) {
+        if (percent >= 90) return '#ef4444'; // Red
+        if (percent >= 75) return '#f59e0b'; // Amber
+        if (percent >= 50) return '#38bdf8'; // Blue
+        return '#10b981'; // Green
+    }
+
+    async function pollSystemStatus() {
+        try {
+            const resp = await fetch('/api/system_status');
+            if (!resp.ok) return;
+            const data = await resp.json();
+
+            // Status dot & text
+            const dot = document.getElementById('sysDot');
+            const statusText = document.getElementById('sysStatusText');
+            if (dot) {
+                dot.style.backgroundColor = data.badge_color;
+                dot.style.boxShadow = `0 0 10px ${data.badge_color}`;
+            }
+
+            if (statusText) {
+                if (data.status === 'overloaded') {
+                    statusText.textContent = `🔴 OVERLOADED • CPU ${data.cpu_percent}% | RAM ${data.ram_percent}%`;
+                } else if (data.status === 'busy') {
+                    const taskName = data.active_tasks && data.active_tasks.length ? ` (${data.active_tasks[0]})` : '';
+                    statusText.textContent = `🟡 Busy${taskName} • CPU ${data.cpu_percent}%`;
+                } else {
+                    statusText.textContent = `🟢 Ready • CPU ${data.cpu_percent}% | RAM ${data.ram_percent}%`;
+                }
+            }
+
+            // CPU Bar
+            const cpuVal = document.getElementById('cpuValText');
+            const cpuBar = document.getElementById('cpuBarFill');
+            if (cpuVal) cpuVal.textContent = `${data.cpu_percent}%`;
+            if (cpuBar) {
+                cpuBar.style.width = `${Math.min(data.cpu_percent, 100)}%`;
+                cpuBar.style.backgroundColor = getLoadColor(data.cpu_percent);
+            }
+
+            // RAM Bar
+            const ramVal = document.getElementById('ramValText');
+            const ramBar = document.getElementById('ramBarFill');
+            if (ramVal) ramVal.textContent = `${data.ram_used_gb} GB / ${data.ram_total_gb} GB (${data.ram_percent}%)`;
+            if (ramBar) {
+                ramBar.style.width = `${Math.min(data.ram_percent, 100)}%`;
+                ramBar.style.backgroundColor = getLoadColor(data.ram_percent);
+            }
+
+            // Swap Bar
+            const swapVal = document.getElementById('swapValText');
+            const swapBar = document.getElementById('swapBarFill');
+            if (swapVal) swapVal.textContent = `${data.swap_used_gb} GB / ${data.swap_total_gb} GB (${data.swap_percent}%)`;
+            if (swapBar) {
+                swapBar.style.width = `${Math.min(data.swap_percent, 100)}%`;
+                swapBar.style.backgroundColor = getLoadColor(data.swap_percent);
+            }
+
+            // Busy alert banner
+            const alertBox = document.getElementById('sysBusyAlert');
+            const alertMsg = document.getElementById('sysBusyAlertMsg');
+            if (alertBox && alertMsg) {
+                if (data.is_overloaded) {
+                    alertBox.style.display = 'block';
+                    alertBox.className = 'sys-busy-alert overloaded';
+                    alertMsg.textContent = '🚨 Extreme system load! CPU or Memory is nearly exhausted. Hold off on running heavy renders.';
+                } else if (data.is_busy) {
+                    alertBox.style.display = 'block';
+                    alertBox.className = 'sys-busy-alert';
+                    alertMsg.textContent = data.message;
+                } else {
+                    alertBox.style.display = 'none';
+                }
+            }
+
+            // Active tasks list
+            const tasksSection = document.getElementById('activeTasksSection');
+            const tasksList = document.getElementById('activeTasksList');
+            if (tasksSection && tasksList) {
+                if (data.active_tasks && data.active_tasks.length > 0) {
+                    tasksSection.style.display = 'block';
+                    tasksList.innerHTML = data.active_tasks.map(t => `<div>• ${t}</div>`).join('');
+                } else {
+                    tasksSection.style.display = 'none';
+                }
+            }
+            // Dispatch event for any page-specific telemetry listeners
+            window.dispatchEvent(new CustomEvent('systemStatusUpdate', { detail: data }));
+        } catch (e) {
+            console.debug("System status poll error:", e);
+        }
+    }
+
+    window.pollSystemStatus = pollSystemStatus;
+    window.getLoadColor = getLoadColor;
+
+    window.setSystemPollSpeed = function(intervalMs) {
+        if (window._sysPollInterval) clearInterval(window._sysPollInterval);
+        window._sysPollInterval = setInterval(pollSystemStatus, intervalMs);
+    };
+
+    window.triggerFreeMemory = async function(e) {
+        if (e) e.stopPropagation();
+        const btnText = document.getElementById('freeMemBtnText');
+        if (btnText) btnText.textContent = "Cleaning...";
+        try {
+            const resp = await fetch('/api/free_memory', { method: 'POST' });
+            const data = await resp.json();
+            if (btnText) btnText.textContent = `Freed ${data.objects_collected} Objects!`;
+            setTimeout(() => {
+                if (btnText) btnText.textContent = "Free Inactive RAM (GC)";
+            }, 2500);
+            pollSystemStatus();
+        } catch (err) {
+            if (btnText) btnText.textContent = "Error freeing RAM";
+            setTimeout(() => {
+                if (btnText) btnText.textContent = "Free Inactive RAM (GC)";
+            }, 2000);
+        }
+    };
+
+    // Initial poll and recurring poll every 3.5s
+    pollSystemStatus();
+    window._sysPollInterval = setInterval(pollSystemStatus, 3500);
+})();
+</script>

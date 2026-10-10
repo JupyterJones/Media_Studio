@@ -1,0 +1,318 @@
+{% extends 'mk_novel.html' %}
+{% block title %}Merge Novel Videos | Media Studio{% endblock %}
+
+{% block content %}
+<style>
+    .workspace-header {
+        margin-bottom: 20px;
+    }
+
+    .workspace-header h1 {
+        font-size: 1.85rem;
+        margin: 0 0 8px 0;
+    }
+
+    .workspace-header p {
+        color: var(--text-muted);
+        margin: 0;
+        font-size: 0.95rem;
+    }
+
+    /* Selection Control Bar */
+    .selection-bar {
+        position: sticky;
+        top: 60px;
+        z-index: 900;
+        background: rgba(14, 16, 28, 0.94);
+        border: 1px solid var(--accent);
+        border-radius: 10px;
+        padding: 14px 20px;
+        margin-bottom: 24px;
+        backdrop-filter: blur(12px);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 16px;
+        box-shadow: 0 4px 25px rgba(0, 240, 255, 0.2);
+    }
+
+    .selection-summary {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        flex-wrap: wrap;
+    }
+
+    .selection-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.9rem;
+        font-weight: 600;
+    }
+
+    .pill-value {
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        padding: 4px 10px;
+        border-radius: 6px;
+        color: #fff;
+        font-weight: normal;
+        max-width: 220px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        display: inline-block;
+    }
+
+    .pill-v1 .pill-value {
+        border-color: rgba(0, 240, 255, 0.5);
+        color: var(--accent);
+        background: rgba(0, 240, 255, 0.1);
+    }
+
+    .pill-v2 .pill-value {
+        border-color: rgba(184, 0, 255, 0.5);
+        color: #c084fc;
+        background: rgba(184, 0, 255, 0.1);
+    }
+
+    .btn-submit-merge {
+        background: linear-gradient(135deg, #00f0ff, #7000ff);
+        color: #ffffff;
+        border: none;
+        border-radius: 8px;
+        padding: 10px 24px;
+        font-size: 0.95rem;
+        font-weight: 700;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: transform 0.15s, box-shadow 0.2s, filter 0.2s;
+        box-shadow: 0 4px 15px rgba(0, 240, 255, 0.35);
+    }
+
+    .btn-submit-merge:hover {
+        transform: translateY(-1px);
+        filter: brightness(1.15);
+        box-shadow: 0 6px 20px rgba(0, 240, 255, 0.5);
+    }
+
+    /* Multi-Column Responsive Video Grid */
+    .video-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 20px;
+        margin-top: 10px;
+    }
+
+    .video-card {
+        background: rgba(14, 16, 28, 0.85);
+        border: 1px solid var(--border-card);
+        border-radius: 12px;
+        padding: 14px;
+        display: flex;
+        flex-direction: column;
+        transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+    }
+
+    .video-card:hover {
+        border-color: rgba(255, 255, 255, 0.25);
+        transform: translateY(-2px);
+    }
+
+    .video-card.selected-v1 {
+        border-color: var(--accent);
+        box-shadow: 0 0 16px rgba(0, 240, 255, 0.4);
+    }
+
+    .video-card.selected-v2 {
+        border-color: var(--accent-purple);
+        box-shadow: 0 0 16px rgba(184, 0, 255, 0.4);
+    }
+
+    .video-box {
+        width: 100%;
+        background: #000;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .video-box video {
+        width: 100%;
+        height: 200px;
+        object-fit: contain;
+        background: #000;
+        display: block;
+    }
+
+    .video-info {
+        margin: 10px 0 12px 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .video-name {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--text-main);
+        word-break: break-all;
+    }
+
+    /* Radio Selectors */
+    .radio-group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-top: auto;
+    }
+
+    .radio-label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        padding: 8px 12px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        cursor: pointer;
+        transition: background 0.15s, border-color 0.15s;
+    }
+
+    .radio-label:hover {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .radio-label input[type="radio"] {
+        margin: 0;
+        cursor: pointer;
+        accent-color: var(--accent);
+    }
+
+    .radio-label.active-v1 {
+        border-color: var(--accent);
+        background: rgba(0, 240, 255, 0.12);
+        color: var(--accent);
+        font-weight: 600;
+    }
+
+    .radio-label.active-v2 {
+        border-color: var(--accent-purple);
+        background: rgba(184, 0, 255, 0.12);
+        color: #c084fc;
+        font-weight: 600;
+    }
+
+    .badge-empty {
+        padding: 30px;
+        text-align: center;
+        color: var(--text-muted);
+        font-size: 1rem;
+    }
+</style>
+
+<div class="workspace-header">
+    <h1>🎞️ Merge Novel Videos</h1>
+    <p>Select any two videos below to resize, normalize to 512×768, and concatenate into a single sequential novel video.</p>
+</div>
+
+<form action="/concatenate_novel" method="POST" id="mergeForm">
+    <!-- Sticky Control Bar -->
+    <div class="selection-bar">
+        <div class="selection-summary">
+            <div class="selection-tag pill-v1">
+                <span>1️⃣ Video 1:</span>
+                <span class="pill-value" id="displayV1">None Selected</span>
+            </div>
+            <div class="selection-tag pill-v2">
+                <span>2️⃣ Video 2:</span>
+                <span class="pill-value" id="displayV2">None Selected</span>
+            </div>
+        </div>
+
+        <button type="submit" class="btn-submit-merge" id="btnSubmit">
+            <span>🚀 Concatenate Videos</span>
+        </button>
+    </div>
+
+    <!-- Multi-Column Video Grid -->
+    <div class="video-grid">
+        {% for video in mp4_files %}
+        {% set filename = video.split('/')[-1] %}
+        <div class="video-card" id="card_{{ loop.index }}">
+            <div class="video-box">
+                <video controls preload="metadata" playsinline>
+                    <source src="/{{ video if not video.startswith('/') else video[1:] }}" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+
+            <div class="video-info">
+                <span class="video-name" title="{{ video }}">{{ filename }}</span>
+            </div>
+
+            <!-- Video 1 & Video 2 Radio Selectors -->
+            <div class="radio-group">
+                <label class="radio-label" id="label_v1_{{ loop.index }}">
+                    <input type="radio" name="video1" value="{{ video }}" required onchange="onSelectVideo('v1', '{{ filename }}', {{ loop.index }})">
+                    <span>1️⃣ Select as 1st Video</span>
+                </label>
+                <label class="radio-label" id="label_v2_{{ loop.index }}">
+                    <input type="radio" name="video2" value="{{ video }}" required onchange="onSelectVideo('v2', '{{ filename }}', {{ loop.index }})">
+                    <span>2️⃣ Select as 2nd Video</span>
+                </label>
+            </div>
+        </div>
+        {% else %}
+        <div class="badge-empty" style="grid-column: 1 / -1;">
+            No MP4 video files found in <code>static/temp_exp/</code>. Generate videos first in Media Studio or Avatar Studio!
+        </div>
+        {% endfor %}
+    </div>
+</form>
+
+<script>
+    let selectedV1Card = null;
+    let selectedV2Card = null;
+
+    function onSelectVideo(type, filename, cardIndex) {
+        if (type === 'v1') {
+            document.getElementById('displayV1').textContent = filename;
+            
+            // Remove previous active classes for v1
+            document.querySelectorAll('.radio-label.active-v1').forEach(el => el.classList.remove('active-v1'));
+            document.querySelectorAll('.video-card.selected-v1').forEach(el => el.classList.remove('selected-v1'));
+            
+            // Add to new selection
+            const label = document.getElementById('label_v1_' + cardIndex);
+            const card = document.getElementById('card_' + cardIndex);
+            if (label) label.classList.add('active-v1');
+            if (card) card.classList.add('selected-v1');
+        } else if (type === 'v2') {
+            document.getElementById('displayV2').textContent = filename;
+            
+            // Remove previous active classes for v2
+            document.querySelectorAll('.radio-label.active-v2').forEach(el => el.classList.remove('active-v2'));
+            document.querySelectorAll('.video-card.selected-v2').forEach(el => el.classList.remove('selected-v2'));
+            
+            // Add to new selection
+            const label = document.getElementById('label_v2_' + cardIndex);
+            const card = document.getElementById('card_' + cardIndex);
+            if (label) label.classList.add('active-v2');
+            if (card) card.classList.add('selected-v2');
+        }
+    }
+
+    document.getElementById('mergeForm').addEventListener('submit', function() {
+        const btn = document.getElementById('btnSubmit');
+        btn.disabled = true;
+        btn.innerHTML = '<span>⏳ Resizing & Concatenating Videos... Please wait</span>';
+        btn.style.opacity = '0.8';
+    });
+</script>
+{% endblock %}

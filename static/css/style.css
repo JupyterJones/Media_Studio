@@ -1,0 +1,42 @@
+/* =========================================================
+   MEDIA STUDIO - LATENT HORIZON STYLE THEME
+   Dark Space Aesthetic // Glassmorphism & Neon Glow Accents
+   ========================================================= */
+
+@import url("themed.css");
+
+/* Video player controls & sliders */
+video {
+  max-width: 100%;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+}
+
+input[type="range"] {
+  width: 100%;
+  max-width: 400px;
+  margin: 12px 0;
+  -webkit-appearance: none;
+  appearance: none;
+  background: rgba(255, 255, 255, 0.1);
+  height: 6px;
+  border-radius: 3px;
+  outline: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  background: var(--accent-primary);
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 0 10px var(--accent-primary);
+  transition: transform var(--transition-speed);
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+}

@@ -1,0 +1,140 @@
+<!-- sound2video.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Combine Video and Audio</title>
+    <script>
+        function handleSubmit() {
+            const videoSelected = document.querySelector('input[name="video"]:checked');
+            const audioSelected = document.querySelector('input[name="audio"]:checked');
+
+            if (!videoSelected || !audioSelected) {
+                alert("Please select both a video and an audio file.");
+                return false;
+            }
+
+            const userConfirmed = confirm("Video and audio selected. Do you want to continue?");
+            return userConfirmed;
+        }
+    </script>
+        <link rel="stylesheet" href="/static/css/dark.css">
+            <style>
+        
+video {
+    max-width: 200px;
+    height: auto;
+}
+
+    </style>
+</head>
+<body>
+    <h2>Select Video and Audio to Combine</h2>
+    <form id="video-audio-form" action="/combine" method="POST" onsubmit="return handleSubmit()">
+        <h3>Select Video: templates2/sound2video.html</h3>
+        <div>
+            {% if videos %}
+                {% for video in videos %}
+                    <input type="radio" name="video" value="{{ video }}" id="{{ video }}">
+                          <video controls>
+                            <source src="/static/temp_exp/{{ video }}" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    <label for="{{ video }}">{{ video }}</label><br>
+                {% endfor %}
+            {% else %}
+                <p>No videos available</p>
+            {% endif %}
+        </div>
+
+        <h3>Select Audio:</h3>
+        {{audios}}
+        <div>
+            {% if audios %}
+                {% for audio in audios %}
+                    <input type="radio" name="audio" value="{{ audio }}" id="{{ audio }}">
+
+                        <audio id="audio_{{ audio }}" controls style="display: none;">
+                            <source src="/static/mp3/{{ audio }}" type="audio/mpeg">
+                                {{ audio }}
+                            Your browser does not support the audio element.
+                        </audio>
+
+                    <label for="{{ audio }}">{{ audio }}</label><br>
+                {% endfor %}
+            {% else %}
+                <p>No audios available</p>
+            {% endif %}
+        </div>
+
+        <button type="submit" id="create-video">Combine Video and Audio</button>
+    </form>
+    <script>
+        // Function to play the selected MP3
+        function playAudio(audioFile) {
+            const audioElement = document.getElementById(`audio_${audioFile}`);
+            
+            // Stop any other audio that's currently playing
+            const audios = document.querySelectorAll('audio');
+            audios.forEach(audio => {
+                if (!audio.paused) {
+                    audio.pause();
+                    audio.currentTime = 0; // Reset to the start
+                }
+            });
+
+            // Play the selected audio
+            audioElement.style.display = 'block'; // Show the hidden audio control
+            audioElement.play();
+        }
+
+        document.getElementById('create-video').addEventListener('click', function() {
+            const form = document.getElementById('video-audio-form');
+            const videoSelected = form.querySelector('input[name="video"]:checked');
+            const audioSelected = form.querySelector('input[name="audio"]:checked');
+
+            // Check if both video and audio are selected
+            if (!videoSelected || !audioSelected) {
+                alert("Please select both a video and an audio file.");
+                return;
+            }
+
+            // Popup confirmation: Continue or Cancel
+            const userConfirmed = confirm("Video and audio selected. Do you want to continue?");
+            if (!userConfirmed) {
+                return;  // User chose 'Cancel', stop the process
+            }
+
+            // Prepare form data manually to ensure video and audio are sent properly
+            const formData = new FormData();
+            formData.append('video', videoSelected.value);
+            formData.append('audio', audioSelected.value);
+
+            // Perform fetch request
+            fetch('/combine', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('output-video-section').innerHTML = `
+                        <h3>Combined Video:</h3>
+                        <video width="200" controls>
+                            <source src="/static/output_videos/${data.output_video}" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    `;
+                } else {
+                    alert(data.error);
+                }
+            })
+            .catch(error => {
+                alert('Error occurred during video processing.');
+                console.error('Error:', error);
+            });
+        });
+    </script>
+</body>
+</html>

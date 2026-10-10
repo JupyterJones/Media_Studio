@@ -1,0 +1,49 @@
+{
+  "project_name": "GoingHome ",
+  "image_filename": "759642552_1090493970318159_3599592464911661042_n_1785765012.webp",
+  "image_url": null,
+  "image_width": 1280,
+  "image_height": 1920,
+  "timestamp": "2026-08-03 21:55:48",
+  "points": [
+    {
+      "id": "pt_1785765026906_181",
+      "x": 358,
+      "y": 621,
+      "label": "Going Home",
+      "bubble_style": "speech_left",
+      "zoom_enabled": true,
+      "zoom": 1.3,
+      "hold_duration": 1.5,
+      "transition_duration": 2,
+      "x_ratio": 0.279687,
+      "y_ratio": 0.323437
+    },
+    {
+      "id": "pt_1785765086520_896",
+      "x": 692,
+      "y": 949,
+      "label": "",
+      "bubble_style": "speech_left",
+      "zoom_enabled": true,
+      "zoom": 1,
+      "hold_duration": 1.5,
+      "transition_duration": 2,
+      "x_ratio": 0.540625,
+      "y_ratio": 0.494271
+    },
+    {
+      "id": "pt_1785765124036_509",
+      "x": 465,
+      "y": 1457,
+      "label": "",
+      "bubble_style": "speech_left",
+      "zoom_enabled": true,
+      "zoom": 1.25,
+      "hold_duration": 1.5,
+      "transition_duration": 2,
+      "x_ratio": 0.363281,
+      "y_ratio": 0.758854
+    }
+  ]
+}

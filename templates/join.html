@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<!-- join.html  -->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<title>Join Image + Audio</title>
+<style>
+    body { background-color: black; color: white; font-family: Arial, sans-serif; }
+    h2 { text-align: center; color: #00ffff; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; padding: 10px; }
+    .box { border: 1px solid #444; padding: 8px; text-align: center; border-radius: 8px; background-color: #111; }
+    img { width: 100%; border-radius: 6px; }
+    button { background-color: #00aaaa; border: none; color: white; padding: 6px 12px; border-radius: 5px; cursor: pointer; margin-top: 5px; }
+    button:hover { background-color: #008888; }
+    audio { width: 100%; margin-top: 5px; }
+    .selected { border: 2px solid #00ffff; }
+</style>
+</head>
+<body>
+<h2>Join Image + Audio</h2>
+<a class="aref" href="{{ url_for('index') }}">HOME</a><hr>
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+<ul style="color:red;">
+    {% for message in messages %}
+    <li>{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+{% endwith %}
+
+<form method="POST" id="joinForm">
+    <input type="hidden" name="image" id="selectedImage">
+    <input type="hidden" name="audio" id="selectedAudio">
+
+    <h3>Select an Image</h3>
+    <div class="grid">
+        {% for img in images %}
+        <div class="box" id="img_{{ loop.index }}">
+            <img src="{{ url_for('static', filename='results/' + img) }}" alt="{{ img }}">
+            <div>{{ img }}</div>
+            <button type="button" onclick="selectImage('{{ img }}', 'img_{{ loop.index }}')">Select Image</button>
+        </div>
+        {% endfor %}
+    </div>
+
+    <h3>Select an Audio</h3>
+    <div class="grid">
+        {% for audio in audios %}
+        <div class="box" id="aud_{{ loop.index }}">
+            <strong>{{ audio }}</strong><br>
+            <audio controls>
+                <source src="{{ url_for('static', filename='results/' + audio) }}" type="audio/mpeg">
+            </audio>
+            <button type="button" onclick="selectAudio('{{ audio }}', 'aud_{{ loop.index }}')">Select Audio</button>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div style="text-align:center; margin-top:20px;">
+        <input type="submit" value="Create Video" style="padding:10px 20px; font-size:16px;">
+    </div>
+</form>
+
+<script>
+let selectedImgBox = null;
+let selectedAudBox = null;
+
+function selectImage(filename, boxId) {
+    document.getElementById('selectedImage').value = filename;
+    if (selectedImgBox) document.getElementById(selectedImgBox).classList.remove('selected');
+    document.getElementById(boxId).classList.add('selected');
+    selectedImgBox = boxId;
+}
+
+function selectAudio(filename, boxId) {
+    document.getElementById('selectedAudio').value = filename;
+    if (selectedAudBox) document.getElementById(selectedAudBox).classList.remove('selected');
+    document.getElementById(boxId).classList.add('selected');
+    selectedAudBox = boxId;
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,202 @@
+<!-- templates/im_on_mp4.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Merge Video on Background Image | Media Studio</title>
+    <link rel="stylesheet" href="/static/css/themed.css">
+    <link rel="stylesheet" href="/static/css/dark.css">
+    <link rel="icon" href="/favicon.ico?v=1">
+    <script src="/static/js/theme.js"></script>
+
+    <style>
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 28px;
+        }
+
+        .header-nav {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .header-nav a {
+            text-decoration: none;
+        }
+
+        .form-card {
+            background: var(--bg-card, rgba(18, 18, 35, 0.75));
+            border: 1px solid var(--border-color, rgba(255, 255, 255, 0.12));
+            border-radius: var(--radius, 10px);
+            padding: 24px;
+            margin-bottom: 30px;
+        }
+
+        .selection-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 24px;
+            margin-bottom: 25px;
+        }
+
+        .field-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .field-group label {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-bright, #fff);
+        }
+
+        select {
+            width: 100%;
+            padding: 10px 12px;
+            background: #080814;
+            color: #fff;
+            border: 1px solid var(--border-color, rgba(255, 255, 255, 0.2));
+            border-radius: 6px;
+            font-size: 0.95rem;
+            outline: none;
+            cursor: pointer;
+        }
+
+        select:focus {
+            border-color: var(--accent-primary, #00f0ff);
+        }
+
+        .preview-box {
+            margin-top: 10px;
+            width: 100%;
+            min-height: 220px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px dashed var(--border-color, rgba(255, 255, 255, 0.15));
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .preview-box video, .preview-box img {
+            max-width: 100%;
+            max-height: 260px;
+            border-radius: 4px;
+            display: block;
+        }
+
+        .btn-submit {
+            padding: 12px 30px;
+            font-size: 1.05rem;
+            font-weight: 700;
+            border: none;
+            border-radius: 6px;
+            background: var(--accent-gradient, linear-gradient(135deg, #00f0ff 0%, #b800ff 100%));
+            color: #080812;
+            cursor: pointer;
+            box-shadow: var(--shadow-glow, 0 2px 12px rgba(0, 240, 255, 0.3));
+            transition: all 0.2s ease;
+        }
+
+        .btn-submit:hover {
+            filter: brightness(1.15);
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header-nav">
+        <a href="/"><button type="button" class="btn">🏠 Home Dashboard</button></a>
+        <a href="/mk_videos"><button type="button" class="btn">🎬 Video Processing</button></a>
+        <a href="/upload_media"><button type="button" class="btn">🎭 Avatar Studio</button></a>
+        <a href="/remember" target="remember_app"><button type="button" class="btn">💾 Remember DB</button></a>
+        <a href="/effects" target="effects_studio"><button type="button" class="btn">🪄 Effects Studio</button></a>
+    </div>
+
+    <h1>🖼️ Merge Video on Background Image</h1>
+    <p style="color: var(--text-muted); margin-bottom: 24px;">
+        Overlay a video clip centered onto a portrait background image (512×768) with decorative typography.
+    </p>
+
+    <div class="form-card">
+        <form action="/merge_video_background" method="POST" id="mergeForm">
+            <div class="selection-row">
+                <!-- Video Selection -->
+                <div class="field-group">
+                    <label for="video_file">📹 Select Overlay Video (from <code>static/temp_exp</code>):</label>
+                    <select name="video_file" id="video_file" onchange="updateVideoPreview()">
+                        {% for video in video_files %}
+                            <option value="{{ video }}">{{ video }}</option>
+                        {% endfor %}
+                    </select>
+                    <div class="preview-box">
+                        <video id="videoPreview" controls preload="metadata">
+                            {% if video_files %}
+                                <source src="/static/temp_exp/{{ video_files[0] }}" type="video/mp4">
+                            {% endif %}
+                            Your browser does not support video.
+                        </video>
+                    </div>
+                </div>
+
+                <!-- Image Selection -->
+                <div class="field-group">
+                    <label for="image_file">🖼️ Select Background Image (from <code>static/novel_images</code>):</label>
+                    <select name="image_file" id="image_file" onchange="updateImagePreview()">
+                        {% for image in image_files %}
+                            <option value="{{ image }}">{{ image }}</option>
+                        {% endfor %}
+                    </select>
+                    <div class="preview-box">
+                        <img id="imagePreview" src="{% if image_files %}/static/novel_images/{{ image_files[0] }}{% endif %}" alt="Background Preview">
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-submit" id="btnSubmit">⚡ Merge Video & Background</button>
+            <span id="processingNote" style="display: none; margin-left: 15px; color: var(--accent-primary, #00f0ff); font-size: 0.95rem;">
+                ⏳ Processing composite video, please wait...
+            </span>
+        </form>
+    </div>
+</div>
+
+<button class="theme-switch-btn" onclick="toggleTheme()">
+    🎨 <span id="themeName">Theme</span>
+</button>
+
+<script>
+    function updateVideoPreview() {
+        const select = document.getElementById('video_file');
+        const video = document.getElementById('videoPreview');
+        if (select.value) {
+            video.src = '/static/temp_exp/' + select.value;
+            video.load();
+        }
+    }
+
+    function updateImagePreview() {
+        const select = document.getElementById('image_file');
+        const img = document.getElementById('imagePreview');
+        if (select.value) {
+            img.src = '/static/novel_images/' + select.value;
+        }
+    }
+
+    document.getElementById('mergeForm').addEventListener('submit', function() {
+        document.getElementById('btnSubmit').disabled = true;
+        document.getElementById('processingNote').style.display = 'inline';
+    });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Media Studio</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/themed.css') }}">
+    <link rel="icon" href="/favicon.ico?v=1">
+    <style>
+        .header-nav {
+            text-align: center;
+            padding: 18px 0;
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 24px;
+        }
+        .header-links {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 12px 0;
+        }
+    </style>
+</head>
+<body>
+    <header class="header-nav">
+        <h1>Media Studio Utilities</h1>
+        <div class="header-links">
+            <a href="{{ url_for('index') }}" class="btn">🏠 Home</a>
+            <a href="{{ url_for('mk_videos') }}" class="btn">🎬 Video Processing</a>
+            <a href="{{ url_for('clean_storage_route') }}" class="btn">🖼️ Image Processing</a>
+            <a href="{{ url_for('home2') }}" class="btn">📝 Blog</a>
+            <a href="{{ url_for('gallery') }}" class="btn">🎨 Gallery</a>
+            <a href="{{ url_for('ask') }}" class="btn">💬 Ask (Ollama)</a>
+            <a href="{{ url_for('ask_gemini') }}" class="btn" style="border-color: #a855f7; color: #c084fc;">✨ Ask Gemini</a>
+            <a href="{{ url_for('view_log') }}" class="btn">📜 View Log</a>
+            <a href="{{ url_for('search') }}" class="btn">🔍 Search</a>
+        </div>
+        <div style="margin-top: 10px;">
+            {% include 'system_monitor_widget.html' %}
+        </div>
+    </header>
+    <div class="container">
+     <main>
+        {% block content %}
+
+
+
+        {% endblock %}
+    </main>
+    <footer>
+        <p>&copy; 2024 FlaskArchitect Blog</p>
+    </footer>
+    </div>
+</body>
+</html>

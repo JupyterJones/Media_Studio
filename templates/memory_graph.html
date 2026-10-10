@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Memory Usage Graph</title>
+</head>
+<body>
+    <h1>Memory Usage Over Time</h1>
+    {% if graph_image %}
+        <img src="{{ url_for('static', filename='graph/' + graph_image) }}" alt="Memory Usage Graph">
+    {% else %}
+        <p>No memory usage graph available yet.</p>
+    {% endif %}
+</body>
+</html>

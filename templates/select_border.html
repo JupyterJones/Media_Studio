@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Select Border</title>
+  </head>
+  <body>
+    <h1>Select Border</h1>
+    <form method="POST" action="{{ url_for('apply_border') }}">
+      <input type="hidden" name="image" value="{{ request.args.get('image') }}">
+      {% for border in borders %}
+        <img src="{{ url_for('static', filename='transparent_borders/'+border) }}" alt="{{ border }}" width="200" height="200">
+        <input type="radio" name="border" value="{{ border }}">
+      {% endfor %}
+      <input type="submit" value="Apply Border">
+    </form>
+  </body>
+</html>

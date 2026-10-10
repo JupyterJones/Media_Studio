@@ -1,0 +1,62 @@
+{
+  "project_name": "firstupload",
+  "image_filename": "comic-page-ecd85e57e71f4057a8d3ccb876ea2375_1785872333.png",
+  "image_url": null,
+  "image_width": 682,
+  "image_height": 1024,
+  "timestamp": "2026-08-05 10:31:39",
+  "points": [
+    {
+      "bubble_style": "thought_left",
+      "hold_duration": 1.4,
+      "id": "pt_1785872352240_734",
+      "label": "Amazing",
+      "transition_duration": 1.7,
+      "x": 130,
+      "x_ratio": 0.190616,
+      "y": 241,
+      "y_ratio": 0.235352,
+      "zoom": 1.95,
+      "zoom_enabled": true
+    },
+    {
+      "bubble_style": "speech_left",
+      "hold_duration": 1.4,
+      "id": "pt_1785872390997_424",
+      "label": "",
+      "transition_duration": 1.7,
+      "x": 527,
+      "x_ratio": 0.772727,
+      "y": 295,
+      "y_ratio": 0.288086,
+      "zoom": 1.6,
+      "zoom_enabled": true
+    },
+    {
+      "bubble_style": "speech_left",
+      "hold_duration": 1.4,
+      "id": "pt_1785872405629_465",
+      "label": "",
+      "transition_duration": 1.7,
+      "x": 142,
+      "x_ratio": 0.208211,
+      "y": 814,
+      "y_ratio": 0.794922,
+      "zoom": 1.15,
+      "zoom_enabled": true
+    },
+    {
+      "bubble_style": "thought_left",
+      "hold_duration": 1.4,
+      "id": "pt_1785872482190_120",
+      "label": "Neat Stuff",
+      "transition_duration": 1.7,
+      "x": 489,
+      "x_ratio": 0.717009,
+      "y": 671,
+      "y_ratio": 0.655273,
+      "zoom": 1.25,
+      "zoom_enabled": true
+    }
+  ]
+}

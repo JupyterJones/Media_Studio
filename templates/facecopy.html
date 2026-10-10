@@ -1,0 +1,19 @@
+<!-- facecopy.html-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Face Swap Result facecopy.html</title>
+</head>
+<body>
+    <h1>Face Swap Application</h1>
+
+    {% if final_video %}
+        <h2>Final Video</h2>
+        <video controls>
+            <source src="{{ final_video }}" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    {% endif %}
+</body>
+</html>

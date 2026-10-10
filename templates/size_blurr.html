@@ -1,0 +1,62 @@
+<!DOCTYPE html>  
+<html lang="en">  
+<head>  
+    <meta charset="UTF-8">  
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+    <title>Audio and Video Combiner</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dark.css') }}">  
+    <style>  
+        .media-container {  
+            display: flex;  
+            flex-wrap: wrap;  
+            margin: 20px 0; /* Spacing above and below the section */  
+        }  
+
+        .media-item {  
+            margin: 10px; /* Spacing between items */  
+            padding: 10px;   
+            border: 1px solid #ccc; /* Optional: for visibility */  
+            border-radius: 8px; /* Optional: rounded corners */  
+            width: calc(30% - 20px); /* Adjust for responsive layout */  
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1); /* Optional: adds shadow effect */  
+            text-align: center; /* Centering text */  
+        }  
+
+        button {  
+            padding: 10px 15px; /* Consistent padding */  
+            font-size: 1.6vw; /* Better sizing */  
+            cursor: pointer;   
+            margin-bottom: 5px; /* Space below button */  
+        }  
+
+        .audio-label {  
+            display: block; /* Set to block for better spacing */  
+            margin-top: 5px; /* Add some space above the label */  
+            color: orange; /* Add color */  
+            word-wrap: break-word; /* Wrap text if too long */  
+        }  
+    </style>  
+</head>  
+<body>  
+    <a href="/size_blur"><button>Refresh</button></a><br/>  <a href="/"><button>Home</button></a>
+    /move_square
+    <a href="/move_square"><button>Move Square</button></a><br/>
+  
+    <hr>  
+
+    <hr>  
+
+<h1>Size Blur / size_blurr.html</h1>
+        <div class="media-container">  
+            {% for image in image_files %}  
+            <div class="media-item">  
+                <label for="{{ image }}">  
+                    <img src="{{ image }}" class="image-preview" alt="{{ image }}" style="max-width: 100%; height: auto;">  
+                    {{ image }}  
+                </label>  
+            </div> 
+            {% endfor %} 
+
+</body>  
+</html>

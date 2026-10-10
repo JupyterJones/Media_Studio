@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Creative Prompt Studio • Media Studio</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="icon" href="/favicon.ico?v=1">
+
+    <style>
+        :root {
+            --bg-body: #080b14;
+            --bg-card: rgba(18, 24, 42, 0.92);
+            --bg-card-hover: rgba(28, 36, 64, 0.98);
+            --border-card: rgba(255, 255, 255, 0.09);
+            --border-focus: #38bdf8;
+            --accent: #38bdf8;
+            --accent-purple: #c084fc;
+            --accent-green: #10b981;
+            --accent-amber: #f59e0b;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-size: 15px;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Sticky Header */
+        .header-bar {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: rgba(8, 11, 20, 0.95);
+            backdrop-filter: blur(14px);
+            border-bottom: 1px solid var(--border-card);
+            padding: 12px 18px;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: -0.02em;
+        }
+
+        .header-title i {
+            color: var(--accent-amber);
+            text-shadow: 0 0 14px rgba(245, 158, 11, 0.5);
+        }
+
+        .badge-studio {
+            font-size: 0.75rem;
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(192, 132, 252, 0.2));
+            color: #fde68a;
+            border: 1px solid rgba(245, 158, 11, 0.35);
+            padding: 2px 9px;
+            border-radius: 12px;
+            font-weight: 600;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 12px;
+            border-radius: var(--radius-md);
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-decoration: none;
+            color: var(--text-main);
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-card);
+            transition: all 0.2s ease;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.12);
+            border-color: var(--border-focus);
+            color: #ffffff;
+        }
+
+        .nav-btn.primary {
+            background: linear-gradient(135deg, #0284c7, #6366f1);
+            border: none;
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(2, 132, 199, 0.35);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 20px 16px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        /* Panels */
+        .panel {
+            background: var(--bg-card);
+            border: 1px solid var(--border-card);
+            border-radius: var(--radius-lg);
+            padding: 22px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border-card);
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .panel-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Audio Player Bar */
+        .audio-card {
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 27, 75, 0.85));
+            border: 1px solid rgba(192, 132, 252, 0.25);
+            border-radius: var(--radius-md);
+            padding: 14px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 14px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+        }
+
+        .audio-info {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .audio-icon-box {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: rgba(192, 132, 252, 0.15);
+            color: var(--accent-purple);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.15rem;
+            border: 1px solid rgba(192, 132, 252, 0.3);
+        }
+
+        .audio-text h4 {
+            font-size: 0.98rem;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 2px;
+        }
+
+        .audio-text p {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+        }
+
+        audio {
+            border-radius: 30px;
+            height: 38px;
+            outline: none;
+            filter: invert(0.9) hue-rotate(180deg);
+        }
+
+        /* Form Controls */
+        .form-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 14px;
+            margin-bottom: 14px;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .form-group {
+            margin-bottom: 14px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 6px;
+        }
+
+        .form-input, select.form-input {
+            width: 100%;
+            background: rgba(11, 15, 28, 0.95);
+            border: 1px solid var(--border-card);
+            border-radius: var(--radius-md);
+            padding: 13px 16px;
+            color: #ffffff;
+            font-family: inherit;
+            font-size: 0.98rem;
+            transition: all 0.2s ease;
+        }
+
+        .form-input:focus, select.form-input:focus {
+            outline: none;
+            border-color: var(--accent-amber);
+            box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2);
+            background: rgba(14, 20, 36, 0.98);
+        }
+
+        /* Buttons */
+        .btn-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border-radius: var(--radius-md);
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.98rem;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .btn-ai {
+            background: linear-gradient(135deg, #38bdf8, #6366f1);
+            color: #ffffff;
+            font-weight: 700;
+            box-shadow: 0 4px 16px rgba(56, 189, 248, 0.35);
+        }
+
+        .btn-ai:hover {
+            filter: brightness(1.1);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(56, 189, 248, 0.5);
+        }
+
+        .btn-random {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: #040814;
+            font-weight: 700;
+            box-shadow: 0 4px 14px rgba(245, 158, 11, 0.35);
+        }
+
+        .btn-random:hover {
+            filter: brightness(1.1);
+            transform: translateY(-1px);
+        }
+
+        .btn-save-remember {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: #ffffff;
+            font-weight: 700;
+            box-shadow: 0 4px 16px rgba(16, 185, 129, 0.35);
+        }
+
+        .btn-save-remember:hover {
+            background: linear-gradient(135deg, #059669, #047857);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.5);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid var(--border-card);
+            color: var(--text-main);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.12);
+            color: #ffffff;
+        }
+
+        /* Visual Breakdown Badges */
+        .prompt-preview-box {
+            background: #060913;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        .prompt-part {
+            margin-bottom: 10px;
+            font-size: 0.92rem;
+            line-height: 1.6;
+        }
+
+        .prompt-part:last-child {
+            margin-bottom: 0;
+        }
+
+        .prompt-tag {
+            display: inline-block;
+            background: rgba(56, 189, 248, 0.12);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            color: #7dd3fc;
+            padding: 3px 9px;
+            border-radius: 6px;
+            font-size: 0.82rem;
+            margin: 2px 4px 2px 0;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .prompt-tag.artist {
+            background: rgba(192, 132, 252, 0.12);
+            border-color: rgba(192, 132, 252, 0.3);
+            color: #d8b4fe;
+        }
+
+        .prompt-tag.caption {
+            background: rgba(245, 158, 11, 0.12);
+            border-color: rgba(245, 158, 11, 0.3);
+            color: #fde68a;
+        }
+
+        /* Modifier Chips Palette */
+        .palette-group {
+            margin-bottom: 14px;
+        }
+
+        .palette-title {
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .chips-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .modifier-chip {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-card);
+            color: #cbd5e1;
+            padding: 5px 12px;
+            border-radius: 18px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.15s ease;
+        }
+
+        .modifier-chip:hover {
+            background: rgba(56, 189, 248, 0.18);
+            border-color: var(--accent);
+            color: #ffffff;
+            transform: translateY(-1px);
+        }
+
+        /* Textareas */
+        .prompt-textarea {
+            width: 100%;
+            height: 150px;
+            background: #060913 !important;
+            border: 1px solid rgba(56, 189, 248, 0.3) !important;
+            border-radius: var(--radius-md);
+            padding: 14px;
+            color: #38bdf8 !important;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            resize: vertical;
+        }
+
+        .prompt-textarea:focus {
+            outline: none;
+            border-color: var(--accent) !important;
+            box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
+        }
+
+        .negative-textarea {
+            width: 100%;
+            height: 80px;
+            background: #0b0707 !important;
+            border: 1px solid rgba(239, 68, 68, 0.25) !important;
+            border-radius: var(--radius-md);
+            padding: 12px;
+            color: #fca5a5 !important;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.88rem;
+            line-height: 1.5;
+            resize: vertical;
+        }
+
+        /* Status Banner */
+        .status-alert {
+            padding: 12px 16px;
+            border-radius: var(--radius-md);
+            margin-top: 14px;
+            display: none;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.95rem;
+            animation: fadeIn 0.25s ease;
+        }
+
+        .status-success {
+            background: rgba(16, 185, 129, 0.18);
+            border: 1px solid rgba(16, 185, 129, 0.45);
+            color: #a7f3d0;
+        }
+
+        .status-error {
+            background: rgba(239, 68, 68, 0.18);
+            border: 1px solid rgba(239, 68, 68, 0.45);
+            color: #fca5a5;
+        }
+
+        .status-loading {
+            background: rgba(56, 189, 248, 0.18);
+            border: 1px solid rgba(56, 189, 248, 0.45);
+            color: #bae6fd;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* History Library */
+        .history-box {
+            max-height: 240px;
+            overflow-y: auto;
+            background: rgba(11, 15, 28, 0.95);
+            border: 1px solid var(--border-card);
+            border-radius: var(--radius-md);
+            padding: 10px;
+            scrollbar-width: thin;
+        }
+
+        .history-item {
+            padding: 9px 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            font-size: 0.88rem;
+            color: #cbd5e1;
+        }
+
+        .history-item:last-child {
+            border-bottom: none;
+        }
+
+        .history-text {
+            flex: 1;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.82rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .history-btn {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid var(--border-card);
+            color: var(--text-main);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.78rem;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .history-btn:hover {
+            background: rgba(56, 189, 248, 0.2);
+            border-color: var(--accent);
+            color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sticky Header Navigation -->
+    <header class="header-bar">
+        <div class="header-content">
+            <div class="header-title">
+                <i class="fa-solid fa-wand-magic-sparkles"></i>
+                <span>Creative Prompt Studio</span>
+                <span class="badge-studio">Media Studio</span>
+            </div>
+            <nav class="nav-links">
+                <a href="/chat" class="nav-btn">
+                    <i class="fa-solid fa-comments"></i> AI Q&A Studio
+                </a>
+                <a href="/remember" class="nav-btn" target="_blank">
+                    <i class="fa-solid fa-book-bookmark"></i> Remember DB
+                </a>
+                <a href="/add_novel_caption" class="nav-btn">
+                    <i class="fa-solid fa-closed-captioning"></i> Caption Studio
+                </a>
+                <a href="/" class="nav-btn primary">
+                    <i class="fa-solid fa-house"></i> Home
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Audio Explanation Card -->
+        <section class="audio-card">
+            <div class="audio-info">
+                <div class="audio-icon-box">
+                    <i class="fa-solid fa-headphones"></i>
+                </div>
+                <div class="audio-text">
+                    <h4>Prompt Generator Audio Walkthrough</h4>
+                    <p>Listen to how artistic tones, captions, and creative prompts are synthesized</p>
+                </div>
+            </div>
+            <audio controls preload="metadata">
+                <source src="/static/assets/Fprompt_narration.mp3" type="audio/mpeg">
+                Your browser does not support the audio element.
+            </audio>
+        </section>
+
+        <!-- Prompt Architect & Concept Mixer -->
+        <section class="panel">
+            <div class="panel-header">
+                <h2 class="panel-title">
+                    <i class="fa-solid fa-sliders" style="color: var(--accent-amber);"></i>
+                    Prompt Architect & Concept Mixer
+                </h2>
+                <span style="font-size: 0.8rem; color: var(--text-muted);">
+                    AI & Combinatorial Engine
+                </span>
+            </div>
+
+            <!-- Concept Input & Tone Select -->
+            <div class="form-row">
+                <div>
+                    <label for="conceptInput" class="form-label">
+                        <i class="fa-solid fa-pen"></i> Enter Concept Idea or Subject:
+                    </label>
+                    <input 
+                        type="text" 
+                        id="conceptInput" 
+                        class="form-input" 
+                        placeholder="e.g. Cyberpunk street ramen stall in pouring neon rain, lone samurai on cliff...">
+                </div>
+
+                <div>
+                    <label for="toneSelect" class="form-label">
+                        <i class="fa-solid fa-palette"></i> Style / Tone Atmosphere:
+                    </label>
+                    <select id="toneSelect" class="form-input">
+                        <option value="Cinematic">🎬 Cinematic Film 35mm</option>
+                        <option value="Cyberpunk">⚡ Cyberpunk & Neon</option>
+                        <option value="Dark Fantasy">🧙 Dark Fantasy Oil</option>
+                        <option value="Studio Ghibli Anime">🌿 Studio Ghibli Anime</option>
+                        <option value="Photorealistic 8k">📸 Photorealistic 8k UHD</option>
+                        <option value="Graphic Novel Comic">📖 Graphic Novel Comic Ink</option>
+                        <option value="Retro 80s Sci-Fi">🚀 Retro 80s Sci-Fi VHS</option>
+                        <option value="Ukiyo-e Woodblock">🏯 Ukiyo-e Woodblock</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="btn-row">
+                <button type="button" class="btn btn-ai" id="btnAiExpand" onclick="generatePromptAJAX('ai')">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> ✨ AI Expand Prompt
+                </button>
+                <button type="button" class="btn btn-random" id="btnRandomMix" onclick="generatePromptAJAX('random')">
+                    <i class="fa-solid fa-dice"></i> 🎲 Surprise Me (Random Mix)
+                </button>
+                <button type="button" class="btn btn-secondary" onclick="clearPrompts()">
+                    <i class="fa-solid fa-eraser"></i> Clear
+                </button>
+            </div>
+
+            <div id="genStatus" class="status-alert"></div>
+        </section>
+
+        <!-- Interactive Style & Modifier Chips Palette -->
+        <section class="panel" style="padding-bottom: 14px;">
+            <div class="panel-header">
+                <h2 class="panel-title">
+                    <i class="fa-solid fa-swatchbook" style="color: var(--accent);"></i>
+                    Visual Modifiers & Style Palette (Click to Append)
+                </h2>
+                <span style="font-size: 0.8rem; color: var(--text-muted);">
+                    1-Tap Modifiers
+                </span>
+            </div>
+
+            <!-- Cameras -->
+            <div class="palette-group">
+                <div class="palette-title"><i class="fa-solid fa-camera"></i> Camera & Perspective:</div>
+                <div class="chips-container">
+                    <span class="modifier-chip" onclick="appendTag('cinematic wide-angle shot')">Cinematic Wide</span>
+                    <span class="modifier-chip" onclick="appendTag('extreme close-up portrait')">Close-up Portrait</span>
+                    <span class="modifier-chip" onclick="appendTag('low angle dramatic hero shot')">Low Angle Hero</span>
+                    <span class="modifier-chip" onclick="appendTag('aerial drone perspective')">Drone Aerial</span>
+                    <span class="modifier-chip" onclick="appendTag('macro lens bokeh')">Macro Bokeh</span>
+                    <span class="modifier-chip" onclick="appendTag('first-person POV')">First-Person POV</span>
+                    <span class="modifier-chip" onclick="appendTag('telephoto depth of field')">Telephoto Depth</span>
+                </div>
+            </div>
+
+            <!-- Lighting -->
+            <div class="palette-group">
+                <div class="palette-title"><i class="fa-solid fa-sun"></i> Lighting & Atmosphere:</div>
+                <div class="chips-container">
+                    <span class="modifier-chip" onclick="appendTag('volumetric god rays through haze')">God Rays</span>
+                    <span class="modifier-chip" onclick="appendTag('golden hour warm rim lighting')">Golden Hour</span>
+                    <span class="modifier-chip" onclick="appendTag('neon cyan and magenta reflections')">Neon Reflections</span>
+                    <span class="modifier-chip" onclick="appendTag('dramatic chiaroscuro deep shadows')">Chiaroscuro</span>
+                    <span class="modifier-chip" onclick="appendTag('bioluminescent twilight glow')">Bioluminescence</span>
+                    <span class="modifier-chip" onclick="appendTag('rain-slicked misty atmosphere')">Rain-Slicked Mist</span>
+                    <span class="modifier-chip" onclick="appendTag('soft diffused studio softbox')">Studio Softbox</span>
+                </div>
+            </div>
+
+            <!-- Mediums & Artists -->
+            <div class="palette-group">
+                <div class="palette-title"><i class="fa-solid fa-paint-roller"></i> Art Medium & Masters:</div>
+                <div class="chips-container">
+                    <span class="modifier-chip" onclick="appendTag('art by Jean Giraud Moebius')">Moebius</span>
+                    <span class="modifier-chip" onclick="appendTag('art by Frank Frazetta')">Frank Frazetta</span>
+                    <span class="modifier-chip" onclick="appendTag('art by Greg Rutkowski')">Greg Rutkowski</span>
+                    <span class="modifier-chip" onclick="appendTag('art by H.R. Giger')">H.R. Giger</span>
+                    <span class="modifier-chip" onclick="appendTag('art by Syd Mead')">Syd Mead</span>
+                    <span class="modifier-chip" onclick="appendTag('oil on textured canvas')">Oil Canvas</span>
+                    <span class="modifier-chip" onclick="appendTag('wet watercolor wash')">Watercolor</span>
+                    <span class="modifier-chip" onclick="appendTag('35mm vintage analog photography')">35mm Film</span>
+                    <span class="modifier-chip" onclick="appendTag('ink and copic marker illustration')">Ink & Marker</span>
+                </div>
+            </div>
+
+            <!-- Quality Boosters -->
+            <div class="palette-group">
+                <div class="palette-title"><i class="fa-solid fa-award"></i> Quality Enhancers:</div>
+                <div class="chips-container">
+                    <span class="modifier-chip" onclick="appendTag('masterpiece, 8k uhd, highly detailed, sharp focus')">🌟 Masterpiece 8k</span>
+                    <span class="modifier-chip" onclick="appendTag('octane render style, intricate textures')">💎 Octane Render</span>
+                    <span class="modifier-chip" onclick="appendTag('cinematic composition, atmospheric depth')">🎬 Cinematic Depth</span>
+                    <span class="modifier-chip" onclick="appendTag('photorealistic, ray tracing reflections')">✨ Ray Tracing</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Live Editable Prompt & Action Suite -->
+        <section class="panel">
+            <div class="panel-header">
+                <h2 class="panel-title">
+                    <i class="fa-solid fa-pen-to-square" style="color: var(--accent-purple);"></i>
+                    Live Prompt Editor (Review & Customize)
+                </h2>
+                <span style="font-size: 0.8rem; color: var(--text-muted);" id="promptWordCount">
+                    0 characters
+                </span>
+            </div>
+
+            <!-- Visual Breakdown Badges -->
+            <div class="prompt-preview-box">
+                <div class="prompt-part">
+                    <span style="font-size: 0.78rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Top Caption:</span>
+                    <span class="prompt-tag caption">{{ top_text }}</span>
+                </div>
+
+                {% if random_prompt_selection %}
+                <div class="prompt-part">
+                    <span style="font-size: 0.78rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Prompt Elements:</span>
+                    {% for p in random_prompt_selection %}
+                        <span class="prompt-tag">{{ p }}</span>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                {% if generated_prompts %}
+                <div class="prompt-part">
+                    <span style="font-size: 0.78rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Artist & Tone Mixes:</span>
+                    {% for p in generated_prompts %}
+                        <span class="prompt-tag artist">{{ p }}</span>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <div class="prompt-part">
+                    <span style="font-size: 0.78rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Bottom Caption:</span>
+                    <span class="prompt-tag caption">{{ bottom_text }}</span>
+                </div>
+            </div>
+
+            <!-- Editable Full Combined Prompt -->
+            <div class="form-group">
+                <label for="combinedPromptTextarea" class="form-label">
+                    <i class="fa-solid fa-font"></i> Positive Prompt:
+                </label>
+                <textarea id="combinedPromptTextarea" class="prompt-textarea">{% if combined_text %}{{ combined_text }}{% else %}{{ top_text }} {% for p in random_prompt_selection %}{{ p }}, {% endfor %}{% for p in generated_prompts %}{{ p }} {% endfor %}{{ bottom_text }}{% endif %}</textarea>
+            </div>
+
+            <!-- Negative Prompt Box -->
+            <div class="form-group">
+                <label for="negativePromptTextarea" class="form-label">
+                    <i class="fa-solid fa-ban" style="color: #f87171;"></i> Negative Prompt (What to Avoid):
+                </label>
+                <textarea id="negativePromptTextarea" class="negative-textarea">lowres, bad anatomy, bad hands, text, error, missing fingers, extra digit, fewer digits, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, blurry</textarea>
+            </div>
+
+            <!-- Action Buttons Row -->
+            <div class="btn-row">
+                <button type="button" class="btn btn-save-remember" id="savePromptBtn" onclick="savePromptToRemember()">
+                    <i class="fa-solid fa-floppy-disk"></i> 💾 Save2Remember
+                </button>
+                <button type="button" class="btn btn-secondary" onclick="copyPromptText()">
+                    <i class="fa-solid fa-copy"></i> 📋 Copy Positive
+                </button>
+                <a id="sdLink" href="/stable_diffusion" class="btn btn-ai" onclick="sendToSD(event)">
+                    <i class="fa-solid fa-paint-brush"></i> 🎨 Send to Image Studio
+                </a>
+            </div>
+
+            <div id="savePromptStatus" class="status-alert"></div>
+        </section>
+
+        <!-- Recently Added Prompts Library -->
+        <section class="panel">
+            <div class="panel-header">
+                <h2 class="panel-title">
+                    <i class="fa-solid fa-clock-rotate-left" style="color: var(--accent-purple);"></i>
+                    Prompts Library (prompts.txt)
+                </h2>
+                <span style="font-size: 0.8rem; color: var(--text-muted);">
+                    Click "Use" to Load
+                </span>
+            </div>
+
+            <div class="history-box">
+                {% if text %}
+                    {% for line in text.splitlines() if line.strip() and not line.strip().startswith('http') and not line.strip().startswith('/home/') and not line.strip().startswith('●') %}
+                    <div class="history-item">
+                        <span class="history-text">{{ line.strip() }}</span>
+                        <button type="button" class="history-btn" onclick="useHistoryPrompt({{ line.strip()|tojson }})">
+                            <i class="fa-solid fa-arrow-up"></i> Use
+                        </button>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div style="padding: 16px; text-align: center; color: var(--text-muted);">
+                        No prompts saved in prompts.txt yet.
+                    </div>
+                {% endif %}
+            </div>
+        </section>
+    </main>
+
+    <script>
+        const combinedTextarea = document.getElementById('combinedPromptTextarea');
+        const negativeTextarea = document.getElementById('negativePromptTextarea');
+        const conceptInput = document.getElementById('conceptInput');
+        const toneSelect = document.getElementById('toneSelect');
+        const genStatus = document.getElementById('genStatus');
+        const saveStatus = document.getElementById('savePromptStatus');
+        const saveBtn = document.getElementById('savePromptBtn');
+        const wordCount = document.getElementById('promptWordCount');
+
+        function updateWordCount() {
+            wordCount.textContent = `${combinedTextarea.value.length.toLocaleString()} characters`;
+        }
+
+        combinedTextarea.addEventListener('input', updateWordCount);
+        updateWordCount();
+
+        function appendTag(tag) {
+            let current = combinedTextarea.value.trim();
+            if (current && !current.endsWith(',')) {
+                current += ', ';
+            } else if (current && current.endsWith(',')) {
+                current += ' ';
+            }
+            combinedTextarea.value = current + tag;
+            updateWordCount();
+            combinedTextarea.focus();
+        }
+
+        function clearPrompts() {
+            conceptInput.value = '';
+            combinedTextarea.value = '';
+            updateWordCount();
+            conceptInput.focus();
+        }
+
+        function copyPromptText() {
+            const txt = combinedTextarea.value.trim();
+            if (!txt) {
+                alert("No prompt text to copy!");
+                return;
+            }
+            navigator.clipboard.writeText(txt).then(() => {
+                alert("✓ Positive prompt copied to clipboard!");
+            }).catch(() => {
+                combinedTextarea.select();
+                document.execCommand('copy');
+                alert("✓ Positive prompt copied to clipboard!");
+            });
+        }
+
+        function useHistoryPrompt(txt) {
+            combinedTextarea.value = txt;
+            updateWordCount();
+            combinedTextarea.scrollIntoView({ behavior: 'smooth' });
+            combinedTextarea.focus();
+        }
+
+        function sendToSD(e) {
+            e.preventDefault();
+            const txt = encodeURIComponent(combinedTextarea.value.trim());
+            window.location.href = `/stable_diffusion?prompt=${txt}`;
+        }
+
+        // AJAX Prompt Generator (AI or Random)
+        async function generatePromptAJAX(mode) {
+            const idea = conceptInput.value.trim();
+            const tone = toneSelect.value;
+            const btn = mode === 'ai' ? document.getElementById('btnAiExpand') : document.getElementById('btnRandomMix');
+            const originalHTML = btn.innerHTML;
+
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Synthesizing...';
+
+            genStatus.className = 'status-alert status-loading';
+            genStatus.style.display = 'flex';
+            genStatus.innerHTML = mode === 'ai' 
+                ? '<i class="fa-solid fa-wand-magic-sparkles fa-spin"></i> Gemini is architecting a vivid Stable Diffusion prompt...' 
+                : '<i class="fa-solid fa-dice fa-spin"></i> Mixing combinatorial styles, cameras, and lighting...';
+
+            saveStatus.style.display = 'none';
+
+            try {
+                const res = await fetch('/api/expand_prompt', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ idea, tone, mode })
+                });
+
+                const data = await res.json();
+                if (data.status === 'ok') {
+                    genStatus.style.display = 'none';
+                    combinedTextarea.value = data.prompt;
+                    if (data.negative_prompt) {
+                        negativeTextarea.value = data.negative_prompt;
+                    }
+                    updateWordCount();
+                    combinedTextarea.scrollIntoView({ behavior: 'smooth' });
+                } else {
+                    genStatus.className = 'status-alert status-error';
+                    genStatus.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> Error: ${data.message}`;
+                }
+            } catch (err) {
+                genStatus.className = 'status-alert status-error';
+                genStatus.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> Generation failed: ${err.message}`;
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = originalHTML;
+            }
+        }
+
+        // 1-Click Save to REMEMBER
+        async function savePromptToRemember() {
+            const content = combinedTextarea.value.trim();
+            const neg = negativeTextarea.value.trim();
+            if (!content) {
+                alert("Prompt content cannot be empty!");
+                return;
+            }
+
+            const idea = conceptInput.value.trim();
+            const title = idea ? `[Prompt] ${idea.substring(0, 50)}` : `[Prompt] ${content.substring(0, 45)}...`;
+            const fullMarkdown = `### 🎨 Positive Prompt:\n\`\`\`text\n${content}\n\`\`\`\n\n### 🚫 Negative Prompt:\n\`\`\`text\n${neg}\n\`\`\`\n`;
+
+            saveBtn.disabled = true;
+            saveBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
+            saveStatus.style.display = 'none';
+
+            try {
+                const res = await fetch('/chat/api/save_remember', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ title, content: fullMarkdown })
+                });
+
+                const data = await res.json();
+                if (data.status === 'ok') {
+                    saveStatus.className = 'status-alert status-success';
+                    saveStatus.style.display = 'flex';
+                    saveStatus.innerHTML = `
+                        <i class="fa-solid fa-circle-check"></i>
+                        <span>
+                            <strong>✓ Successfully saved prompt to REMEMBER!</strong> (Post #${data.post_id}) &bull; 
+                            <a href="/remember/post/${data.post_id}" target="_blank" style="color: #6ee7b7; text-decoration: underline; font-weight: 600;">
+                                Open in REMEMBER <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                            </a>
+                        </span>
+                    `;
+                } else {
+                    saveStatus.className = 'status-alert status-error';
+                    saveStatus.style.display = 'flex';
+                    saveStatus.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> Save failed: ${data.message}`;
+                }
+            } catch (err) {
+                saveStatus.className = 'status-alert status-error';
+                saveStatus.style.display = 'flex';
+                saveStatus.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> Error saving: ${err.message}`;
+            } finally {
+                saveBtn.disabled = false;
+                saveBtn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> 💾 Save2Remember';
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Manager - {{ current_directory }}</title>
+    <style>
+body{
+color: yellow;
+font-size:4vw;
+}
+        .delete-btn {
+            background-color: red;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        .delete-btn:hover {
+            background-color: darkred;
+        }
+        notice {
+            color: orange;
+            font-weight: bold;
+            font-style: italic;
+            font-size: 1.7vw;
+        }
+    .sticky {
+        position: -webkit-sticky;
+        margin-left: auto;
+        margin-right: auto;
+        position: sticky;
+        top: 0;
+        text-align: center!important;
+        padding: 10px 0;
+        z-index: 1000;
+        width: 100%!important;
+    }
+</style>
+    
+    <!-- static/css/dark.css-->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dark.css') }}">
+</head>
+<body>
+   <script>
+        function findString(str) {
+            if (parseInt(navigator.appVersion) < 4) return;
+
+            if (window.find) {
+                var strFound = window.find(str);
+                if (!strFound) {
+                    window.find(str, 0, 1);
+                }
+                if (strFound) {
+                    var range = window.getSelection().getRangeAt(0);
+                    var span = document.createElement("span");
+                    span.style.backgroundColor = "yellow";
+                    range.surroundContents(span);
+                }
+            } else if (navigator.appName.indexOf("Microsoft") != -1) {
+                // Not implemented for brevity
+            } else if (navigator.appName == "Opera") {
+                alert("Opera browsers not supported, sorry...");
+                return;
+            }
+
+            if (!strFound) alert("String '" + str + "' not found!");
+        }
+
+        function moveToNextOccurrence() {
+            var search_str = document.getElementById("search_input").value;
+            findString(search_str);
+        }
+    </script>
+
+</head>
+
+
+<body>
+    <header class="sticky">
+        <span>FlaskArchitect Blog</span>&nbsp;&nbsp;|&nbsp;&nbsp;
+        <a href="{{ url_for('index') }}">App Home</a>&nbsp;&nbsp;|&nbsp;&nbsp;
+            <a href="{{ url_for('home2') }}">Text Home</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="{{ url_for('gallery') }}">Gallery</a>&nbsp;&nbsp;|&nbsp;&nbsp;
+            <a href="{{ url_for('edit_text') }}">Edit Text File</a>&nbsp;&nbsp;|&nbsp;&nbsp;
+             <a href="{{ url_for('new_post') }}">Create New Post</a><br>&nbsp;&nbsp;|&nbsp;&nbsp;
+
+          
+            <a href="{{ url_for('contents') }}">View All Contents</a>&nbsp;&nbsp;|&nbsp;&nbsp;
+            <a href="{{ url_for('ask') }}">Ask GPT2</a>&nbsp;&nbsp;|&nbsp;&nbsp;
+
+            
+            <a href="{{ url_for('view_log') }}">View Log</a>&nbsp;&nbsp;|&nbsp;&nbsp;
+            <a href="{{ url_for('search') }}">Search</a>
+            <input type="text" id="search_input" />
+            <button id="search_submit" onclick="moveToNextOccurrence()">
+                Find in page Next
+              </button>
+        
+    </header>
+
+    <h1>Managing Files in {{ current_directory }}</h1>
+    <p>file_manager.html</p>
+    <span>
+        <a href="{{ url_for('create_directory', directory=current_directory) }}">Create Directory</a>&nbsp;&nbsp; | &nbsp;&nbsp;
+        <a href="{{ url_for('create_file', directory=current_directory) }}">Create File</a>&nbsp;&nbsp; | &nbsp;&nbsp;
+        <a href="{{ url_for('file_home') }}">Back to directory selection</a>
+    </span>
+
+    <!-- Display Flash Messages (Success/Error) -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <ul>
+            {% for category, message in messages %}
+                <li class="{{ category }}">{{ message }}</li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+
+    <h2>Files:</h2>
+    <ul>
+        {% for file in files %}
+        <hr>
+            <li><notice>{{ file }}</notice>
+                <!-- Move File Form -->
+                <form action="{{ url_for('move_file') }}" method="post" style="display:inline;">
+                    <input type="hidden" name="directory" value="{{ current_directory }}">
+                    <input type="hidden" name="src" value="{{ file }}">
+                    <button type="submit">Move</button>
+                    <input type="text" name="dest" placeholder="New location">
+                </form>
+
+                <!-- Rename File Form -->
+                <form action="{{ url_for('rename_file') }}" method="post" style="display:inline;">
+                    <input type="hidden" name="directory" value="{{ current_directory }}">
+                    <input type="hidden" name="src" value="{{ file }}">
+                    <button type="submit">Rename</button>
+                    <input type="text" name="new_name" placeholder="New name">
+                </form>
+
+                <!-- Delete File Form (with red delete button) -->
+                <form action="{{ url_for('delete_file') }}" method="post" style="display:inline;">
+                    <input type="hidden" name="directory" value="{{ current_directory }}">
+                    <input type="hidden" name="file" value="{{ file }}">
+                    <button type="submit" class="delete-btn">Delete</button>
+                </form>
+
+                <!-- Edit File Button (if applicable) -->
+                {% if file.endswith('.txt') or file.endswith('.html') or file.endswith('.py') %}
+                    <form action="{{ url_for('edit_file', directory=current_directory, filename=file) }}" method="get" style="display:inline;">
+                        <button type="submit">Edit</button>
+                    </form>
+                {% endif %}
+
+                <!-- Copy File Form -->
+                <form action="{{ url_for('copy_file') }}" method="post" style="display:inline;">
+                    <input type="hidden" name="directory" value="{{ current_directory }}">
+                    <input type="hidden" name="src" value="{{ file }}">
+                    <button type="submit">Copy</button>
+                    <input type="text" name="dest" placeholder="Copy to...">
+                </form>
+
+                <!-- Save Changes Form (only visible for the currently editing file) -->
+                {% if file == filename %}
+                <form action="{{ url_for('save_file') }}" method="POST" style="display:inline;">
+                    <input type="hidden" name="directory" value="{{ directory }}">
+                    <input type="hidden" name="filename" value="{{ filename }}">
+                    <textarea name="file_content">{{ file_content }}</textarea>
+                    <button type="submit">Save Changes</button>
+                </form>
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+
+    <a href="{{ url_for('file_home') }}">Back to directory selection</a>
+</body>
+</html>

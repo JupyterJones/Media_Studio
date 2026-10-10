@@ -1,0 +1,424 @@
+<style>
+  .video-gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+    padding: 10px 0;
+    margin: 0;
+  }
+  .video-gallery figure {
+    background: var(--bg-card, rgba(18, 18, 35, 0.75));
+    border: 1px solid var(--border-color, rgba(255, 255, 255, 0.12));
+    border-radius: var(--radius, 10px);
+    padding: 14px;
+    margin: 0;
+    text-align: center;
+    transition: all var(--transition-speed, 0.25s);
+    box-shadow: var(--shadow, 0 4px 16px rgba(0, 0, 0, 0.4));
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .video-gallery figure:hover {
+    transform: translateY(-3px);
+    border-color: var(--accent-primary, #00f0ff);
+    box-shadow: 0 8px 24px var(--accent-glow, rgba(0, 240, 255, 0.25));
+  }
+  .video-gallery video {
+    width: 100%;
+    max-height: 220px;
+    border-radius: var(--radius-sm, 6px);
+    background: #000;
+  }
+  .video-gallery figcaption {
+    margin-top: 12px;
+    font-size: 0.95rem;
+    color: var(--text-muted, #8a8fba);
+    width: 100%;
+    line-height: 1.5;
+  }
+  .video-gallery .button {
+    display: inline-block;
+    margin-top: 8px;
+    padding: 8px 16px;
+    font-size: 0.92rem;
+    font-weight: 600;
+    font-family: inherit;
+    color: #080812;
+    background: var(--accent-gradient, linear-gradient(135deg, #00f0ff 0%, #b800ff 100%));
+    border: none;
+    border-radius: var(--radius-sm, 6px);
+    text-decoration: none;
+    cursor: pointer;
+    transition: all var(--transition-speed, 0.25s);
+    box-shadow: var(--shadow-glow, 0 2px 10px rgba(0, 240, 255, 0.3));
+  }
+  .video-gallery .button:hover {
+    filter: brightness(1.15);
+    transform: translateY(-1px);
+    color: #000;
+  }
+  .video-gallery .round {
+    display: inline-block;
+    padding: 8px 14px;
+    font-size: 0.85rem;
+    color: #fff;
+    background: var(--accent-secondary, #b800ff);
+    border: 1px solid var(--border-color, rgba(255, 255, 255, 0.2));
+    border-radius: 20px;
+    text-decoration: none;
+  }
+  .video-gallery .responsive-img {
+    width: 100%;
+    max-width: 256px;
+    height: auto;
+    object-fit: cover;
+    display: block;
+    border-radius: var(--radius-sm, 6px);
+  }
+  img {
+    width: 300px;
+   height: auto;
+   }
+</style>
+ <script>
+    function confirmAction(event, url) {
+        // Prevent the default link action
+        event.preventDefault();
+        
+        // Show a confirmation dialog
+        const userConfirmed = confirm("Are you sure you want to proceed?");
+        
+        // If the user confirmed, navigate to the link
+        if (userConfirmed) {
+            window.location.href = url;
+        }
+    }
+</script>
+
+<div class="video-gallery">
+      <figure>
+        <video width="300" height="auto" controls preload="metadata">
+          <source src="/static/temp_exp/slerpX.mp4" type="video/mp4" />
+          <source src="static/temp_exp/slerpX.mp4" type="video/mp4" />
+          <source src="/static/novel_images/slerpX.mp4" type="video/mp4" />
+        </video>
+        <figcaption>
+          slerpX.mp4<br />
+          <span style="font-size: 0.8rem; color: #a5b4fc;">SLERP Morph Video</span><br />
+          <a href="{{ url_for('stable_diffusion') }}" class="button">Create SLERP Video</a>
+        </figcaption>
+      </figure>
+
+      <figure>
+        <video width="300" height="auto" controls preload="metadata">
+          <source src="/static/temp_exp/cgfX.mp4" type="video/mp4" />
+          <source src="/static/temp_exp/cfgX.mp4" type="video/mp4" />
+          <source src="static/temp_exp/cgfX.mp4" type="video/mp4" />
+        </video>
+        <figcaption>
+          cgfX.mp4<br />
+          <span style="font-size: 0.8rem; color: #a5b4fc;">CFG Sweep Video</span><br />
+          <a href="{{ url_for('stable_diffusion') }}" class="button">Batch Studio</a>
+        </figcaption>
+      </figure>
+
+      <figure>
+        <video width="300" height="auto" controls preload="metadata">
+          <source src="/static/temp_exp/seedX.mp4" type="video/mp4" />
+          <source src="/static/temp_exp/seedsX.mp4" type="video/mp4" />
+          <source src="static/temp_exp/seedX.mp4" type="video/mp4" />
+        </video>
+        <figcaption>
+          seedX.mp4<br />
+          <span style="font-size: 0.8rem; color: #a5b4fc;">Seed Explorer Video</span><br />
+          <a href="{{ url_for('stable_diffusion') }}" class="button">Batch Studio</a>
+        </figcaption>
+      </figure>
+
+      <figure>
+        <video width="300" height="auto" controls preload="metadata">
+          <source src="/static/temp_exp/modelsX.mp4" type="video/mp4" />
+          <source src="/static/temp_exp/modelX.mp4" type="video/mp4" />
+          <source src="static/temp_exp/modelsX.mp4" type="video/mp4" />
+        </video>
+        <figcaption>
+          modelsX.mp4<br />
+          <span style="font-size: 0.8rem; color: #a5b4fc;">All Models Video (2 per second)</span><br />
+          <a href="{{ url_for('stable_diffusion') }}" class="button">Benchmark Models</a>
+        </figcaption>
+      </figure>
+
+      <figure>
+        <video width="300" height="auto" controls>
+          <source src="static/temp_exp/TEMP2X.mp4" type="video/mp4" />
+        </video>
+        <figcaption>
+          TEMP2X.mp4<br />
+          <a href="{{ url_for('create_video_route') }}" class="button"onclick="confirmAction(event, this.href)">Horizontal Scroll</a>
+        </figcaption>
+      </figure>
+
+      <figure>
+        <video width="300" height="auto" controls>
+          <source src="static/temp_exp/final_flipbookX.mp4" type="video/mp4" />
+        </video>
+        <figcaption>
+          final_flipbookX.mp4<br />
+          <a href="{{ url_for('mk_flipnovel') }}" class="button"onclick="confirmAction(event, this.href)">Best FlipBook</a>
+        </figcaption>
+      </figure>
+
+      <figure>
+        <video width="300" height="auto" controls>
+          <source src="static/temp_exp/final_output_expX.mp4" type="video/mp4" />
+        </video>
+        <figcaption>
+          final_output_expX<br />
+          <a href="{{ url_for('zoom_each_route') }}" class="button"onclick="confirmAction(event, this.href)">Zoom Images</a>
+        </figcaption>
+      </figure>
+      <figure>
+        <video width="300" height="auto" controls>
+          <source src="static/temp_exp/TEMP0X.mp4" type="video/mp4" />
+        </video>
+        <figcaption>
+          TEMP0X.mp4<br />
+          <a href="{{ url_for('slide_route') }}" class="button" onclick="confirmAction(event, this.href)">Slide</a>
+          <!--a href="{{ url_for('slide_route') }}" class="button">Slide</a-->
+        </figcaption>
+      </figure>
+      <figure>
+        <video width="300" height="auto" controls>
+          <source src="static/temp_exp/novel_creationX.mp4" type="video/mp4" />
+        </video>
+        <figcaption>
+          TEMP1X.mp4<br />
+          <a href="{{ url_for('diagonal_transition_route') }}" class="button"onclick="confirmAction(event, this.href)">Diagonal Transition</a>
+        </figcaption>
+      </figure>
+      <figure>
+        <video width="300" height="auto" controls>
+          <source src="static/temp_exp/blendem_final_outputX.mp4" type="video/mp4" />
+        </video>
+        <figcaption>
+          blendem_final_outputX<br />
+          <a href="{{ url_for('blendem_route') }}" class="button"onclick="confirmAction(event, this.href)">Blendem</a>
+        </figcaption>
+      </figure>
+      <figure>
+        <video width="300" height="auto" controls>
+          <source src="static/temp_exp/verticalX.mp4" type="video/mp4" />
+        </video>
+        <figcaption>
+          verticalX <br />
+          <a href="{{ url_for('vertical_scroll_route') }}" class="button"onclick="confirmAction(event, this.href)">Vertical Scroll</a>
+        </figcaption>
+      </figure>
+
+      <figure>
+        <video width="300" height="auto" controls>
+          <source src="static/temp_exp/final_zoomxX.mp4" type="video/mp4" />
+        </video>
+        <figcaption>
+          final_zoomxX<br />
+          <a href="{{ url_for('zoomx4_route') }}" class="button"onclick="confirmAction(event, this.href)">Zoom X4 Videos</a>
+        </figcaption>
+      </figure>
+      <figure>
+        <video width="300" height="auto" controls>
+          <source src="static/temp_exp/fademX.mp4" type="video/mp4" />
+        </video>
+        <figcaption>
+          fademX<br />
+          <a href="{{ url_for('fadem') }}" class="button"onclick="confirmAction(event, this.href)">Fade Images</a>
+        </figcaption>
+      </figure>
+
+      <figure>
+        <video width="300" height="auto" controls>
+          <source src="/static/temp_exp/shrink_flipbookX.mp4" type="video/mp4" />
+        </video>
+        <figcaption>
+          shrink_flipbookX.mp4<br />
+          <a href="{{ url_for('shrink_flipbook_route') }}" class="button"onclick="confirmAction(event, this.href)">Shrink FlipBook</a>
+        </figcaption>
+      </figure>
+      <figure>
+        <center><img src="static/temp_image/temp-image.png" /></center>
+        <figcaption>
+          temp-image.jpg<br />
+          <a href="{{ url_for('add_novel_text') }}" class="button"onclick="confirmAction(event, this.href)">Step One<br/>Create Title Image</a>
+</figcaption></figure>
+
+      <figure>
+        <video width="300" height="auto" controls>
+          <source src="static/temp_exp/resized_titleX.mp4" type="video/mp4" />
+        </video>
+        <figcaption>
+          resized_titleX.mp4<br />
+<a href="{{ url_for('upload_form') }}" class="button"onclick="confirmAction(event, this.href)">Step Two<br/>Join Title</a>
+        </figcaption>
+      </figure>
+      <figure>
+        <video width="300" height="auto" controls>
+          <source src="static/temp_exp/concatenated_videoX.mp4" type="video/mp4" />
+        </video>
+        <figcaption>
+          concatenated_videoX<br />
+          <a href="{{ url_for('view_videos') }}" class="button"onclick="confirmAction(event, this.href)">Concatenate 2 Videos</a>
+        </figcaption>
+      </figure>
+
+      <figure>
+        <video width="300" height="auto" controls>
+          <source src="static/text2audio5/videoX.mp4" type="video/mp4" />
+        </video>
+        <figcaption>
+          text2videoX.mp4<br />
+          <a href="{{ url_for('sound_to_video') }}" class="button"onclick="confirmAction(event, this.href)">Add Sound to Video</a>
+        </figcaption>
+      </figure>
+      <figure>
+        <video width="300" height="auto" controls>
+          <source src="static/temp_exp/circular_mask_transitionX.mp4" type="video/mp4" />
+        </video>
+        <figcaption>circular_mask_<br />transitionX.mp4<br />
+          <a href="{{ url_for('circular_transition_route') }}" class="button"onclick="confirmAction(event, this.href)">Circular Transition</a>
+        </figcaption>
+      </figure>
+
+      <figure>
+        <video width="300" height="auto" controls>
+          <source src="static/temp_exp/square_transitionX.mp4" type="video/mp4" />
+        </video>
+        <figcaption>square_transitionX<br />
+          <a href="{{ url_for('square_transition_route') }}" class="button"onclick="confirmAction(event, this.href)">Square Transition </a>
+        </figcaption>
+      </figure>
+      <figure>
+        <video width="300" height="auto" controls>
+          <source src="static/temp_exp/OPEN_doorsX.mp4" type="video/mp4" />
+        </video>
+        <figcaption>
+          OPEN_doorsX.mp4<br />
+          <a href="{{ url_for('open_doors_route') }}" class="button"onclick="confirmAction(event, this.href)">Mk OpenDoors</a>
+        </figcaption>
+      </figure>
+      <figure>
+        <video width="300" height="auto" controls>
+          <source src="static/temp_exp/512x768X.mp4" type="video/mp4" />
+        </video>
+        <figcaption>
+          512x768X.mp4<br />
+          <a href="{{ url_for('square_images') }}" class="button"onclick="confirmAction(event, this.href)">Make Scrolling Squares</a>
+        </figcaption>
+      </figure>
+        <figure> <video width="300" height="auto" controls>
+            <source src="static/temp_exp/square_zoomyX.mp4" type="video/mp4" />
+          </video>
+          <figcaption>square_zoomyX<br />
+            <a href="{{ url_for('square_zoomy_route') }}" class="button"onclick="confirmAction(event, this.href)">Scrolling Squares Zoom</a>
+          </figcaption>
+        </figure>
+        <figure>
+          <video width="300" height="auto" controls>
+
+            <source src="static/temp_exp/STILLX.mp4" type="video/mp4" />
+          </video>
+          <figcaption>
+            STILLX<br />
+            <a href="{{ url_for('render_add_sound_form') }}" class="button"onclick="confirmAction(event, this.href)">Add Sound to Image</a>
+          </figcaption>
+        </figure>
+        <figure>
+          <video width="300" height="auto" controls>
+            <source src="static/temp_exp/output_video.mp4" type="video/mp4" />
+          </video>
+          <figcaption>
+            output_video.mp4<br />
+            <a href="{{ url_for('join_video_route') }}" class="button"onclick="confirmAction(event, this.href)">Join Videos(create title video last)</a>
+          </figcaption>
+        </figure>
+
+        <figure>
+          <video width="300" height="auto" controls>
+            <source src="static/temp_exp/avatarX.mp4" type="video/mp4" />
+          </video>
+          <figcaption>avatarX.mp4</figcaption>
+        </figure>
+        
+        <figure>
+          <video width="300" height="auto" controls>
+            <source src="static/temp_exp/halloweenX.mp4" type="video/mp4" />
+          </video>
+          <figcaption>Happy Halloween<br />
+            <a href="{{ url_for('square_images') }}" class="button"onclick="confirmAction(event, this.href)">Create a Halloween Video</a>
+          </figcaption>
+        
+        </figure>
+        <figure>
+          <video width="300" height="auto" controls>
+            <source src="static/temp_exp/avatarX.mp4" type="video/mp4" />
+          </video>
+          <figcaption>Wav2Lip Talking Avatar<br />
+            <a href="{{ url_for('upload_media') }}" class="button">🎭 Create Avatar & Sound</a>
+          </figcaption>
+        </figure>
+
+        <figure>
+          <video width="300" height="auto" controls>
+            <source src="static/temp_exp/png_overlayX.mp4" type="video/mp4" />
+          </video>
+          <figcaption>png_overlay<br />
+            <a href="{{ url_for('png_overlay') }}" class="button"onclick="confirmAction(event, this.href)">png_overlay</a>
+          </figcaption>
+        </figure>
+
+        <figure>
+          <video width="300" height="auto" controls>
+            <source src="static/temp_exp/halloween_textX.mp4" type="video/mp4" />
+          </video>
+          <figcaption>Experimental<br />
+            <a href="{{ url_for('merge_video_background') }}" class="button"onclick="confirmAction(event, this.href)">merge_video_background</a>
+          </figcaption>
+        </figure>
+
+<figure>
+  <video width="300" height="auto" controls>
+    <source src="static/temp_exp/final_zoomyyX.mp4" type="video/mp4" />
+  </video>
+  <figcaption>json_zoom<br />
+    <a href="{{ url_for('jsonzoom') }}" class="button"onclick="confirmAction(event, this.href)">json_zoom</a>
+  </figcaption>
+</figure>
+
+<figure>
+  <video width="300" height="auto" controls>
+    <source src="static/temp_exp/final_flipbookX.mp4" type="video/mp4" />
+    </video>
+    <figcaption>novel_flipbookX<br />
+      <a href="{{ url_for('mk_flipnovel') }}" class="button"onclick="confirmAction(event, this.href)">novel_flipbookX</a>
+      </figcaption>
+      </figure>
+
+
+<figure>
+  <video width="300" height="auto" controls>
+    <source src="static/temp_exp/temp_videoX.mp4" type="video/mp4" />
+    </video>
+    <figcaption>temp_videoX<br />
+      <a href="{{ url_for('combine_audio_image') }}" class="button"onclick="confirmAction(event, this.href)">temp_videoX</a>
+      </figcaption>
+      </figure>
+
+<figure>
+  <video width="300" height="auto" controls>
+    <source src="static/temp_exp/png_overlayX.mp4" type="video/mp4" />
+    </video>
+    <figcaption>png_overlayX.mp4<br />
+      <a href="{{ url_for('png_overlay') }}" class="button"onclick="confirmAction(event, this.href)">temp_videoX</a>
+      </figcaption>
+      </figure>
+</div>

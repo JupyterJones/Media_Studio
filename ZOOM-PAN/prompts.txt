@@ -1,0 +1,351 @@
+
+fantastic double exposure bold line art, composition of a beautiful long haired, Latina model, Holly Hendrix, white tank top, Beautiful tension builds as the stark monochrome background maintains razor-sharp contrast, drawing all focus to the richly layered double exposure, tropical forest wwith tropical flowers background, Characterized by its vibrant full-color scheme within Holly’s silhouette and crisp, deliberate lines that trace every contour with emotional precision, (Detailed:1.45),(Detailed background:1.4)
+
+Masterpiece, abstract lineart painting, primary colors, splatter paint, line art illustration of a DMT dream, out of this world, weird halucinations, spirals twisted dreams, Eve wearing leafs for clothes in the garden of eden reaching for an apple while a snake is coming from all apple tree branch also going for the apple (Detailed:1.45),(Detailed background:1.4), style Salvador Dali
+
+Masterpiece, abstract lineart painting, primary colors, splatter paint, line art illustration of a DMT dream, out of this world, planets, Saturn, moon, weird halucinations, spirals twisted dreams, while a snake is in the garden wrapped around a holding an apple, a half human cyborg is watching (Detailed:1.45),(Detailed background:1.4), style Robert Crumb
+
+noir comic style, realistic ink linework, selective color palette, muted tones, cross-hatch shadows, painterly skin, graphic novel illustration, high contrast, professional comic artportrait of a 21 year old black woman, dark brown skin, beautiful face, full lips, natural hair, slim waist, curvy figure, fitted outfit, comic book art style, realistic sketch style, ink linework, cross-hatching shading,
+
+multiple comic panels, man, radiation suit, walking, dog, ruined city
+
+multiple comic panels, bipedal alien, meets dog and befriends
+
+A comic-style illustration divided into four panels showing a muscular, green-skinned female muscle monster figure in various poses. The top-left panel features a close-up of a single green eye with a fierce expression. The top-right panel shows the full upper body, flexing with exaggerated muscles and wearing blue underwear. The bottom-left panel depicts a foot stepping down, crushing stone fragments, with a black anklet. The bottom-right panel shows the rear view, emphasizing large buttocks and the same blue underwear. The background is a solid green with motion lines and debris indicating power and impact. The art style is bold, cartoonish, and exaggerated, with thick black outlines and vibrant colors. High detail, sharp lines, dynamic composition, anime-inspired muscularity, and comic book panel layout.
+
+Prompt:
+“Create a 6-panel Marvel comic page in the style of Jason Aaron.
+Spider-Man and Deadpool in dynamic, comedic action poses.
+Bold ink lines, gritty shadows, bright colors, expressive faces, dramatic motion lines, NYC backgrounds.
+Panels include spider-sense, strength moment, lab chaos, sad rooftop in rain, villain gallery, and swinging finale with Deadpool eating a chimichanga.”
+
+A surreal movie backlot fused with a comic book death motif, in a clean modern comic illustration style. A muddy, swamp-like film set filled with shallow reflective puddles, echoing a “mire” landscape. Scattered film equipment: broken cameras, lighting rigs, cables half-sunken in the mud. Torn green screens hang like tattered curtains. The environment blends death imagery with filmmaking: skull patterns subtly embedded in the ground and backdrop, reminiscent of a repeating graphic texture.
+
+Reality is breaking: comic panels float and peel away in the air, halftone dots visible in the sky blending into real clouds. A director’s chair labeled “DEADPOOL” sits off-center, knocked over. Script pages are scattered in the mud, some with red ink edits and crude drawings. A boom microphone dips into frame intentionally.
+
+Color palette matches a bold comic style: warm beige/yellow background tones with red accents and deep blacks, similar to a printed comic page. Clean linework, sharp shadows, slightly stylized anatomy, high contrast. Subtle humor elements: a spilled drink with a tiny umbrella, taco wrappers, bullet casings mixed with fake stage blood.
+
+No characters present, but Deadpool’s presence is implied through props and chaos. Cinematic composition, slightly low angle, dramatic lighting from studio lamps mixed with ambient glow. 3:4 aspect ratio.
+
+Retro comic style artwork, highly detailed "James Bond", comic book cover, symmetrical, vibrant
+
+Holy cow, I am blown away. Seriously, this model is what Stable Diffusion 3.5 should have been. It can generate a variety of images, including comics! I think if the model is further fine-tunes on comics, it would handle them pretty well. We are almost there! Soon, we can make our own manga!
+
+I have an RTX3090, and I generate in 1920x1200. It takes 23 second to generate, which is insane!
+
+Here is the prompt used for these examples (written by Kimi2-thinking):
+A dynamic manga page layout featuring a cyberpunk action sequence, drawn in a gritty seinen style. The page uses stark black and white ink with heavy cross-hatching, Ben-Day dot screentones, and kinetic speed lines.
+
+**Panel 1 (Top, wide establishing shot):** A bustling neon-drenched alleyway in a dystopian metropolis. Towering holographic kanji signs flicker above, casting electric blue and magenta light on wet pavement. The perspective is from a high angle, looking down at the narrow street crowded with food stalls and faceless pedestrians. In the foreground, a mysterious figure in a long coat pushes through the crowd. Heavy rainfall is indicated with fast vertical motion lines and white-on-black sound effects: "ZAAAAAA" across the panel.
+
+**Panel 2 (Below Panel 1, left side, medium close-up):** The figure turns, revealing a young woman with sharp eyes and a cybernetic eye gleaming with data streams. Her face is half-shadowed, jaw clenched. The panel border is irregular and jagged, suggesting tension. Detailed hatching defines her cheekbones, and concentrated screentones create deep shadows. Speed lines radiate from her head. A small speech bubble: "Found you."
+
+**Panel 3 (Below Panel 1, right side, horizontal):** A gloved hand clenches into a fist, hydraulic servos in the knuckles activating with "SH-CHNK" sound effects. The cyborg arm is exposed, showing chrome plating and pulsing fiber-optic cables. Extreme close-up with dramatic foreshortening, deep black shadows, and white highlights catching on metal grooves. Thin panel frame.
+
+**Panel 4 (Center, large vertical panel):** The woman explodes into action, launching from a crouch. Dynamic low-angle perspective (worm's eye view) captures her mid-leap, coat billowing, one leg extended for a flying kick. Her mechanical arm is pulled back, crackling with electricity rendered as bold, jagged white lines. Background dissolves into pure speed lines and speed blurs. The panel borders are slanted diagonally for energy.
+
+**Panel 5 (Bottom left, inset):** Impact frame—her boot connects with a chrome helmet. The enemy's head snaps back, shards of metal flying. Drawn with extreme speed lines radiating from the impact point, negative space reversed (white background with black speed lines). "GA-KOOM!" sound effect in bold, cracked letters dominates the panel.
+
+**Panel 6 (Bottom right, final panel):** The woman lands in a three-point stance on the rain-slicked ground, steam rising from her overheating arm. Low angle shot, her face is tilted up with a fierce smirk. Background shows fallen assailants blurred. Heavy blacks in the shadows, screentones on her coat, and a single white highlight on her cybernetic eye. Panel border is clean and solid, providing a sense of finality.
+
+r/StableDiffusion - Guys, Z-Image Can Generate COMICS with Multi-panels!!
+The prompt for the second page:
+**PAGE 2**
+
+**Panel 1 (Top, wide shot):** The cyborg woman rises to her full height, rainwater streaming down her coat. Steam continues to vent from her arm's exhaust ports with thin, wispy lines. She cracks her neck, head tilted slightly. The perspective is eye-level, showing the alley stretching behind her with three downed assailants lying in twisted heaps. Heavy cross-hatching in the shadows under the neon signs. Sound effect: "GISHI..." (creak). Her speech bubble, small and cold: "...That's all?"
+
+**Panel 2 (Inset, overlapping Panel 1, bottom right):** A tight close-up of her cybernetic eye whirring as the iris aperture contracts. Data streams and targeting reticles flicker in her vision, rendered as thin concentric circles and scrolling vertical text (binary code or garbled kanji) in the screentone. The pupil glows with a faint white highlight. No border, just the eye detail floating over the previous panel.
+
+**Panel 3 (Middle left, vertical):** Her head snaps to the right, eyes wide, rain droplets flying off her hair. Dynamic motion lines arc across the panel. In the blurred background, visible through the downpour, a massive silhouette emerges—heavy tactical armor with a single glowing red optic sensor. The panel border is cracked and fragmented. Sound effect: "ZUUN!" (rumble).
+
+**Panel 4 (Middle right, small):** A booted foot stomps down, cracking the concrete. Thick, jagged cracks radiate from the impact. Extreme foreshortening from a low angle, showing the weight and power. The armor plating is covered in warning stickers and weathered paint. Sound effect: "DOON!" (crash).
+
+**Panel 5 (Bottom, large horizontal spread):** Full reveal of the enemy—an 8-foot tall enforcer droid, bulky and asymmetrical, with a rotary cannon arm and a rusted riot shield. It looms over her, filling the panel. The perspective is from behind the woman's shoulder, low angle, emphasizing its size. Rain sheets down its chassis, white highlights catching on metal edges. In the far background, more red eyes glow in the darkness. The woman's shadow stretches small before it. Sound effect across the top: "GOGOGOGOGO..." (menacing rumble).
+
+**Panel 6 (Bottom right corner, inset):** A tight shot of her face, now smirking dangerously, one eye hidden by wet hair. She raises her mechanical arm, fingers spreading as hidden compartments slide open, revealing glowing energy cores. White-hot light bleeds into the black ink. Her dialogue bubble, sharp and cocky: "Now we're talking."
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+give me a comic with panels and a story i alos want the panels to be in compostion black and white crosshatching raster inked only style and atmosphere of Massimiliano Haematinon Nigro ergo cosmos, the stroy is a girl with a moebius inspired helmet, the world is medievel
+
+a character Semi-realistic American webcomic style, vertical comic panels, cinematic lighting, beautiful blonde women, expressive faces, fashion magazine quality illustration, clean lineart, soft rendering, dramatic storytelling, romance drama comic, highly detailed hair, modern western comic art, webtoon composition.
+
+
+КАДР 1 — КРЮЧОК
+Промт:
+Comic book panel, Marvel/DC style, bold ink outlines, vivid colors. A grieving middle-aged Russian man in a dark apartment, holding a legal document with a shocked expression. A framed photo of his deceased wife on the wall behind him. Dramatic lighting, shadow and light contrast. Single panel, no text inside the image.
+STYLE REFERENCE PROMPT (копируй в каждый кадр):
+
+American comic book style, Marvel/DC inspired, bold black ink outlines, 
+clean cel-shading, vivid saturated colors, high contrast shadows, 
+halftone dot texture in background, dramatic cinematic angles, 
+professional comic panel composition, consistent character design 
+throughout all panels, heroic proportions, detailed expressive faces, 
+noir-inspired lighting with warm accent colors, 
+printed comic book aesthetic, no watermarks, no text inside image, 
+single panel illustration, 4:5 aspect ratio for Instagram.
+
+Main character: middle-aged man, dark hair with grey temples, 
+stubble, wearing a grey jacket.
+Lawyer: tall, broad-shouldered, sharp suit, short dark hair, 
+strong jawline, confident posture.
+
+Male detective, mid-40s, rugged and world-weary, stern expression, sharp cheekbones, slicked-back dark hair, cigarette glowing red, wearing long brown trench coat, dark collared shirt, brown trousers, black shoes. American comic book noir style, realistic anatomy, heavy shadows, chiaroscuro lighting, detailed cross-hatching, muted palette of browns, grays, and blues with selective pops of color, gritty and atmospheric
+
+Bold Chromatics is an illustrative style from Exactly AI that produces vibrant, high-contrast artwork with striking color palettes. It generates expressive illustrations with bold chromatic choices, ideal for 
+
+A noir comic book style portrait of a blonde young woman detective nicknamed. She has blue eyes, soft lips, a  and fair skin. Wearing a salad coat and a beige scard, with silver earrings. Background with a night sky full of stars and glowing city lanterns. Semi-realistic, detailed, colored illustration, graphic novel style, vivid colors with noir shadows.
+
+Comic book style illustration of a man sitting alone in darkness, half of his face hidden in shadow, police lights reflecting in his eyes, dramatic noir lighting, strong ink outlines, intense expression, mysterious atmosphere, unsolved case vibe, graphic novel thriller aesthetic, vertical 9:16
+
+A moody, atmospheric comic book panel set inside a dimly lit bar at night. Warm amber and deep shadow lighting. A hauntingly beautiful woman — Sara — sits alone at the bar, a half-empty glass of whiskey in her hand, her expression hollow and distant, dressed elegantly but disheveled, as if the evening broke something in her. Beside her, a tall, ethereally striking man — Alexander — has just settled onto the adjacent stool, his dark coat and timeless, almost otherworldly features cutting against the smoky bar backdrop. He is turning toward her, his gaze falling on her face for the first time — and in that instant his expression shifts: eyes wide, breath caught, something ancient and shattered flickering across his face. A supernatural visual effect overlays Sara's eyes — a ghostly double exposure of another woman's face, Eliza, soft and luminous, fading like a memory returning from a thousand years ago. The ghost image is tender, heartbreaking. The bar around them feels frozen, as if time itself paused. Moody neon signs bleed color into the darkness — deep burgundy, cold blue, faint gold. Comic book art style with bold ink lines, dramatic chiaroscuro shading, cinematic panel composition, emotional storytelling, noir atmosphere, highly detailed.
+
+A cityscape at early morning on an autumn day, heavy rain falling, urban setting with multi-story buildings in the style of Le Corbusier, brutalist architecture, gray tones, a street with tram rails, a tram moving through the scene, rare passersby as black silhouettes under black umbrellas, moody and melancholic atmosphere, noir aesthetic, comic book art style inspired by DC Comics, dramatic shadows, wet reflections on the pavement, muted color palette with shades of gray and brown, detailed line work, cinematic composition, high contrast, 4k resolution
+
+Hyper-detailed black and white comic book illustration, high contrast ink drawing, heavy cross-hatching, raw textured lines, dramatic chiaroscuro lighting. A bald, 35-year-old man, shirtless with black pants, sits slumped on the edge of a messy bed, head bowed in despair, smoking a cigarette. His body is covered in intricate, dense black tattoos. The room is dimly lit, with smoke curling in the air, empty bottles on the floor, and an ashtray on a bedside table. Style of Sean Gordon Murphy and Frank Miller, gritty noir graphic novel, monochrome, stark shadows, emotional and atmospheric."
+
+A surreal comic book-style illustration depicting two overlapping male faces with intense, brooding expressions, both partially shaded in deep blacks and accented with contrasting salmon pink tones and hatching. From the mouth of each face, thick, curling smoke billows outward and visually connects the two in a looping, organic flow, with one face holding a cigarette. The background features abstract splatters and brush textures in black and off-white, creating a dynamic, chaotic atmosphere reminiscent of noir graphic novels or 1970s psychedelic posters, with a bold, hand-inked quality and dramatic chiaroscuro lighting.
+
+Create an drawing Black and white comic book art, Sin City noir style, high contrast, gritty atmosphere. A futuristic spaceport at night. A single sleek, angular spaceship positioned slightly to the right of center, illuminated by harsh floodlights casting sharp shadows. The ship has jagged edges, glowing white thrusters, and a lowered ramp with shadowy silhouettes loading cargo. Industrial background with towering brutalist structures, exposed pipes, and scaffolding. Rain falls diagonally, streaks of white ink. Foreground puddles reflect the ship's lights. Silhouetted figure in the lower left corner holding a weapon. Bold ink outlines, heavy crosshatching, no color, Frank Miller-inspired
+
+comic book illustration of a glowing orange Digital eye on a dark background, cyberpunk style, only the outline of the eyelid, Iris and pupil, eye is a computer-generated image inside a virtual space, leave some space around the eye, in the style of Sean Murphy, noir graphic novel, brush pen illustration
+
+Ultra-detailed comic book illustration in the style of Brian Bolland, inspired by The Killing Joke cover. 
+The subject keeps the exact same pose and facial features as in the original photo, realistic likeness preserved. 
+Sharp linework, high contrast, meticulous inking, strong outlines, vibrant comic colors with dramatic lighting. 
+Color palette dominated by purples, greens, yellows, noir atmosphere, theatrical highlights, intense shadows. 
+Extremely detailed, clean inked lines, polished finish, highly expressive and striking composition, 
+as if drawn for a DC Comics cover.
+
+neo-noir graphic novel illustration of an older businessman sitting at a large desk in a dark high-rise office at night, smoking a cigarette, dramatic side lighting, red rim light illuminating half his face, deep shadows obscuring the other half, stacks of paper and files on the desk, floor-to-ceiling windows behind him, art deco skyscraper skyline glowing in teal and cyan night light, cinematic composition, high contrast chiaroscuro lighting, heavy ink lines, comic book style, ultra detailed, sharp focus, moody atmosphere, volumetric smoke, 4k, wide angle shot
+
+Comic style scene of a bustling city street, detailed backgrounds, and lively characters.
+
+multi-panel Comic art page of an alien invasion, detailed spaceships and extraterrestrials, vivid colors, sci-fi theme art style  Jean Giraud, Moebius,.
+
+Comic style portrait of a mysterious detective, noir elements, and dramatic lighting.
+Comic art of a superhero flying over a bustling city, bright colors, action-packed scene.
+Comic art of an alien invasion, detailed spaceships and extraterrestrials, vivid colors, sci-fi theme.
+Comic art of a mystical forest, talking animals and magical creatures, whimsical style, vibrant colors.
+Comic art of a detective solving a mysterious case, noir style, dark and moody colors.
+Comic art of a group of teenagers with supernatural abilities, high school setting, dynamic poses, bright colors.
+Comic art of a post-apocalyptic world, detailed ruins and survivors, grim colors, dystopian theme.
+Comic art of a classic western showdown, detailed cowboy characters, desert setting, warm colors.
+Comic art of a superheroine battling a giant robot, cityscape background, dynamic poses, bright and metallic colors.
+Comic art of a medieval knight on a quest, detailed dragons and castles, fantasy theme, vivid colors.
+Comic art of a space explorer discovering a new planet, alien flora and fauna, vibrant and surreal colors, sci-fi theme.
+Comic art of a pirate adventure, detailed ship and sea monsters, ocean setting, vibrant colors.
+Comic art of a vampire hunter, gothic style, dramatic shadows and red highlights.
+Comic art of a time-traveling adventure, detailed historical and futuristic settings, vibrant colors.
+Comic art of a ninja stealth mission, detailed oriental architecture, night scene, cool colors.
+Comic art of a dystopian rebellion, detailed city ruins and freedom fighters, intense action, grim colors.
+Comic art of an epic superhero team-up, dynamic poses, detailed cityscape, vibrant and bright colors.
+Comic art of a magical girl transformation, detailed costume and magical effects, pastel colors.
+Comic art of an undersea adventure, detailed marine life and underwater city, vibrant colors.
+Comic art of a steampunk inventor, detailed machinery and Victorian setting, warm colors.
+Comic art of a zombie apocalypse, detailed characters and zombies, grim and gory colors.
+Comic art of a cybernetic future, detailed cityscape and robots, neon colors, sci-fi theme.
+Comic art of a mythical creature encounter, detailed mythical beasts, vibrant colors, fantasy theme.
+Comic art of a superhero origin story, detailed transformation sequence, bright colors.
+Comic art of an epic space battle, detailed spaceships and aliens, vibrant and dark colors, sci-fi theme.
+Comic art of a magical duel, detailed spells and magical effects, vibrant colors, fantasy theme.
+
+https://stablediffusionweb.com/prompts/comic-panels
+
+Comic book illustration, three diagonal split panels stacked vertically from top-left to bottom-right, each panel showing a close-up portrait of a different masked superhero from chest up.
+
+Top panel: red and gold armored hero with glowing white slit eyes, sleek metallic helmet, two sword hilts visible behind shoulders, dramatic red and coral lighting, sharp rim light, flat vector shading, comic halftone texture, high-tech aesthetic.
+
+Middle panel: red masked hero with black web pattern and large angular white eyes, pink and purple duotone lighting, cross-hatching shadows, gritty comic ink texture, intense expression.
+
+Bottom panel: dark cowl vigilante with glowing yellow eyes, stern expression, yellow and black color scheme, golden city skyline silhouette background with bokeh light particles, strong backlight.
+
+Style: bold 2D vector art, high contrast, sharp hard-edged shadows, vibrant flat colors, graphic novel cover, limited color palette per panel, dramatic directional lighting, no gradients, cel shading, thick black linework, modern comic book art style, 8k --ar 3:4 --style raw --s 750
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Bold Chromatics is an illustrative style from Exactly AI that produces vibrant, high-contrast artwork with striking color palettes. It generates expressive illustrations with bold chromatic choices, ideal for eye-catching visuals, brand illustrations, and creative projects that demand strong visual impact.
+
+Featured Models
+Top-performing models in this category, recommended by our community and performance benchmarks.
+
+#2
+View details
+Exactly Graphic Harmony
+Exactly AI
+Exactly Graphic Harmony
+by Exactly AI
+
+Graphic Harmony is an illustrative style from Exactly AI that produces balanced, visually cohesive graphic artwork. It generates illustrations with harmonious color relationships and well-structured compositions, well suited for branding, marketing materials, and design projects that require visual consistency.
+
+#3
+View details
+Exactly Editorial Line
+Exactly AI
+Exactly Editorial Line
+by Exactly AI
+
+Editorial Line is an illustrative style from Exactly AI that produces clean, refined line-based illustrations with an editorial sensibility. It generates artwork with precise linework and measured compositions, ideal for publishing, magazine visuals, storytelling, and professional editorial content.
+
+#4
+View details
+Exactly Earthy Elegance
+Exactly AI
+Exactly Earthy Elegance
+by Exactly AI
+
+Earthy Elegance is an illustrative style from Exactly AI that produces artwork with warm, organic earth tones and a refined aesthetic. It generates illustrations with muted natural palettes and elegant compositions, suited for editorial work, nature-themed visuals, and designs that call for a grounded, sophisticated feel.
+
+#5
+View details
+Exactly Dark Comics
+Exactly AI
+Exactly Dark Comics
+by Exactly AI
+
+Dark Comics is an illustrative style from Exactly AI that produces gritty, noir-inspired comic artwork with heavy shadows and dramatic contrast. It generates illustrations with a dark, moody atmosphere and bold compositions, ideal for horror, thriller, dystopian themes, and projects that demand an intense, cinematic comic book aesthetic.
+
+#6
+View details
+Exactly Graphic Novel
+Exactly AI
+Exactly Graphic Novel
+by Exactly AI
+
+Graphic Novel is an illustrative style from Exactly AI that produces artwork in the tradition of graphic novels and comic books. It generates illustrations with strong ink lines, dramatic shading, and panel-ready compositions, well suited for storytelling, sequential art, comic covers, and projects that call for a bold, narrative-driven visual style.
+
+#7
+View details
+Exactly Monochrome Café
+Exactly AI
+Exactly Monochrome Café
+by Exactly AI
+
+Monochrome Café is an illustrative style from Exactly AI that produces artwork in warm monochromatic palettes reminiscent of café sketches and ink drawings. It generates illustrations with a cozy, hand-drawn quality using limited tonal ranges, ideal for lifestyle visuals, storyboard art, and projects with a warm, intimate feel.
+
+#8
+View details
+Exactly Muted Modern
+Exactly AI
+Exactly Muted Modern
+by Exactly AI
+
+Muted Modern is an illustrative style from Exactly AI that produces contemporary artwork with soft, desaturated color palettes and a modern aesthetic. It generates illustrations with understated tones and clean design sensibilities, ideal for modern branding, app visuals, and projects that favor a minimalist, polished look.
+
+#9
+View details
+Exactly Playful Line Adventures
+Exactly AI
+Exactly Playful Line Adventures
+by Exactly AI
+
+Playful Line Adventures is an illustrative style from Exactly AI that produces whimsical, energetic line art with a sense of adventure and fun. It generates illustrations with loose, expressive linework and a lighthearted feel, perfect for children's content, character design, playful branding, and projects that need a sense of joy and movement.
+
+#10
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

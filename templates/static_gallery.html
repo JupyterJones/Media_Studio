@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Media Studio | Static Images Gallery</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/themed.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" href="/favicon.ico?v=1">
+    <script src="{{ url_for('static', filename='js/theme.js') }}"></script>
+    <style>
+        .gallery-container {
+            max-width: 1500px;
+            margin: 0 auto;
+            padding: 10px 16px 60px;
+        }
+
+        .studio-header {
+            text-align: center;
+            padding: 24px 20px 16px;
+            margin-bottom: 20px;
+        }
+
+        .studio-header h1 {
+            font-size: 2.4rem;
+            margin-bottom: 8px;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .studio-header p {
+            color: var(--text-muted);
+            font-size: 1.05rem;
+        }
+
+        .studio-nav {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 26px;
+        }
+
+        .studio-nav a {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            padding: 9px 18px;
+            border-radius: var(--radius-sm);
+            color: var(--text-bright);
+            font-family: 'Outfit', sans-serif;
+            font-weight: 600;
+            font-size: 0.92rem;
+            transition: all var(--transition-speed);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .studio-nav a:hover {
+            background: var(--accent-glow);
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 15px var(--accent-glow);
+            transform: translateY(-2px);
+            color: var(--text-bright);
+        }
+
+        .studio-nav a.primary {
+            background: var(--accent-gradient);
+            color: #080812;
+            border: none;
+            box-shadow: var(--shadow-glow);
+        }
+
+        .studio-nav a.primary:hover {
+            filter: brightness(1.15);
+            color: #000;
+        }
+
+        /* Controls & Filter Bar */
+        .controls-panel {
+            background: var(--bg-card);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 16px 22px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+            box-shadow: var(--shadow);
+        }
+
+        .search-wrapper {
+            position: relative;
+            flex: 1;
+            min-width: 260px;
+            max-width: 480px;
+        }
+
+        .search-wrapper i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            pointer-events: none;
+        }
+
+        .search-input {
+            width: 100%;
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            padding: 10px 16px 10px 38px;
+            color: var(--text-bright);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            transition: all var(--transition-speed);
+        }
+
+        .search-input:focus {
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 14px var(--accent-glow);
+            outline: none;
+            background: var(--bg-code);
+        }
+
+        .stats-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-subtle);
+            border-radius: 20px;
+            padding: 8px 16px;
+            font-size: 0.88rem;
+            color: var(--text-main);
+            font-family: 'Outfit', sans-serif;
+            font-weight: 600;
+        }
+
+        .stats-badge strong {
+            color: var(--accent-primary);
+        }
+
+        /* Gallery Grid */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+            gap: 20px;
+        }
+
+        .gallery-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: transform var(--transition-speed), border-color var(--transition-speed), box-shadow var(--transition-speed);
+            box-shadow: var(--shadow);
+            position: relative;
+        }
+
+        .gallery-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--accent-primary);
+            box-shadow: 0 12px 28px var(--accent-glow);
+        }
+
+        .thumb-link {
+            position: relative;
+            display: block;
+            width: 100%;
+            height: 220px;
+            background: var(--bg-code);
+            overflow: hidden;
+        }
+
+        .thumb-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.35s ease;
+        }
+
+        .gallery-card:hover .thumb-img {
+            transform: scale(1.05);
+        }
+
+        .ext-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(8, 8, 18, 0.78);
+            border: 1px solid var(--border-color);
+            color: var(--accent-primary);
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            backdrop-filter: blur(8px);
+        }
+
+        .video-indicator {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            background: rgba(8, 8, 18, 0.82);
+            border: 1px solid var(--accent-primary);
+            color: var(--accent-primary);
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            backdrop-filter: blur(8px);
+            pointer-events: none;
+            transition: all var(--transition-speed);
+        }
+
+        .gallery-card:hover .video-indicator {
+            background: var(--accent-primary);
+            color: #080812;
+            box-shadow: 0 0 14px var(--accent-glow);
+            transform: scale(1.1);
+        }
+
+        /* Filter Pills */
+        .filter-pills {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .filter-pill {
+            background: var(--bg-surface) !important;
+            border: 1px solid var(--border-color) !important;
+            color: var(--text-muted) !important;
+            border-radius: 20px !important;
+            padding: 6px 14px !important;
+            font-size: 0.82rem !important;
+            font-weight: 600 !important;
+            font-family: 'Outfit', sans-serif !important;
+            cursor: pointer !important;
+            transition: all var(--transition-speed) !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 6px !important;
+            box-shadow: none !important;
+            margin: 0 !important;
+        }
+
+        .filter-pill:hover, .filter-pill.active {
+            background: var(--accent-primary) !important;
+            color: #080812 !important;
+            border-color: var(--accent-primary) !important;
+            box-shadow: 0 0 12px var(--accent-glow) !important;
+            transform: none !important;
+        }
+
+        .card-body {
+            padding: 14px 16px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            flex-grow: 1;
+        }
+
+        .card-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text-bright);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin: 0;
+        }
+
+        .folder-badge {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .folder-badge i {
+            color: var(--accent-primary);
+            font-size: 0.8rem;
+        }
+
+        .path-box {
+            background: var(--bg-code);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-sm);
+            padding: 6px 10px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.74rem;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            cursor: pointer;
+            transition: all var(--transition-speed);
+            user-select: none;
+        }
+
+        .path-box:hover {
+            border-color: var(--accent-primary);
+            color: var(--text-bright);
+            background: rgba(0, 240, 255, 0.05);
+        }
+
+        .path-text {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            flex: 1;
+            direction: rtl;
+            text-align: left;
+        }
+
+        .copy-icon {
+            font-size: 0.85rem;
+            color: var(--accent-primary);
+            flex-shrink: 0;
+            transition: color var(--transition-speed);
+        }
+
+        .card-footer {
+            margin-top: auto;
+            display: flex;
+            justify-content: flex-end;
+            padding-top: 6px;
+        }
+
+        .detail-btn {
+            font-size: 0.84rem !important;
+            padding: 7px 14px !important;
+            margin: 0 !important;
+            width: 100%;
+        }
+
+        /* Empty State */
+        .empty-state {
+            background: var(--bg-card);
+            border: 1px dashed var(--border-color);
+            border-radius: var(--radius);
+            padding: 60px 20px;
+            text-align: center;
+            grid-column: 1 / -1;
+            display: none;
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+        }
+
+        .empty-state h3 {
+            color: var(--text-bright);
+            margin-bottom: 8px;
+        }
+
+        .empty-state p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        /* Toast notification */
+        .copy-toast {
+            position: fixed;
+            bottom: 74px;
+            right: 20px;
+            background: var(--bg-surface);
+            border: 1px solid var(--accent-primary);
+            color: var(--text-bright);
+            padding: 10px 18px;
+            border-radius: var(--radius-sm);
+            box-shadow: 0 8px 24px var(--accent-glow);
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 10000;
+            opacity: 0;
+            transform: translateY(12px);
+            transition: all 0.25s ease;
+            pointer-events: none;
+        }
+
+        .copy-toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+
+<div class="gallery-container">
+    <!-- Header -->
+    <div class="studio-header">
+        <h1>Static Images Gallery</h1>
+        <p>Media Studio AI Asset Browser & Filesystem Inspector</p>
+    </div>
+
+    <!-- Navigation -->
+    <div class="studio-nav">
+        <a href="/" class="primary"><i class="fas fa-home"></i> Media Studio</a>
+        <a href="{{ url_for('gallery.static_images') }}"><i class="fas fa-images"></i> Images</a>
+        <a href="{{ url_for('gallery.static_videos') }}"><i class="fas fa-video"></i> Videos</a>
+        <a href="{{ url_for('gallery.static_sounds') }}"><i class="fas fa-music"></i> Sounds</a>
+        <a href="{{ url_for('gallery.static_images') }}"><i class="fas fa-sync-alt"></i> Sync & Refresh</a>
+        <a href="/clean_storage"><i class="fas fa-paint-brush"></i> Image Processing</a>
+        <a href="/remember" target="remember_app"><i class="fas fa-database"></i> Remember DB</a>
+    </div>
+
+    <!-- Controls Panel -->
+    <div class="controls-panel">
+        <div class="search-wrapper">
+            <i class="fas fa-search"></i>
+            <input type="text" id="gallerySearch" class="search-input" placeholder="Search by image name, folder, or file path..." autocomplete="off">
+        </div>
+
+        <div class="stats-badge">
+            <i class="fas fa-images"></i>
+            <span>Showing <strong id="visibleCount">{{ images|length }}</strong> of <strong>{{ images|length }}</strong> Images</span>
+        </div>
+    </div>
+
+    <!-- Gallery Grid -->
+    <div class="gallery-grid" id="galleryGrid">
+        {% for img in images %}
+        <div class="gallery-card"
+             data-title="{{ img.title|lower }}"
+             data-path="{{ img.image|lower }}"
+             data-folder="{{ (img.caption or '')|lower }}">
+            <a href="{{ url_for('gallery.show_image', id=img.id) }}" class="thumb-link" title="Click to inspect {{ img.title }}">
+                <img src="{{ url_for('static', filename=img.image) }}"
+                     alt="{{ img.title }}"
+                     class="thumb-img"
+                     loading="lazy">
+                <span class="ext-badge">{{ img.image.split('.')[-1] }}</span>
+            </a>
+
+            <div class="card-body">
+                <h3 class="card-title" title="{{ img.title }}">{{ img.title }}</h3>
+
+                <div class="folder-badge" title="Folder: static/{{ img.caption }}">
+                    <i class="fas fa-folder-open"></i>
+                    <span>static/{{ img.caption or '' }}</span>
+                </div>
+
+                <div class="path-box"
+                     title="Click to copy full absolute path"
+                     onclick="copyPath('{{ img.full_path|e }}', this)">
+                    <span class="path-text">{{ img.image }}</span>
+                    <i class="fas fa-copy copy-icon"></i>
+                </div>
+
+                <div class="card-footer">
+                    <a href="{{ url_for('gallery.show_image', id=img.id) }}" class="btn btn-secondary detail-btn">
+                        <i class="fas fa-arrow-up-right-from-square"></i> Inspect
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+
+        <div class="empty-state" id="emptyState">
+            <i class="fas fa-search"></i>
+            <h3>No matching images found</h3>
+            <p>Try searching for a different keyword or file extension.</p>
+        </div>
+    </div>
+</div>
+
+<!-- Copy Toast Notification -->
+<div class="copy-toast" id="copyToast">
+    <i class="fas fa-check-circle" style="color: var(--success-color);"></i>
+    <span id="toastMsg">File path copied to clipboard!</span>
+</div>
+
+<!-- Theme Switcher -->
+<button class="theme-switch-btn" onclick="toggleTheme()">
+    🎨 <span id="themeName">Theme</span>
+</button>
+
+<script>
+    // Live Search & Type Filter
+    const searchInput = document.getElementById('gallerySearch');
+    const cards = document.querySelectorAll('.gallery-card');
+    const visibleCount = document.getElementById('visibleCount');
+    const emptyState = document.getElementById('emptyState');
+    let currentTypeFilter = 'all';
+
+    function setTypeFilter(type, btn) {
+        currentTypeFilter = type;
+        document.querySelectorAll('.filter-pill').forEach(b => b.classList.remove('active'));
+        if (btn) btn.classList.add('active');
+        applyFilters();
+    }
+
+    function applyFilters() {
+        const query = (searchInput ? searchInput.value : '').toLowerCase().trim();
+        let visible = 0;
+
+        cards.forEach(card => {
+            const title = card.getAttribute('data-title') || '';
+            const path = card.getAttribute('data-path') || '';
+            const folder = card.getAttribute('data-folder') || '';
+            const cardType = card.getAttribute('data-type') || 'image';
+
+            const matchesType = (currentTypeFilter === 'all') || (cardType === currentTypeFilter);
+            const matchesQuery = !query || title.includes(query) || path.includes(query) || folder.includes(query);
+
+            if (matchesType && matchesQuery) {
+                card.style.display = '';
+                visible++;
+            } else {
+                card.style.display = 'none';
+            }
+        });
+
+        if (visibleCount) {
+            visibleCount.textContent = visible;
+        }
+
+        if (emptyState) {
+            emptyState.style.display = visible === 0 ? 'block' : 'none';
+        }
+    }
+
+    if (searchInput) {
+        searchInput.addEventListener('input', applyFilters);
+    }
+
+    // Copy to clipboard with toast notification
+    function copyPath(text, el) {
+        navigator.clipboard.writeText(text).then(() => {
+            const toast = document.getElementById('copyToast');
+            const toastMsg = document.getElementById('toastMsg');
+            if (toast) {
+                toastMsg.textContent = 'Path copied to clipboard!';
+                toast.classList.add('show');
+                setTimeout(() => toast.classList.remove('show'), 2200);
+            }
+
+            // Also temporarily flash the icon
+            if (el) {
+                const icon = el.querySelector('.copy-icon');
+                if (icon) {
+                    icon.className = 'fas fa-check copy-icon';
+                    icon.style.color = 'var(--success-color)';
+                    setTimeout(() => {
+                        icon.className = 'fas fa-copy copy-icon';
+                        icon.style.color = '';
+                    }, 1800);
+                }
+            }
+        }).catch(err => {
+            console.error('Copy failed:', err);
+        });
+    }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rorschach Inkblot Test</title>
+
+        <!-- Link to the CSS file -->
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
+        <style>
+    /* Sticky header with white background */
+    .sticky {
+        position: fixed;
+        top: 0;
+        width: 100%;
+        background-color: darkred;
+        padding: 10px 0;
+        text-align: center;
+        z-index: 1000;
+    }
+    .paragraph {
+    white-space: pre-wrap;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    padding: 10px;
+}
+
+        </style>
+</head>
+<script>
+    // Function to find and highlight the search string
+    function findString(str) {
+        if (parseInt(navigator.appVersion) < 4) return;
+
+        // Check if find method is supported
+        if (window.find) {
+            // Find the search string
+            var strFound = window.find(str);
+            if (!strFound) {
+                // If not found, try to find from the beginning
+                window.find(str, 0, 1);
+            }
+            if (strFound) {
+                // Highlight the found text
+                var range = window.getSelection().getRangeAt(0);
+                var span = document.createElement("span");
+                span.style.backgroundColor = "yellow";
+                range.surroundContents(span);
+            }
+        } else if (navigator.appName.indexOf("Microsoft") != -1) {
+            // Handle Microsoft browsers
+            // Not implemented for brevity
+        } else if (navigator.appName == "Opera") {
+            // Handle Opera browsers
+            alert("Opera browsers not supported, sorry...");
+            return;
+        }
+
+        // If not found, show alert
+        if (!strFound) alert("String '" + str + "' not found!");
+    }
+
+    // Function to move cursor to next occurrence of search input
+    function moveToNextOccurrence() {
+        var search_str = document.getElementById("search_input").value;
+        findString(search_str);
+    }
+</script>
+</head>
+
+<body>
+<header class="sticky">
+<span style="font-size:2vw;">Search Results</span>&nbsp;&nbsp; | &nbsp;&nbsp;&nbsp;
+<input <script>
+    // Function to find and highlight the search string
+    function findString(str) {
+        if (parseInt(navigator.appVersion) < 4) return;
+
+        // Check if find method is supported
+        if (window.find) {
+            // Find the search string
+            var strFound = window.find(str);
+            if (!strFound) {
+                // If not found, try to find from the beginning
+                window.find(str, 0, 1);
+            }
+            if (strFound) {
+                // Highlight the found text
+                var range = window.getSelection().getRangeAt(0);
+                var span = document.createElement("span");
+                span.style.backgroundColor = "yellow";
+                range.surroundContents(span);
+            }
+        } else if (navigator.appName.indexOf("Microsoft") != -1) {
+            // Handle Microsoft browsers
+            // Not implemented for brevity
+        } else if (navigator.appName == "Opera") {
+            // Handle Opera browsers
+            alert("Opera browsers not supported, sorry...");
+            return;
+        }
+
+        // If not found, show alert
+        if (!strFound) alert("String '" + str + "' not found!");
+    }
+
+    // Function to move cursor to next occurrence of search input
+    function moveToNextOccurrence() {
+        var search_str = document.getElementById("search_input").value;
+        findString(search_str);
+    }
+</script>
+</head>
+
+<body>
+<header class="sticky">
+<span style="font-size:2vw;" >Search Results</span>&nbsp;&nbsp; | &nbsp;&nbsp;&nbsp;
+<input style="font-size:2vw;" type="text" id="search_input" />
+
+<button style="font-size:2vw;" id="search_submit" onclick="moveToNextOccurrence()">
+    Find in page Next</button>&nbsp;&nbsp; | &nbsp;&nbsp;&nbsp;
+<type="text" id="search_input" />
+
+<button style="font-size:2vw;" id="search_submit" onclick="moveToNextOccurrence()">
+    Find in page Next</button>&nbsp;&nbsp; | &nbsp;&nbsp;&nbsp;
+
+    <h1>Detail on Creating Rorschach Inkblot Test - . Explain.html</h1>
+    <p>What do you see in the inkblots below?</p>
+    <a href="{{ url_for('rorschach_route') }}" class="refresh-button">Create Rorschach</a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="{{ url_for('home') }}" class="refresh-button">HOME</a>
+</header>
+<pre style="margin-top:150px" class="paragraph">
+def process_image(seed_count, seed_max_size, imgsize=(510, 766), count=0):
+    """
+    Generates a Rorschach-style inkblot and saves it.
+
+    Parameters:
+    - seed_count: Number of random blobs to generate.
+    - seed_max_size: Maximum size for the blobs.
+    - imgsize: Size of the image (width, height).
+    - count: Not currently used but can be utilized for additional functionality.
+    
+    Returns:
+    - final_filename: Path to the saved normal image.
+    - inverted_filename: Path to the saved inverted image.
+    """
+
+    # Set margins for blob placement
+    margin_h, margin_v = 60, 60
+
+    # Set the color for the blobs (black)
+    color = (0, 0, 0)
+
+    # Create a new white image of the specified size
+    img = Image.new("RGB", imgsize, "white")
+
+    # Log the start of the image generation process
+    logit(f"Starting image generation with {seed_count} seeds and max size {seed_max_size}.")
+    
+    try:
+        # Create the inkblot by drawing random blobs
+        for seed in range(seed_count):
+            # Randomly select a point to draw the blob, ensuring it stays within the left half of the image
+            point = (random.randrange(0 + margin_h, imgsize[0] // 2),
+                     random.randrange(0 + margin_v, imgsize[1] - margin_v))
+
+            # Randomly determine the size of the blob, up to the maximum size specified
+            blob_size = random.randint(10, seed_max_size)
+
+            # Draw the blob on the image
+            draw_blob(img, point, blob_size, color)
+
+        # Create symmetry by flipping the left half onto the right half
+        # Crop the left half of the image
+        cropped = img.crop((0, 0, imgsize[0] // 2, imgsize[1]))
+
+        # Flip the cropped image horizontally
+        flipped = cropped.transpose(Image.FLIP_LEFT_RIGHT)
+
+        # Paste the flipped image onto the right half of the original image
+        img.paste(flipped, (imgsize[0] // 2, 0))
+
+        # Apply a Gaussian blur to the image to create a softening effect
+        blurred_img = img.filter(ImageFilter.GaussianBlur(radius=15))
+
+        # Convert the blurred image to grayscale for binarization
+        im_grey = blurred_img.convert('L')
+
+        # Calculate the mean intensity value of the grayscale image for thresholding
+        mean = np.mean(np.array(im_grey))
+
+        # Binarize the image: set pixels above the mean to 255 (white), and those below to 0 (black)
+        image_array = np.array(im_grey)
+        binary_image = np.where(image_array > mean, 255, 0).astype(np.uint8)
+
+        # Save the final normal image with a timestamp in its filename
+        final_filename = time.strftime("static_new/archived-images/GOODblots%Y%m%d%H%M%S.png")
+        ImageOps.expand(Image.fromarray(binary_image), border=1, fill='white').save(final_filename)
+
+        # Create the inverted image by swapping the colors (black and white)
+        inverted_image = np.where(binary_image == 255, 0, 255).astype(np.uint8)
+
+        # Save the inverted image with a timestamp in its filename
+        inverted_filename = time.strftime("static_new/archived-images/INVERTEDblots%Y%m%d%H%M%S.png")
+        ImageOps.expand(Image.fromarray(inverted_image), border=1, fill='black').save(inverted_filename)
+
+        # Log the successful generation of images with their filenames
+        logit(f"Images generated: {final_filename}, {inverted_filename}")
+
+        # Return the paths to the generated images
+        return final_filename, inverted_filename
+    except Exception as e:
+        # Log any errors encountered during the image processing
+        logit(f"Error during image processing: {e}")
+</pre>
+<p>Components Explained</p>
+<pre>
+
+    Function Signature:
+        The function takes four parameters: seed_count, seed_max_size, imgsize, and count.
+        seed_count determines how many random blobs will be drawn, while seed_max_size limits the size of those blobs.
+        imgsize sets the dimensions of the final image, defaulting to (510, 766).
+        count is currently unused but can be reserved for future enhancements.
+
+    Blob Drawing Logic:
+        The function generates random coordinates for each blob while ensuring that the blobs remain within the left half of the image by adjusting the x-coordinate with imgsize[0] // 2.
+        A random size for each blob is determined using random.randint, providing variability in the sizes of the blobs.
+
+    Symmetry Creation:
+        The left half of the image is cropped and flipped to create a symmetrical inkblot effect.
+
+    Image Processing:
+        A Gaussian blur is applied to soften the features of the inkblot, enhancing the aesthetic quality.
+        The blurred image is converted to grayscale for further processing, allowing for easy binarization based on pixel intensity.
+
+    Binarization:
+        The mean intensity of the grayscale image is calculated and used as a threshold for binarization. This process converts the grayscale image into a strictly black-and-white format.
+
+    Saving Images:
+        Both the normal and inverted versions of the image are saved with timestamps, ensuring unique filenames for each image generated.
+
+    Error Handling:
+        A try-except block is employed to catch and log any errors that may occur during the image processing stages.
+
+Conclusion
+
+This function provides a robust mechanism for generating artistic inkblot images with a focus on both randomization and symmetry. The extensive logging incorporated throughout helps in tracking the function's execution and debugging issues as they arise. If you have any further questions or need additional modifications, feel free to ask!
+</pre>
+<img src="{{ url_for('static', filename='images/Rorschach.jpg') }}" alt="Inkblot Image 1">
+</body>
+</html>

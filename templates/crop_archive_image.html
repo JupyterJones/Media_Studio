@@ -1,0 +1,227 @@
+<!-- crop_archieve_image.html -->
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Crop Archive Image</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='dark.css') }}">
+    <style>
+        body {
+            background-color: var(--bg-card);
+            color: white;
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        /* Button Styling */
+        .refresh-button, .refresh-button2 {
+            display: inline-block;
+            padding: 8px 16px;
+            margin: 10px 2px;
+            font-size: 1em;
+            color: rgb(0, 0, 0);
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 600;
+        }
+
+        .refresh-button {
+            background-color: orange;
+        }
+
+        .refresh-button2 {
+            background-color: rgb(255, 225, 0);
+        }
+
+        .refresh-button:hover, .refresh-button2:hover {
+            background-color: #f97316;
+            color: black;
+        }
+
+        /* Text Styling */
+        h1 {
+            color: #f8fafc;
+            margin-bottom: 12px;
+        }
+
+        .form-label {
+            color: white;
+            font-size: 1.1rem;
+            font-family: monospace;
+            margin: 12px 0 4px 0;
+        }
+
+        input[type="text"] {
+            padding: 8px 12px;
+            font-size: 1rem;
+            border-radius: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(15, 23, 42, 0.8);
+            color: #f8fafc;
+            width: 320px;
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+
+        input[type="submit"] {
+            padding: 10px 28px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: #000;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 15px;
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+        }
+
+        input[type="submit"]:hover {
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+            box-shadow: 0 6px 16px rgba(245, 158, 11, 0.5);
+        }
+
+        /* Gallery and Item Containers */
+        .video-gallery {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            justify-content: flex-start;
+            margin-top: 16px;
+        }
+
+        .video-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 240px;
+            max-width: 260px;
+            min-width: 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.45);
+            padding: 12px;
+            background-color: rgba(30, 41, 59, 0.75);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 8px;
+            box-sizing: border-box;
+            overflow: hidden;
+            transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+        }
+
+        .video-item:hover {
+            border-color: #38bdf8;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.6);
+        }
+
+        .video-item:has(input[type="radio"]:checked) {
+            border-color: #00f0ff;
+            box-shadow: 0 0 14px rgba(0, 240, 255, 0.4);
+            background-color: rgba(15, 30, 55, 0.9);
+        }
+
+        .image-label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            cursor: pointer;
+            box-sizing: border-box;
+        }
+
+        .image-label img {
+            width: 100%;
+            max-width: 216px;
+            height: auto;
+            aspect-ratio: auto;
+            display: block;
+            margin-bottom: 8px;
+            border-radius: 6px;
+            object-fit: contain;
+            background: #0b0f19;
+        }
+
+        .caption-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            width: 100%;
+            box-sizing: border-box;
+            margin-top: 6px;
+        }
+
+        .caption-row input[type="radio"] {
+            margin-top: 3px;
+            flex-shrink: 0;
+            cursor: pointer;
+            accent-color: #00f0ff;
+            width: 18px;
+            height: 18px;
+        }
+
+        .filename-text {
+            font-family: monospace;
+            font-size: 0.8rem;
+            line-height: 1.35;
+            color: #e2e8f0;
+            word-break: break-all;
+            overflow-wrap: anywhere;
+            word-wrap: break-word;
+            white-space: normal;
+            text-align: left;
+            flex: 1;
+            min-width: 0;
+            box-sizing: border-box;
+        }
+
+        .success-box {
+            background: rgba(34, 197, 94, 0.15);
+            border: 1px solid rgba(34, 197, 94, 0.4);
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin: 14px 0;
+            max-width: 650px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Select an Image to Crop</h1>
+    <a class="refresh-button" href="{{ url_for('img_processing_route') }}">Image Processing</a>
+
+    {% if new_image %}
+    <div class="success-box">
+        <div style="color: #4ade80; font-weight: bold; margin-bottom: 4px;">Cropped Image Saved:</div>
+        <div style="color: #cbd5e1; font-family: monospace; font-size: 0.85rem; word-break: break-all;">{{ new_image }}</div>
+        <div style="margin-top: 8px;">
+            <img src="/{{ new_image }}" alt="Cropped Preview" style="max-height: 180px; width: auto; border-radius: 6px; border: 1px solid rgba(255, 255, 255, 0.2);">
+        </div>
+    </div>
+    {% endif %}
+    <hr>
+
+    <!-- Crop Form -->
+    <form action="{{ url_for('crop_store_image') }}" method="post" enctype="multipart/form-data">
+        <div class="form-label"><label for="size">Size (width,height):</label></div>
+        <input type="text" id="size" name="size" value="512,768">
+
+        <div class="form-label"><label for="pos">Position (left,top,right,bottom):</label></div>
+        <input type="text" id="pos" name="pos" value="120,10,400,500">
+
+        <div class="form-label" style="margin-top: 16px;">Select Image:</div>
+        <div class="video-gallery">
+            {% for image in images %}
+            {% set filename = image.split('/')[-1] %}
+            <div class="video-item">
+                <label class="image-label">
+                    <img src="{{ url_for('static', filename=image.split('static/')[-1]) }}" alt="{{ filename }}" loading="lazy">
+                    <div class="caption-row">
+                        <input type="radio" name="image" value="{{ image }}" required>
+                        <div class="filename-text" title="{{ filename }}">{{ filename }}</div>
+                    </div>
+                </label>
+            </div>
+            {% endfor %}
+        </div>
+        <p><input type="submit" value="Crop"></p>
+    </form>
+</body>
+</html>

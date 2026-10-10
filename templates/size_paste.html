@@ -1,0 +1,82 @@
+<!-- templates3/size_past.html -->
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>🛠️ Image Size & Paste Tool</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #121212;
+            color: #eee;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            font-weight: 300;
+            margin-bottom: 20px;
+        }
+
+        .image-container {
+            display: flex;
+            flex-wrap: wrap;
+            margin-top: 20px;
+            gap: 20px;
+        }
+
+        .image-card {
+            background: #1e1e1e;
+            padding: 10px;
+            border-radius: 8px;
+            width: 220px;
+            text-align: center;
+        }
+
+        .image-card img {
+            width: 250px;
+            border-radius: 5px;
+            display: block;
+            margin: 0 auto 10px auto;
+        }
+
+        .filename {
+            font-size: 14px;
+            color: #bbb;
+            word-wrap: break-word;
+        }
+        a{ font-size:2vw; color:orange; }
+    </style>
+</head>
+
+<body>
+    <h1>🛠️ Image Size & Paste Tool</h1>
+    
+    <p>This images will get "Auto" resized to allow space on the bottom for captions. <a href="/">HOME</a></p>
+   <form method="POST" enctype="multipart/form-data">
+        <label for="image">Select Images:</label><br>
+        <input type="file" name="image" id="image" multiple accept="image/*"><br><br>
+        <input type="submit" value="Process Images">
+    </form>
+
+    {% if processed_files %}
+    <div class="image-container">
+        {% for filename in processed_files %}
+        <div class="image-card">
+            <img src="{{ url_for('static', filename='project_files/' ~ filename) }}">
+            <div class="filename">{{ filename }}</div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+<!--
+If your processed output files are NOT in static/project_files,
+change this line:
+
+    < img src="{{ url_for('static', filename=filename) }}" >
+
+to whatever directory you want to pull from.
+-->
+filename: size_paste.html<br/>
+</body>
+</html>

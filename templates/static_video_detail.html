@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ vid.title }} | Media Studio Video Theater</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/themed.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" href="/favicon.ico?v=1">
+    <script src="{{ url_for('static', filename='js/theme.js') }}"></script>
+    <style>
+        .detail-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 14px 20px 60px;
+        }
+
+        /* Top Nav & Breadcrumbs */
+        .detail-nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            flex-wrap: wrap;
+            margin-bottom: 22px;
+            padding: 12px 18px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            box-shadow: var(--shadow);
+        }
+
+        .nav-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .pager-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Main Content Layout */
+        .detail-layout {
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: 24px;
+            align-items: start;
+        }
+
+        @media (max-width: 960px) {
+            .detail-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Video Theater Frame */
+        .theater-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 20px;
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .video-theater-wrapper {
+            width: 100%;
+            min-height: 400px;
+            max-height: 75vh;
+            background: #000;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-subtle);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            box-shadow: 0 0 35px rgba(0, 0, 0, 0.8);
+        }
+
+        .theater-video {
+            width: 100%;
+            max-height: 74vh;
+            object-fit: contain;
+            display: block;
+            border-radius: 4px;
+            outline: none;
+        }
+
+        /* Meta Sidebar */
+        .meta-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 24px 20px;
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .meta-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: var(--text-bright);
+            word-break: break-word;
+            margin: 0;
+            border-bottom: 1px solid var(--border-subtle);
+            padding-bottom: 12px;
+        }
+
+        .meta-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .meta-label {
+            font-size: 0.78rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .meta-label i {
+            color: var(--accent-primary);
+        }
+
+        .meta-value-box {
+            background: var(--bg-code);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-sm);
+            padding: 8px 12px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            color: var(--text-bright);
+            word-break: break-all;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .copy-btn {
+            background: none !important;
+            border: none !important;
+            padding: 4px !important;
+            margin: 0 !important;
+            color: var(--accent-primary) !important;
+            box-shadow: none !important;
+            cursor: pointer;
+            font-size: 0.95rem !important;
+            flex-shrink: 0;
+            transition: all var(--transition-speed);
+        }
+
+        .copy-btn:hover {
+            color: var(--text-bright) !important;
+            transform: scale(1.15) !important;
+        }
+
+        .actions-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .shortcut-hint {
+            margin-top: 12px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-sm);
+            padding: 10px 14px;
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            text-align: center;
+            line-height: 1.6;
+        }
+
+        .shortcut-hint kbd {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 2px 6px;
+            color: var(--accent-primary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.74rem;
+        }
+
+        /* Toast */
+        .copy-toast {
+            position: fixed;
+            bottom: 74px;
+            right: 20px;
+            background: var(--bg-surface);
+            border: 1px solid var(--accent-primary);
+            color: var(--text-bright);
+            padding: 10px 18px;
+            border-radius: var(--radius-sm);
+            box-shadow: 0 8px 24px var(--accent-glow);
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 10000;
+            opacity: 0;
+            transform: translateY(12px);
+            transition: all 0.25s ease;
+            pointer-events: none;
+        }
+
+        .copy-toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+
+<div class="detail-container">
+    <!-- Top Nav -->
+    <div class="detail-nav">
+        <div class="nav-group">
+            <a href="{{ url_for('gallery.static_videos') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Video Studio
+            </a>
+            <a href="{{ url_for('gallery.static_images') }}" class="btn btn-secondary">
+                <i class="fas fa-images"></i> Images
+            </a>
+            <a href="/" class="btn btn-secondary">
+                <i class="fas fa-home"></i> Studio Home
+            </a>
+        </div>
+
+        <div class="pager-group">
+            {% if prev_id %}
+            <a href="{{ url_for('gallery.show_video', id=prev_id) }}" class="btn btn-secondary" id="prevBtn" title="Previous Video [←]">
+                <i class="fas fa-chevron-left"></i> Prev
+            </a>
+            {% else %}
+            <span class="btn btn-secondary" style="opacity: 0.35; cursor: not-allowed;">
+                <i class="fas fa-chevron-left"></i> Prev
+            </span>
+            {% endif %}
+
+            {% if next_id %}
+            <a href="{{ url_for('gallery.show_video', id=next_id) }}" class="btn btn-secondary" id="nextBtn" title="Next Video [→]">
+                Next <i class="fas fa-chevron-right"></i>
+            </a>
+            {% else %}
+            <span class="btn btn-secondary" style="opacity: 0.35; cursor: not-allowed;">
+                Next <i class="fas fa-chevron-right"></i>
+            </span>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="detail-layout">
+        <!-- Video Player Card -->
+        <div class="theater-card">
+            <div class="video-theater-wrapper">
+                <video id="theaterVideo" class="theater-video" controls autoplay loop playsinline>
+                    <source src="{{ url_for('static', filename=vid.video) }}" type="video/mp4">
+                    Your browser does not support HTML5 video.
+                </video>
+            </div>
+        </div>
+
+        <!-- Meta Sidebar -->
+        <div class="meta-card">
+            <h2 class="meta-title">{{ vid.title }}</h2>
+
+            <div class="meta-group">
+                <span class="meta-label"><i class="fas fa-tag"></i> Format</span>
+                <div class="meta-value-box">
+                    <span>{{ vid.video.split('.')[-1]|upper }} Video File</span>
+                </div>
+            </div>
+
+            <div class="meta-group">
+                <span class="meta-label"><i class="fas fa-folder"></i> Folder</span>
+                <div class="meta-value-box">
+                    <span>static/{{ vid.caption or '' }}</span>
+                </div>
+            </div>
+
+            <div class="meta-group">
+                <span class="meta-label"><i class="fas fa-hard-drive"></i> Local Filesystem Path</span>
+                <div class="meta-value-box">
+                    <span style="font-size: 0.72rem;">{{ vid.full_path }}</span>
+                    <button class="copy-btn" onclick="copyText('{{ vid.full_path|e }}')" title="Copy absolute path">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="meta-group">
+                <span class="meta-label"><i class="fas fa-link"></i> Static URL</span>
+                <div class="meta-value-box">
+                    <span>{{ url_for('static', filename=vid.video) }}</span>
+                    <button class="copy-btn" onclick="copyText('{{ url_for('static', filename=vid.video) }}')" title="Copy URL">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="actions-panel">
+                <a href="{{ url_for('static', filename=vid.video) }}" target="_blank" class="btn" style="width: 100%;">
+                    <i class="fas fa-up-right-from-square"></i> Open In New Tab
+                </a>
+                <a href="{{ url_for('static', filename=vid.video) }}" download class="btn btn-secondary" style="width: 100%;">
+                    <i class="fas fa-download"></i> Download Video
+                </a>
+            </div>
+
+            <div class="shortcut-hint">
+                <i class="fas fa-keyboard"></i> <strong>Playback Shortcuts</strong><br>
+                <kbd>←</kbd> Prev &nbsp;|&nbsp; <kbd>→</kbd> Next &nbsp;|&nbsp; <kbd>Space</kbd> Play/Pause &nbsp;|&nbsp; <kbd>Esc</kbd> Video Studio
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Copy Toast Notification -->
+<div class="copy-toast" id="copyToast">
+    <i class="fas fa-check-circle" style="color: var(--success-color);"></i>
+    <span id="toastMsg">Copied to clipboard!</span>
+</div>
+
+<!-- Theme Switcher -->
+<button class="theme-switch-btn" onclick="toggleTheme()">
+    🎨 <span id="themeName">Theme</span>
+</button>
+
+<script>
+    const video = document.getElementById('theaterVideo');
+
+    function copyText(val) {
+        navigator.clipboard.writeText(val).then(() => {
+            const toast = document.getElementById('copyToast');
+            if (toast) {
+                toast.classList.add('show');
+                setTimeout(() => toast.classList.remove('show'), 2000);
+            }
+        });
+    }
+
+    // Keyboard Shortcuts
+    document.addEventListener('keydown', function(e) {
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+        if (e.key === 'ArrowLeft') {
+            const prev = document.getElementById('prevBtn');
+            if (prev) prev.click();
+        } else if (e.key === 'ArrowRight') {
+            const next = document.getElementById('nextBtn');
+            if (next) next.click();
+        } else if (e.key === ' ' || e.code === 'Space') {
+            e.preventDefault();
+            if (video) {
+                if (video.paused) video.play();
+                else video.pause();
+            }
+        } else if (e.key === 'Escape') {
+            window.location.href = "{{ url_for('gallery.static_videos') }}";
+        }
+    });
+</script>
+
+</body>
+</html>

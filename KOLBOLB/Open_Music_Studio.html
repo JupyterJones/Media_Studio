@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>KOLBOLB Music Studio Launcher & Presets</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace;
+            background: #0b0f19;
+            color: #f1f5f9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        .card {
+            background: #1e293b;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+            max-width: 650px;
+            width: 100%;
+            border: 1px solid #334155;
+        }
+        h2 {
+            color: #22d3ee;
+            margin-top: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 14px;
+        }
+        th, td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #334155;
+            text-align: left;
+        }
+        th {
+            color: #94a3b8;
+            text-transform: uppercase;
+            font-size: 12px;
+        }
+        .val {
+            color: #00ffcc;
+            font-weight: bold;
+            font-family: monospace;
+            font-size: 15px;
+        }
+        .btn-open {
+            display: block;
+            width: 100%;
+            text-align: center;
+            background: #6366f1;
+            color: #fff;
+            padding: 12px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 16px;
+            transition: all 0.2s;
+            margin-top: 15px;
+        }
+        .btn-open:hover {
+            background: #4f46e5;
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.6);
+        }
+        .tip {
+            background: rgba(0, 255, 204, 0.08);
+            border-left: 4px solid #00ffcc;
+            padding: 10px 14px;
+            font-size: 13px;
+            margin: 15px 0;
+            border-radius: 0 6px 6px 0;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2><span>🎵</span> AceStep Music Quick Reference</h2>
+        
+        <p style="color: #94a3b8; font-size: 14px;">Here are the optimal default values for your AMD Ryzen 5 CPU setup:</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Setting</th>
+                    <th>Recommended Value</th>
+                    <th>Notes</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><b>BPM</b></td>
+                    <td class="val">120</td>
+                    <td>Standard upbeat tempo (use 90 for slow ambient)</td>
+                </tr>
+                <tr>
+                    <td><b>Duration (s)</b></td>
+                    <td class="val">25s <span style="color:#94a3b8; font-size:12px;">(or 55s)</span></td>
+                    <td><b>1 Verse:</b> 25s. <b>2 Verses:</b> Check <code>&lt;TwoVerses&gt;</code> (sets 55s &amp; generates both verse codes).</td>
+                </tr>
+                <tr>
+                    <td><b>Key</b></td>
+                    <td class="val">A Minor</td>
+                    <td>Dark sci-fi mood (or <code>C Major</code> for bright)</td>
+                </tr>
+                <tr>
+                    <td><b>Time Sig</b></td>
+                    <td class="val">4</td>
+                    <td>Standard 4/4 meter (integer value)</td>
+                </tr>
+                <tr>
+                    <td><b>Lyrics</b></td>
+                    <td class="val">Verses / Chorus</td>
+                    <td><b>For Singing Vocals:</b> Put rhyming words with <code>[Verse]</code> &amp; <code>[Chorus]</code>.<br><b>For No Vocals:</b> Put <code>[instrumental]</code>.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="tip" style="border-left-color: #ec4899; background: rgba(236, 72, 153, 0.08);">
+            🎤 <b>Why There Was No Voice Before:</b><br>
+            The default template had <code>[instrumental]</code> in the Lyrics box! In AceStep, <code>[instrumental]</code> is the special AI tag that commands the engine to <i>silence all singing</i> and produce purely background instruments.<br><br>
+            <b>To Hear Singing Vocals:</b>
+            <ol style="margin: 6px 0 0 16px; padding: 0;">
+                <li>Replace <code>[instrumental]</code> with actual lyrics lines (e.g. <code>[Verse 1]</code> and <code>[Chorus]</code>).</li>
+                <li>Add vocal keywords in the Caption (e.g., <i>"melodic synthwave, female vocals, clear emotional singing"</i>).</li>
+                <li>Set Duration to <b>25s or 30s</b> so the singer has time to sing the lines!</li>
+            </ol>
+        </div>
+
+        <div class="tip">
+            💡 <b>Magic Shortcut:</b> You can also just type a style description in <b>Caption</b> and click <b>[ Plan Lyrics ]</b>. The AI will write full rhyming lyrics, calculate BPM, Key, and Duration automatically!
+        </div>
+
+        <div style="display:flex; gap:10px; margin-top:15px;">
+            <a class="btn-open" style="background:#22c55e; flex:1;" href="Music_Studio.html" target="_blank">🚀 Open Enhanced Music Studio →</a>
+            <a class="btn-open" style="background:#334155; flex:1;" href="http://localhost:5001/musicui/" target="_blank">Built-in Port 5001 UI →</a>
+        </div>
+
+        <a class="btn-open" style="background:#00f0ff; color:#050811; margin-top:10px;" href="LipSync_Avatar_Studio.html" target="_blank">🎤 Open Avatar Lip-Sync Studio (Watch Your Characters Sing!) →</a>
+    </div>
+</body>
+</html>

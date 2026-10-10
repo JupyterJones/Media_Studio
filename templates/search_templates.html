@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='dark.css') }}">
+    <title>Search Templates</title>
+    <style>
+input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+}
+label {
+    display: block;
+    color: orange;
+    margin-bottom: 5px;
+    font-weight: bold;
+    font-size: 1.5vw;
+}
+li {
+    margin-bottom: 10px;
+    font-size: 1.5vw;
+    color:yellow;
+}
+    </style>
+</head>
+<body>
+    <h1>Search HTML Templates</h1>
+    <a href="/">Home</a>
+    <form method="POST" action="/search_templates">
+        <label for="search_term">Enter search term:</label>
+        <input type="text" id="search_term" name="search_term" required>
+        <button type="submit">Search</button>
+    </form>
+
+    {% if search_term %}
+        <h2>Search Results for "{{ search_term }}"</h2>
+        {% if results %}
+            <ul>
+                {% for result in results %}
+                    <li>
+                        <strong>{{ result.file }}</strong>
+                        <ul>
+                            {% for match in result.matches %}
+                                <li>{{ match }}</li>
+                            {% endfor %}
+                        </ul>
+                    </li>
+                    <hr>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No results found for "{{ search_term }}".</p>
+        {% endif %}
+    {% endif %}
+</body>
+</html>

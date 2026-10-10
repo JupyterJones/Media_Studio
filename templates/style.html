@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>AI Style Transfer</title>
+</head>
+<body>
+    <h1>AI Style Transfer</h1>
+    
+    <form action="/" method="post" enctype="multipart/form-data">
+        <label for="content_image">Upload Content Image:</label><br>
+        <input type="file" name="content_image" required><br><br>
+
+        <label for="style_image">Upload Style Image:</label><br>
+        <input type="file" name="style_image" required><br><br>
+
+        <button type="submit">Stylize Image</button>
+    </form>
+
+    {% if stylized_filename %}
+        <h2>Here is your stylized image:</h2>
+        <img src="{{ url_for('static', filename='images/' + stylized_filename) }}" alt="Stylized Image">
+        <br><br>
+    {% endif %}
+</body>
+</html>

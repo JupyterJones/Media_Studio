@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Videos</title>
+    <style>
+        body {
+            background-color: var(--bg-card);
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+
+        .refresh-button {
+            display: inline-block;
+            padding: 5px;
+            margin: 10px;
+            font-size: 2em;
+            background-color: orange;
+            color: rgb(0, 0, 0);
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 1px;
+        }
+
+        .refresh-button2 {
+            display: inline-block;
+            padding: 5px;
+            margin: 10px;
+            font-size: 2em;
+            background-color: rgb(255, 225, 0);
+            color: rgb(0, 0, 0);
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 1px;
+        }
+
+        .refresh-button3 {
+            display: inline-block;
+            padding: 5px;
+            margin: 10px;
+            font-size: 2em;
+            background-color: blue;
+            color: yellow;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 1px;
+        }
+
+        .refresh-button:hover {
+            background-color: orange;
+        }
+
+        .sticky {
+            position: -webkit-sticky;
+            position: sticky;
+            top: 0;
+            background-color: orange;
+            padding: 10px 0;
+            z-index: 1000;
+        }
+
+        .video-gallery {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+        }
+
+        figure {
+            max-width: 300px;
+            margin: 10px;
+            text-align: center;
+        }
+
+        figcaption {
+            margin-top: 8px;
+            font-size: 1rem;
+            color: #cccccc;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: var(--bg-card);
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 5px;
+            font-size: 23px;
+            color: black;
+            background-color: orange;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            text-align: center;
+            cursor: pointer;
+        }
+        .button:hover {
+            background-color: orange;
+        }
+        .round {
+            display: inline-block;
+            padding: 15px 15px 15px 15px;
+            min-width: 1vw;
+            min-height: 1vw;
+            font-size: 24px;
+            font-weight:bold;
+            color: black;
+            background-color: green;
+            border: 2px black solid;
+            border-radius: 50%;
+            text-decoration: none;
+            text-align: center;
+            cursor: pointer;
+        }
+        .round:hover {
+            background-color: red;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Select Videos Delete</h1>
+    <a class="round" href="/">Home</a>
+    <form action="/delete_file" method="POST">
+        <h2>Select Video</h2>
+        <div  class="video-gallery">
+        {% for video in videos %}
+        <!--div class="video-container"--><figure>
+            <video style="width:200px;height:auto;" controls>
+                <source src="{{ video }}" type="video/mp4">
+                Your browser does not support the video tag.
+            </video><br/>
+            <span>{{ video }}</span><br/>
+
+            <!-- Radio buttons for 1st and 2nd video selection -->
+            <label>
+                <input type="radio" name="mask_path" value="{{ video }}" required>
+                Select to Delete<br>
+            </label></figure>
+            {% endfor %}
+        <!--/div-->
+    
+        <button class = "round" type="submit">Delete <br/> Selected <br/> Video</button>
+    </form>
+
+</div>
+</body>
+
+</html>

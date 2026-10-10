@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ZoomPan Studio - Flask Interactive Point Editor & MP4 Generator</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- App Header -->
+  <header class="app-header">
+    <a href="/" class="logo-area" style="text-decoration: none;">
+      <div class="logo-icon">ZP</div>
+      <div class="logo-text">ZoomPan Studio <span style="font-size: 11px; opacity: 0.5; font-weight: normal; margin-left: 6px;">FLASK EDITION</span></div>
+    </a>
+    <div class="header-actions">
+      <a class="btn btn-sm btn-primary" href="/">🏠 Home</a>
+      <a class="btn btn-sm" href="/comic" style="background: linear-gradient(135deg, #ff6b6b, #c0392b); color: white; border: none;">💥 Comic Builder</a>
+      <a class="btn btn-sm" href="/projects" style="background: rgba(139, 92, 246, 0.2); color: #c4b5fd;">📁 Projects</a>
+      <a class="btn btn-sm" href="/trash" style="background: rgba(239, 68, 68, 0.2); color: #fca5a5;">🗑️ Trash Can</a>
+      <a class="btn btn-sm" href="/sequenced_video">SequencedVideo</a>
+      <a class="btn btn-sm" href="/frame_video">Frame Video</a>
+      <a class="btn btn-sm" href="/video_gallery">Video Gallery</a>
+      <a class="btn btn-sm" href="/image_gallery">Image Gallery</a>
+      <a class="btn btn-sm" href="/generation">GenerateImage</a>
+      <label class="btn btn-sm" for="image-file-input" style="cursor: pointer;">
+        📷 Load Image
+      </label>
+      <input type="file" id="image-file-input" accept="image/*" style="display: none;">
+      <button class="btn btn-sm" id="btn-save-json">💾 Save JSON</button>
+      <button class="btn btn-sm" id="btn-load-json">📂 Load JSON</button>
+      <button class="btn btn-sm" id="btn-export-zip" style="background: rgba(139, 92, 246, 0.2); border-color: rgba(139, 92, 246, 0.4); color: #c4b5fd;">📦 Export ZIP</button>
+      <button class="btn btn-sm btn-primary" id="btn-preview-run">▶️ Live Play</button>
+      <button class="btn btn-sm btn-success" id="btn-export-mp4">🎬 Export MP4</button>
+    </div>
+  </header>
+
+  <!-- App Main Workspace -->
+  <div class="app-container">
+    
+    <!-- Left Interactive Canvas Viewport -->
+    <main class="canvas-section" id="canvas-container">
+      <canvas id="image-canvas"></canvas>
+
+      <!-- HUD Coordinates Overlay -->
+      <div class="hud-coordinates">
+        <span>PX: <strong id="hud-px-x">0</strong>, <strong id="hud-px-y">0</strong></span>
+        <span>Zoom: <strong id="hud-zoom-scale">1.0x</strong></span>
+        <span style="color: var(--text-muted); font-size: 11px;" id="img-dim-info">1920 x 1080</span>
+      </div>
+
+      <!-- HUD Control Buttons -->
+      <div class="hud-controls">
+        <button class="hud-btn" id="hud-actual-size" title="Actual Size 1:1 (100% Image Pixels)" style="font-weight: 700; font-size: 11px;">1:1</button>
+        <button class="hud-btn" id="hud-reset-view" title="Fit to Screen">⟲ Fit</button>
+        <button class="hud-btn" id="hud-zoom-in" title="Zoom In">+</button>
+        <button class="hud-btn" id="hud-zoom-out" title="Zoom Out">-</button>
+        <button class="hud-btn" id="hud-toggle-points" title="Toggle Point Markers">👁️</button>
+        <button class="hud-btn" id="hud-toggle-sidebar" title="Toggle Fullscreen Canvas">⛶ Panel</button>
+      </div>
+    </main>
+
+    <!-- Right Sidebar Inspector & Sequencer -->
+    <aside class="sidebar">
+      <div class="sidebar-scroll">
+
+        <!-- Active Point Inspector Card -->
+        <div class="card" id="inspector-card">
+          <div class="card-title">
+            <span>💬 Caption & Panel Inspector</span>
+            <span id="active-point-badge" style="font-size: 11px; color: var(--accent-cyan);">No Caption Selected</span>
+          </div>
+
+          <div class="form-group">
+            <label for="point-label-input">Caption / Dialogue Text</label>
+            <textarea id="point-label-input" rows="2" placeholder="Click a point on the image or select from list to edit text..." style="width: 100%; background: rgba(0,0,0,0.4); border: 1px solid var(--panel-border); color: #fff; padding: 10px; border-radius: 6px; font-family: inherit; font-size: 13px; resize: vertical; outline: none;"></textarea>
+          </div>
+
+
+          <div class="form-group">
+            <label for="point-bubble-style">Caption & Bubble Style</label>
+            <select id="point-bubble-style" disabled style="background-color: #161c26; color: #f3f4f6;">
+              <option value="speech_left" selected>💬 Speech Bubble (Tail Left 👈)</option>
+              <option value="speech_right">💬 Speech Bubble (Tail Right 👉)</option>
+              <option value="thought_left">💭 Thought Bubble (Tail Left 👈)</option>
+              <option value="thought_right">💭 Thought Bubble (Tail Right 👉)</option>
+              <option value="idea">💡 Eureka Light Bulb Idea</option>
+              <option value="caption">🟡 Classic Yellow Caption Box 🏷️</option>
+              <option value="sfx">🔴 Comic Action SFX Badge 💥</option>
+              <option value="dark">🔵 Cyber Neon Dark Badge 🌙</option>
+              <option value="manga">⬛ Manga High-Contrast Action ⚡</option>
+              <option value="noir">📜 Vintage Parchment Box</option>
+              <option value="hero">🛡️ Superhero Navy & Gold</option>
+            </select>
+          </div>
+
+
+
+          <div class="form-group" style="padding: 6px 0;">
+            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; color: var(--accent-cyan); font-weight: 600;">
+              <input type="checkbox" id="point-zoom-enabled" checked style="width: auto;" disabled>
+              Zoom Camera to Panel & Caption
+            </label>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="point-px-x">Pixel X</label>
+              <input type="number" id="point-px-x" placeholder="X Coords" disabled>
+            </div>
+            <div class="form-group">
+              <label for="point-px-y">Pixel Y</label>
+              <input type="number" id="point-px-y" placeholder="Y Coords" disabled>
+            </div>
+          </div>
+
+          <div class="form-group" id="zoom-controls-wrap">
+            <label>Zoom Level: <span id="zoom-val-display" style="color: var(--accent-cyan); font-weight: 600;">1.25x</span></label>
+            <div class="range-wrap">
+              <input type="range" id="point-zoom-slider" min="1.0" max="6.0" step="0.05" value="1.25" disabled>
+              <input type="number" id="point-zoom-num" min="1.0" max="6.0" step="0.05" value="1.25" style="width: 75px;" disabled>
+            </div>
+          </div>
+
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="point-hold-sec">Hold Secs</label>
+              <input type="number" id="point-hold-sec" min="0.1" max="10.0" step="0.5" value="1.5" disabled>
+            </div>
+            <div class="form-group">
+              <label for="point-trans-sec">Transition Secs</label>
+              <input type="number" id="point-trans-sec" min="0.5" max="10.0" step="0.5" value="2.0" disabled>
+            </div>
+          </div>
+
+          <div class="form-row" style="margin-top: 4px;">
+            <button class="btn btn-sm btn-primary" id="btn-focus-point" disabled style="flex: 1;">Center View</button>
+            <button class="btn btn-sm btn-danger" id="btn-delete-point" disabled>Delete</button>
+          </div>
+        </div>
+
+
+        <!-- Points Sequence List Card -->
+        <div class="card">
+          <div class="card-title">
+            <span>📌 Keyframe Sequence</span>
+            <span id="point-count-label" style="color: var(--text-muted); font-size: 12px;">0 Points</span>
+          </div>
+
+          <p style="font-size: 12px; color: var(--text-muted); line-height: 1.4;">
+            Click anywhere on the image canvas to create a point keyframe with exact pixel coordinates.
+          </p>
+
+          <div class="points-list" id="points-list-container">
+            <!-- Dynamically populated points -->
+          </div>
+        </div>
+
+        <!-- Video Render Options Card -->
+        <div class="card export-card">
+          <div class="card-title" style="color: var(--accent-green);">
+            <span>🎬 Export MP4 Options</span>
+          </div>
+
+          <div class="form-group">
+            <label for="export-resolution">Output Resolution</label>
+            <select id="export-resolution">
+              <option value="original" selected>Original Image Resolution (512x768 / Native)</option>
+              <option value="1080p">1920x1080 (1080p Landscape)</option>
+              <option value="720p">1280x720 (720p Landscape)</option>
+              <option value="portrait_1080p">1080x1920 (1080p Vertical 9:16)</option>
+              <option value="portrait_720p">720x1280 (720p Vertical 9:16)</option>
+            </select>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="export-fps">Frame Rate</label>
+              <select id="export-fps">
+                <option value="30" selected>30 FPS</option>
+                <option value="60">60 FPS</option>
+              </select>
+            </div>
+            <div class="form-group" style="justify-content: flex-end;">
+              <label style="display: flex; align-items: center; gap: 6px; cursor: pointer; padding-bottom: 8px;">
+                <input type="checkbox" id="export-render-labels" checked style="width: auto;">
+                Overlay Text
+              </label>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+              <label for="export-audio-track" style="margin-bottom: 0;">Audio Track (from static/uploads)</label>
+              <button class="btn btn-sm" id="btn-refresh-audio" type="button" onclick="fetchAndPopulateAudioTracks()" style="padding: 2px 8px; font-size: 11px; background: rgba(255,255,255,0.08);">🔄 Refresh</button>
+            </div>
+            <select id="export-audio-track">
+              <option value="none">-- None (No Audio) --</option>
+            </select>
+          </div>
+
+          <button class="btn btn-primary" id="btn-auto-sync-audio" onclick="if(window.autoSyncAudio) window.autoSyncAudio();" style="width: 100%; justify-content: center; margin-bottom: 12px; font-size: 13px;">
+            ⚡ Auto-Sync Camera Moves to Audio
+          </button>
+
+          <button class="btn btn-success" id="btn-trigger-mp4-export" style="width: 100%; justify-content: center;">
+            Render & Download MP4 Video
+          </button>
+        </div>
+
+      </div>
+    </aside>
+
+  </div>
+
+  <!-- Load Projects Modal -->
+  <div class="modal-backdrop" id="modal-load-json">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>📂 Load JSON Zoom Pattern</h3>
+        <button class="btn btn-sm" onclick="closeModal('modal-load-json')">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group" style="background: rgba(255,255,255,0.03); padding: 12px; border-radius: 6px; border: 1px dashed var(--panel-border);">
+          <label for="local-json-file-input">📁 Option A: Open Local .json File from Computer</label>
+          <input type="file" id="local-json-file-input" accept=".json" style="margin-top: 6px; font-size: 12px; color: var(--text-muted);">
+        </div>
+
+        <div class="form-group" style="margin-top: 14px;">
+          <label for="select-project-file">💾 Option B: Select Server Saved Project / Pattern</label>
+          <select id="select-project-file">
+            <option value="">Loading saved projects...</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; color: var(--text-main); font-size: 13px;">
+            <input type="checkbox" id="chk-keep-current-image" style="width: auto;">
+            Apply pattern to currently loaded image (Reuse pattern)
+          </label>
+          <p style="font-size: 11px; color: var(--text-muted); margin-left: 24px; margin-top: 2px;">
+            Scales target point coordinates proportionally to fit your active image resolution.
+          </p>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px;">
+          <button class="btn" onclick="closeModal('modal-load-json')">Cancel</button>
+          <button class="btn btn-primary" id="btn-confirm-load-json">Load & Apply Pattern</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- MP4 Video Export Modal -->
+  <div class="modal-backdrop" id="modal-video-export">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>🎬 MP4 Video Rendered</h3>
+        <button class="btn btn-sm" onclick="closeModal('modal-video-export')">✕</button>
+      </div>
+      <div class="modal-body">
+        <video id="video-preview-player" controls playsinline preload="auto" style="width: 100%; max-height: 380px; background: #000; border-radius: 6px;"></video>
+
+        <div style="font-size: 13px; color: var(--text-muted); display: flex; justify-content: space-between; align-items: center; margin-top: 6px;">
+          <span id="video-info-stats">Resolution: 1920x1080 | Duration: 8.5s</span>
+          <button class="btn btn-sm btn-primary" onclick="const p=document.getElementById('video-preview-player'); if(p) { p.play(); }" style="padding: 4px 12px; font-size: 12px;">▶️ Play Video</button>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px;">
+          <button class="btn" onclick="closeModal('modal-video-export')">Close</button>
+          <a class="btn btn-success" id="btn-download-video-file" download target="_blank">⬇️ Download MP4 File</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/static/js/viewer.js?v=3.2"></script>
+  <script>
+    async function fetchAndPopulateAudioTracks() {
+      const audioSelect = document.getElementById('export-audio-track');
+      const btnRefresh = document.getElementById('btn-refresh-audio');
+      if (!audioSelect) return;
+
+      if (btnRefresh) btnRefresh.textContent = '⏳ Loading...';
+
+      try {
+        const response = await fetch('/api/list_audio?t=' + Date.now());
+        const data = await response.json();
+        const files = data.audio_files || [];
+        
+        const currentVal = audioSelect.value;
+        let html = '<option value="none">-- None (No Audio) --</option>';
+        files.forEach(f => {
+          const selected = (f === currentVal) ? 'selected' : '';
+          html += `<option value="${f}" ${selected}>${f}</option>`;
+        });
+        audioSelect.innerHTML = html;
+
+        if (btnRefresh) {
+          btnRefresh.textContent = `🔄 Refresh (${files.length})`;
+          setTimeout(() => { btnRefresh.textContent = '🔄 Refresh'; }, 3000);
+        }
+      } catch (err) {
+        console.error("Error listing audio:", err);
+        if (btnRefresh) btnRefresh.textContent = '❌ Error';
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', fetchAndPopulateAudioTracks);
+  </script>
+</body>
+</html>

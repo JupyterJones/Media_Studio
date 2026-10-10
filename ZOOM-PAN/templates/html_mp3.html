@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kokoro TTS & Reflective Script Studio</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-base: #080b11;
+            --bg-surface: #0f1524;
+            --bg-card: rgba(22, 30, 49, 0.7);
+            --bg-card-hover: rgba(29, 40, 65, 0.85);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --border-glow: rgba(99, 102, 241, 0.25);
+            
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --primary-glow: rgba(99, 102, 241, 0.4);
+            
+            --secondary: #8b5cf6;
+            --accent: #14b8a6;
+            --accent-glow: rgba(20, 184, 166, 0.3);
+            
+            --success: #10b981;
+            --danger: #ef4444;
+            
+            --radius-sm: 8px;
+            --radius-md: 14px;
+            --radius-lg: 20px;
+            
+            --shadow-sm: 0 2px 8px -2px rgba(0,0,0,0.5);
+            --shadow-md: 0 10px 25px -5px rgba(0,0,0,0.6);
+            --shadow-lg: 0 20px 40px -10px rgba(0,0,0,0.8);
+            
+            --transition-fast: 0.15s ease;
+            --transition-normal: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-base);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(139, 92, 246, 0.08) 0%, transparent 40%);
+            background-attachment: fixed;
+        }
+
+        h1, h2, h3 {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
+        header {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 2rem;
+            background-color: rgba(15, 21, 36, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .logo-icon {
+            width: 2.25rem;
+            height: 2.25rem;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            box-shadow: 0 0 15px var(--primary-glow);
+        }
+
+        .logo-text {
+            font-size: 1.1rem;
+            font-weight: 700;
+            background: linear-gradient(to right, #ffffff, #c7d2fe);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            overflow-x: auto;
+            max-width: 100%;
+            white-space: nowrap;
+            padding-bottom: 6px;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .nav-links::-webkit-scrollbar {
+            height: 8px;
+        }
+        .nav-links::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 4px;
+        }
+        .nav-links::-webkit-scrollbar-thumb {
+            background: linear-gradient(90deg, #6366f1, #a855f7);
+            border-radius: 4px;
+        }
+
+        .nav-btn {
+            color: var(--text-secondary);
+            text-decoration: none;
+            padding: 0.5rem 0.85rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: all var(--transition-fast);
+            border: 1px solid transparent;
+        }
+
+        .nav-btn:hover {
+            color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--border-color);
+        }
+
+        .nav-btn.active {
+            color: #fff;
+            background: rgba(99, 102, 241, 0.15);
+            border-color: rgba(99, 102, 241, 0.3);
+        }
+
+        main {
+            max-width: 860px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+        }
+
+        .card-title {
+            font-size: 1.15rem;
+            margin-bottom: 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: var(--text-primary);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding-bottom: 0.75rem;
+        }
+
+        .mode-selector {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .mode-card {
+            background: rgba(15, 21, 36, 0.6);
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 1rem;
+            cursor: pointer;
+            transition: all var(--transition-normal);
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .mode-card:hover {
+            border-color: var(--primary);
+            background: rgba(29, 40, 65, 0.5);
+        }
+
+        .mode-card.active {
+            border-color: var(--accent);
+            background: rgba(20, 184, 166, 0.12);
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+
+        .mode-card input[type="radio"] {
+            display: none;
+        }
+
+        .mode-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: var(--text-primary);
+        }
+
+        .mode-desc {
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            line-height: 1.4;
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-control {
+            width: 100%;
+            background: rgba(15, 21, 36, 0.8);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            color: var(--text-primary);
+            padding: 0.75rem;
+            font-family: inherit;
+            font-size: 0.9rem;
+            outline: none;
+            transition: border-color var(--transition-fast);
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+        }
+
+        textarea.form-control {
+            min-height: 160px;
+            resize: vertical;
+            line-height: 1.5;
+        }
+
+        .voice-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        @media (max-width: 600px) {
+            .mode-selector, .voice-grid { grid-template-columns: 1fr; }
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            border: none;
+            border-radius: var(--radius-md);
+            padding: 0.9rem 1.5rem;
+            font-family: inherit;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: none;
+            box-shadow: 0 4px 15px var(--primary-glow);
+            transition: all var(--transition-normal);
+            width: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.6);
+        }
+
+        .btn-accent {
+            background: linear-gradient(135deg, var(--accent) 0%, #0d9488 100%);
+            box-shadow: 0 4px 15px var(--accent-glow);
+        }
+
+        .btn-accent:hover {
+            box-shadow: 0 6px 20px rgba(20, 184, 166, 0.5);
+        }
+
+        .flash-msg {
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #fca5a5;
+            padding: 0.75rem 1rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.85rem;
+            margin-bottom: 1rem;
+        }
+
+        .result-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px dashed rgba(255, 255, 255, 0.1);
+        }
+
+        audio {
+            width: 100%;
+            height: 44px;
+            border-radius: var(--radius-sm);
+        }
+
+        .info-pill {
+            font-size: 0.78rem;
+            color: var(--accent);
+            background: rgba(20, 184, 166, 0.1);
+            border: 1px solid rgba(20, 184, 166, 0.2);
+            padding: 0.4rem 0.75rem;
+            border-radius: 20px;
+            display: inline-block;
+        }
+
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                gap: 0.75rem;
+                padding: 0.75rem 1rem;
+                align-items: stretch;
+            }
+            .logo-container { justify-content: center; }
+            .nav-links {
+                display: flex;
+                overflow-x: auto;
+                white-space: nowrap;
+                padding-bottom: 4px;
+                -webkit-overflow-scrolling: touch;
+            }
+            .nav-btn { flex: 0 0 auto; }
+            main { padding: 1rem 0.75rem; }
+            .mode-grid { grid-template-columns: 1fr; }
+            .voice-pickers { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="/" class="logo-container" style="text-decoration: none;">
+            <div class="logo-icon">🗣️</div>
+            <div>
+                <h1 class="logo-text">Kokoro TTS Studio</h1>
+                <span style="font-size: 0.7rem; color: var(--text-muted);">SMART NARRATION & REFLECTIVE SCRIPT</span>
+            </div>
+        </a>
+        <nav class="nav-links">
+            <a href="/" class="nav-btn" style="background: rgba(99,102,241,0.2); color: #fff;">🏠 Home</a>
+            <a href="/comic" class="nav-btn" style="background: linear-gradient(135deg, #ff6b6b, #c0392b); color: white;">💥 Comic Builder</a>
+            <a href="/projects" class="nav-btn">📁 Projects</a>
+            <a href="/trash" class="nav-btn" style="color: #ef4444;">🗑️ Trash Can</a>
+            <a href="/sequenced_video" class="nav-btn">🎬 Sequencer</a>
+            <a href="/frame_video" class="nav-btn">🖼️ Frame Video</a>
+            <a href="/video_gallery" class="nav-btn">📹 Video Gallery</a>
+            <a href="/generation" class="nav-btn">🎨 Image Gen</a>
+            <a href="/text_to_mp3" class="nav-btn active">🗣️ Kokoro TTS</a>
+        </nav>
+    </header>
+
+    <main>
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+                <div class="flash-msg">⚠️ {{ message }}</div>
+            {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <form method="post" action="/text_to_mp3">
+            <!-- Mode Selection -->
+            <div class="card">
+                <div class="card-title">
+                    <span>⚙️ Generation Mode</span>
+                </div>
+
+                <div class="mode-selector">
+                    <label class="mode-card {% if mode == 'regular' %}active{% endif %}" id="card-regular">
+                        <input type="radio" name="mode" value="regular" {% if mode == 'regular' %}checked{% endif %} onchange="updateModeUI('regular')">
+                        <div class="mode-header">
+                            <span>🎙️ Regular Single-Voice TTS</span>
+                        </div>
+                        <div class="mode-desc">
+                            Direct, fast synthesis using a single selected Kokoro voice for the entire script text.
+                        </div>
+                    </label>
+
+                    <label class="mode-card {% if mode == 'reflective' %}active{% endif %}" id="card-reflective">
+                        <input type="radio" name="mode" value="reflective" {% if mode == 'reflective' %}checked{% endif %} onchange="updateModeUI('reflective')">
+                        <div class="mode-header">
+                            <span>🎭 Reflective Script Generation</span>
+                        </div>
+                        <div class="mode-desc">
+                            Multi-voice narration with smart pauses for commas, questions, dramatic transitions, and dialogue quotes.
+                        </div>
+                    </label>
+                </div>
+
+                <!-- Voice Selection Controls -->
+                <div id="regular-voice-section" style="{% if mode == 'reflective' %}display: none;{% endif %}">
+                    <div class="form-group">
+                        <label for="voice">Kokoro Voice</label>
+                        <select name="voice" id="voice" class="form-control">
+                            {% for v in voices %}
+                            <option value="{{ v }}" {% if v == selected_voice %}selected{% endif %}>{{ v }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <div id="reflective-voice-section" class="voice-grid" style="{% if mode != 'reflective' %}display: none;{% endif %}">
+                    <div class="form-group">
+                        <label for="narrator_voice">Narrator Voice (Default: am_adam)</label>
+                        <select name="narrator_voice" id="narrator_voice" class="form-control">
+                            {% for v in voices %}
+                            <option value="{{ v }}" {% if v == narrator_voice %}selected{% endif %}>{{ v }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="dialogue_voice">Dialogue Voice (Quotes: af_sarah)</label>
+                        <select name="dialogue_voice" id="dialogue_voice" class="form-control">
+                            {% for v in voices %}
+                            <option value="{{ v }}" {% if v == dialogue_voice %}selected{% endif %}>{{ v }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Script Input -->
+            <div class="card">
+                <div class="card-title">
+                    <span>📜 Script Content</span>
+                    <span style="font-size: 0.75rem; color: var(--text-muted);">Use quotes "like this" for dialogue in reflective mode</span>
+                </div>
+
+                <div class="form-group">
+                    <textarea name="text" class="form-control" placeholder="Enter or paste your narration script here...">{{ text }}</textarea>
+                </div>
+
+                <button type="submit" class="btn btn-accent">
+                    ✨ Generate MP3 Audio
+                </button>
+            </div>
+        </form>
+
+        <!-- Result Card -->
+        {% if mp3_file %}
+        <div class="card">
+            <div class="card-title">
+                <span>🎉 Generated Audio Track</span>
+                {% if generation_info %}
+                <span class="info-pill">{{ generation_info }}</span>
+                {% endif %}
+            </div>
+
+            <div class="result-container">
+                <audio controls autoplay>
+                    <source src="{{ url_for('serve_audio_file', filename=mp3_file) }}" type="audio/mpeg">
+                    Your browser does not support audio playback.
+                </audio>
+
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-family: monospace; font-size: 0.85rem; color: var(--text-secondary);">{{ mp3_file }}</span>
+                    <a href="{{ url_for('serve_audio_file', filename=mp3_file) }}" download class="btn" style="width: auto; padding: 0.5rem 1rem; font-size: 0.85rem; text-decoration: none;">
+                        📥 Download MP3
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </main>
+
+    <script>
+        function updateModeUI(mode) {
+            const cardRegular = document.getElementById('card-regular');
+            const cardReflective = document.getElementById('card-reflective');
+            const regSection = document.getElementById('regular-voice-section');
+            const refSection = document.getElementById('reflective-voice-section');
+
+            if (mode === 'reflective') {
+                cardRegular.classList.remove('active');
+                cardReflective.classList.add('active');
+                regSection.style.display = 'none';
+                refSection.style.display = 'grid';
+            } else {
+                cardReflective.classList.remove('active');
+                cardRegular.classList.add('active');
+                regSection.style.display = 'block';
+                refSection.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>

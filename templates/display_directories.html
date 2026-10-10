@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Images</title>
+    <style>
+
+        body {
+            background-color: var(--bg-card);
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 4vw;
+        }
+
+        select {
+            font-size: 1.5em;
+            margin: 10px;
+            padding: 5px;
+        }
+
+        button {
+            font-size: 1.5em;
+            padding: 5px;
+            margin: 10px;
+            background-color: orange;
+            color: black;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: darkorange;
+        }
+        h1 {
+            text-align: center;
+            font-size: 2vw;
+        }   
+        .refresh-button {
+            display: inline-block;
+            padding: 5px;
+            margin: 10px;
+            font-size: 4em;
+            background-color: orange;
+            color: rgb(0, 0, 0);
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 1px;
+        }
+        h1{
+            text-align: center;
+            font-size: 4vw;
+        }
+        img {
+            margin: 10px;
+            width: 25%;
+            height: auto;
+       
+        }
+     </style>
+</head>
+<body>
+    <h1>Select Images to Archive / display_directories.html</h1>
+
+    <a href="{{ url_for('index') }}" class="refresh-button">Home</a>
+    <form action="{{ url_for('copy_image') }}" method="POST">
+        <input type="hidden" name="selected_dir" value="{{ selected_dir }}">
+        <ul>
+            {% for image in images %}
+            <li>
+                <img src="{{ url_for('static', filename=selected_dir + '/' + image) }}" alt="{{ image }}" width="100"><br/>
+                <input style="width:40px;height:40px;" type="checkbox" name="selected_images" value="{{ image }}">{{ image[17:] }}
+            </li>
+            {% endfor %}
+        </ul>
+        <button type="submit">Copy Selected Images</button>
+    </form>
+</body>
+</html>

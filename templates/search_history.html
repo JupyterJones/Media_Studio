@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terminal History Search</title>
+    <link rel="stylesheet" href="static/css/dark.css">
+        <style>
+        body {
+            background-color: var(--bg-card);
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+
+        .refresh-button {
+            display: inline-block;
+            padding: 5px;
+            margin: 10px;
+            font-size: 2em;
+            background-color: orange;
+            color: rgb(0, 0, 0);
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 1px;
+        }
+
+        .refresh-button2 {
+            display: inline-block;
+            padding: 5px;
+            margin: 10px;
+            font-size: 2em;
+            background-color: rgb(255, 225, 0);
+            color: rgb(0, 0, 0);
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 1px;
+        }
+
+        .refresh-button:hover {
+            background-color: orange;
+        }
+
+        .sticky {
+            position: -webkit-sticky;
+            position: sticky;
+            top: 0;
+            background-color: orange;
+            padding: 10px 0;
+            z-index: 1000;
+        }
+
+        .video-gallery {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+        }
+
+        figure {
+            max-width: 300px;
+            margin: 10px;
+            text-align: center;
+        }
+
+        figcaption {
+            margin-top: 8px;
+            font-size: 1rem;
+            color: #cccccc;
+        }
+        pre {
+            color: white;
+            font-size: 24px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        p {
+            color: white;
+            font-size: 24px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+    img {
+        width: 200px;
+        height: auto;
+        
+        display: block;
+        margin-bottom: 5px;
+        border-radius: 8px;
+    }
+    </style>
+</head>
+<body>
+    <h1>Terminal History Search</h1>
+    <p>Use this page to search the history of the terminal commands. I use terminal commands all the time. I do not always remember what commands I have passed to be executed. This will allow me to search my history and even store the history in a database. The results are stored in a temp file. The "Search Temp File: button" refines the result of the primary search.</p>
+    <p> If a new history search is required click <a href="/search_history">"New Search"</a> To clear the page history.</p>
+    
+    <!-- Form to search command history -->
+    <form method="post">
+        <label for="query">Search History:</label>
+        <input type="text" name="query" placeholder="Search in history..." required>
+        <input type="submit" value="Search Terminal History">
+    </form>
+    
+    <!-- Form to search tempfile -->
+    <form method="post" action="/search_text_file">
+        <label for="temp_query">Search Temp File:</label>
+        <input type="text" name="temp_query" placeholder="Search in tempfile...">
+        <input type="submit" value="Search Temp File">
+    </form>
+        <form method="POST" action="/remove_tempfile">
+        <button type="submit">Remove tempfile.txt</button>
+    </form>
+    
+    <h2>Command History Search Results:</h2>
+    <ul>
+        {% for result in history_results %}
+            <li>{{ result[0] }}</li>
+        {% endfor %}
+    </ul>
+    
+    <h2>Temp File Search Results:</h2>
+    <ul>
+        {% for result in temp_results %}
+            <li>{{ result }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

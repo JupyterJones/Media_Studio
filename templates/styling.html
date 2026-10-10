@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Styling</title>
+    <style>
+        .thumbnail {
+            width: 100px;
+            height: auto;
+            margin: 10px; /* Adds space around each image */
+        }
+        .image-group {
+            display: flex;
+            flex-wrap: wrap; /* Allows the images to wrap to the next line */
+            gap: 10px;
+            justify-content: space-around; /* Distribute the images evenly */
+        }
+    </style>
+</head>
+<body>
+    <h1>Image Styling Application styling.html</h1>
+    <a href="/">Home</a>
+    <!--- reload page --->
+    <a href="/styling">Refresh</a> 
+    <form action="/styling" method="post">
+        <h3>Select Content Image:</h3>
+        <div class="image-group">
+            {% for image in content_images %}
+                <label>
+                    <input type="radio" name="content_image" value="{{ image }}" required>
+                    <img src="{{ url_for('static', filename='archived_resources/' ~ image) }}" class="thumbnail">
+                </label>
+            {% endfor %}
+        </div>
+
+        <h3>Select Style Image:</h3>
+        <div class="image-group">
+            {% for image in style_images %}
+                <label>
+                    <input type="radio" name="style_image" value="{{ image }}" required>
+                    <img src="{{ url_for('static', filename='style_resources/' ~ image) }}" class="thumbnail">
+                </label>
+            {% endfor %}
+        </div>
+
+        <button type="submit">Stylize</button>
+    </form>
+
+    {% if result_image %}
+        <h2>Stylized Result:</h2>
+        <img src="static/archived_resources/tmp_result.jpg" alt="Stylized
+         Image">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+         <img src='static/archived_resources/enhanced.jpg' alt='Enhanced Image'>
+    {% endif %}
+</body>
+</html>

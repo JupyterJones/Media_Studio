@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Novel Caption & Video Studio | Media Studio</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/themed.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="/favicon.ico?v=1">
+
+    <style>
+        :root {
+            --bg-body: #070913;
+            --bg-card: rgba(18, 22, 40, 0.88);
+            --bg-card-hover: rgba(28, 34, 62, 0.95);
+            --border-card: rgba(255, 255, 255, 0.08);
+            --border-focus: #6366f1;
+            --accent: #00f0ff;
+            --accent-purple: #8b5cf6;
+            --accent-green: #10b981;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --radius-md: 10px;
+            --radius-lg: 16px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-size: 15px;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* Header Bar */
+        .header-bar {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: rgba(7, 9, 19, 0.94);
+            backdrop-filter: blur(14px);
+            border-bottom: 1px solid var(--border-card);
+            padding: 14px 24px;
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: -0.02em;
+        }
+
+        .header-title i {
+            color: var(--accent);
+            text-shadow: 0 0 12px rgba(0, 240, 255, 0.6);
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 8px 14px;
+            border-radius: var(--radius-md);
+            font-size: 0.85rem;
+            font-weight: 500;
+            text-decoration: none;
+            color: var(--text-main);
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-card);
+            transition: all 0.2s ease;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.12);
+            border-color: var(--border-focus);
+            color: #ffffff;
+            transform: translateY(-1px);
+        }
+
+        .nav-btn.primary {
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            border: none;
+            box-shadow: 0 4px 14px rgba(99, 102, 241, 0.35);
+        }
+
+        .nav-btn.primary:hover {
+            background: linear-gradient(135deg, #4338ca, #6d28d9);
+            box-shadow: 0 6px 18px rgba(99, 102, 241, 0.5);
+        }
+
+        /* Main Workspace Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        .alert-banner {
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid rgba(16, 185, 129, 0.4);
+            color: #a7f3d0;
+            padding: 12px 18px;
+            border-radius: var(--radius-md);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.95rem;
+        }
+
+        .grid-layout {
+            display: grid;
+            grid-template-columns: 1.15fr 0.85fr;
+            gap: 28px;
+            align-items: start;
+        }
+
+        @media (max-width: 1024px) {
+            .grid-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Glass Cards */
+        .panel {
+            background: var(--bg-card);
+            border: 1px solid var(--border-card);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding-bottom: 14px;
+            border-bottom: 1px solid var(--border-card);
+        }
+
+        .panel-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Form Controls */
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 8px;
+        }
+
+        .form-input, .form-textarea, select.form-input {
+            width: 100%;
+            background: rgba(10, 12, 24, 0.8);
+            border: 1px solid var(--border-card);
+            border-radius: var(--radius-md);
+            padding: 10px 14px;
+            color: #ffffff;
+            font-family: inherit;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+        }
+
+        .form-input:focus, .form-textarea:focus, select.form-input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(0, 240, 255, 0.18);
+            background: rgba(15, 18, 36, 0.95);
+        }
+
+        select.form-input option, select.form-input optgroup {
+            background: #0d1124;
+            color: #f1f5f9;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        /* Image Picker Grid */
+        .image-selector-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 20px 0 12px;
+        }
+
+        .image-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 12px;
+            max-height: 380px;
+            overflow-y: auto;
+            padding: 6px;
+            border-radius: var(--radius-md);
+            background: rgba(5, 7, 16, 0.6);
+            border: 1px solid var(--border-card);
+        }
+
+        .image-card {
+            position: relative;
+            cursor: pointer;
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            border: 2px solid transparent;
+            background: rgba(255, 255, 255, 0.03);
+            transition: all 0.2s ease;
+        }
+
+        .image-card:hover {
+            border-color: rgba(99, 102, 241, 0.5);
+            transform: translateY(-2px);
+        }
+
+        .image-card input[type="radio"] {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            z-index: 2;
+            cursor: pointer;
+            accent-color: #6366f1;
+            width: 18px;
+            height: 18px;
+        }
+
+        .image-card.active {
+            border-color: var(--accent);
+            box-shadow: 0 0 14px rgba(0, 240, 255, 0.45);
+        }
+
+        .image-card img {
+            width: 100%;
+            height: 110px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .image-card-footer {
+            padding: 5px;
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            background: rgba(10, 13, 26, 0.85);
+            text-align: center;
+        }
+
+        /* Action Buttons */
+        .btn-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+            margin-top: 24px;
+        }
+
+        @media (max-width: 600px) {
+            .btn-group {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 13px 18px;
+            color: #ffffff;
+            border: none;
+            border-radius: var(--radius-md);
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.98rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.25s ease;
+        }
+
+        .submit-btn.secondary-btn {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid var(--border-card);
+            color: #f1f5f9;
+        }
+
+        .submit-btn.secondary-btn:hover {
+            background: rgba(255, 255, 255, 0.16);
+            transform: translateY(-2px);
+            border-color: var(--accent);
+            color: #ffffff;
+        }
+
+        .submit-btn.primary-btn {
+            background: linear-gradient(135deg, #00f0ff, #3b82f6);
+            color: #050814;
+            font-weight: 700;
+            box-shadow: 0 4px 18px rgba(0, 240, 255, 0.3);
+        }
+
+        .submit-btn.primary-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 24px rgba(0, 240, 255, 0.5);
+            filter: brightness(1.1);
+        }
+
+        /* Preview Display */
+        .preview-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 380px;
+            background: rgba(6, 8, 18, 0.75);
+            border: 1px dashed var(--border-card);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            position: relative;
+            padding: 12px;
+        }
+
+        .preview-img, .preview-video {
+            max-width: 100%;
+            max-height: 540px;
+            object-fit: contain;
+            border-radius: var(--radius-md);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+        }
+
+        .preview-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 18px;
+            width: 100%;
+        }
+
+        .action-row {
+            display: flex;
+            gap: 10px;
+            width: 100%;
+        }
+
+        .save-remember-btn {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: #ffffff;
+            border: none;
+            box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
+        }
+
+        .save-remember-btn:hover {
+            background: linear-gradient(135deg, #059669, #047857);
+            box-shadow: 0 6px 18px rgba(16, 185, 129, 0.5);
+            transform: translateY(-1px);
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Navigation Header -->
+    <header class="header-bar">
+        <div class="header-content">
+            <div class="header-title">
+                <i class="fa-solid fa-closed-captioning"></i>
+                <span>Novel Caption & Video Studio</span>
+            </div>
+            <nav class="nav-links">
+                <a href="{{ url_for('mk_novel') }}" class="nav-btn">
+                    <i class="fa-solid fa-book-open"></i> Novel Home
+                </a>
+                <a href="{{ url_for('clean_storage_route') }}" class="nav-btn">
+                    <i class="fa-solid fa-trash-can"></i> Clean Storage
+                </a>
+                <a href="/" class="nav-btn primary">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> Media Studio Home
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Workspace Container -->
+    <main class="container">
+        {% if message %}
+        <div class="alert-banner">
+            <i class="fa-solid fa-circle-check"></i>
+            <span>{{ message }}</span>
+        </div>
+        {% endif %}
+
+        <div class="grid-layout">
+            <!-- Left Panel: Caption Configuration -->
+            <section class="panel">
+                <div class="panel-header">
+                    <h2 class="panel-title">
+                        <i class="fa-solid fa-pen-nib" style="color: var(--accent);"></i>
+                        Compose Caption & Select Media Options
+                    </h2>
+                    <span style="font-size: 0.8rem; color: var(--text-muted);">
+                        {{ images|length if images else 0 }} Images available
+                    </span>
+                </div>
+
+                <form action="{{ url_for('add_caption') }}" method="post" id="captionForm">
+                    <!-- Caption Textarea -->
+                    <div class="form-group">
+                        <label for="caption" class="form-label">
+                            <i class="fa-regular fa-comment-dots"></i> Caption Text (Auto-wrapped to image size):
+                        </label>
+                        <textarea 
+                            name="caption" 
+                            id="caption" 
+                            class="form-textarea" 
+                            rows="5" 
+                            required 
+                            placeholder="Type your story narration, dialogue, or scene caption here...">{{ current_values.caption if current_values else '' }}</textarea>
+                    </div>
+
+                    <!-- Voice Selection (Kokoro TTS) -->
+                    <div class="form-group">
+                        <label for="speaker_voice" class="form-label">
+                            <i class="fa-solid fa-microphone-lines" style="color: var(--accent);"></i> Kokoro TTS Voice (for MP4 narration):
+                        </label>
+                        <select name="speaker_voice" id="speaker_voice" class="form-input">
+                            {% if kokoro_voices %}
+                                {% for category, voice_list in kokoro_voices.items() %}
+                                <optgroup label="{{ category }}">
+                                    {% for voice_id, voice_label in voice_list %}
+                                    <option value="{{ voice_id }}" {% if current_values and current_values.speaker_voice == voice_id %}selected{% elif voice_id == 'af_heart' and (not current_values or not current_values.speaker_voice) %}selected{% endif %}>
+                                        {{ voice_label }} ({{ voice_id }})
+                                    </option>
+                                    {% endfor %}
+                                </optgroup>
+                                {% endfor %}
+                            {% else %}
+                                <option value="af_heart" selected>Heart (Female - Expressive, Warm)</option>
+                                <option value="af_bella">Bella (Female - Conversational)</option>
+                                <option value="am_adam">Adam (Male - Deep Narrator)</option>
+                            {% endif %}
+                        </select>
+                    </div>
+
+                    <!-- Font Name & Font Size -->
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="font_name" class="form-label">
+                                <i class="fa-solid fa-font"></i> Font:
+                            </label>
+                            <select name="font_name" id="font_name" class="form-input">
+                                {% if fonts %}
+                                    {% for font in fonts %}
+                                    <option value="{{ font }}" {% if current_values and current_values.font_name == font %}selected{% elif font == 'DejaVuSans-Bold.ttf' %}selected{% endif %}>
+                                        {{ font }}
+                                    </option>
+                                    {% endfor %}
+                                {% else %}
+                                    <option value="DejaVuSans-Bold.ttf" selected>DejaVuSans-Bold.ttf</option>
+                                {% endif %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="font_size" class="form-label">
+                                <i class="fa-solid fa-text-height"></i> Font Size (px):
+                            </label>
+                            <input 
+                                type="number" 
+                                name="font_size" 
+                                id="font_size" 
+                                class="form-input" 
+                                value="{{ current_values.font_size if current_values else 24 }}" 
+                                min="12" 
+                                max="96">
+                        </div>
+                    </div>
+
+                    <!-- Colors: Text Color & Box Color -->
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="text_color" class="form-label">
+                                <i class="fa-solid fa-palette"></i> Text Color:
+                            </label>
+                            <input 
+                                type="color" 
+                                name="text_color" 
+                                id="text_color" 
+                                class="form-input" 
+                                value="{{ current_values.text_color if current_values else '#000000' }}" 
+                                style="height: 44px; padding: 4px; cursor: pointer;">
+                        </div>
+                        <div class="form-group">
+                            <label for="box_color" class="form-label">
+                                <i class="fa-solid fa-square"></i> Box Color:
+                            </label>
+                            <input 
+                                type="color" 
+                                name="box_color" 
+                                id="box_color" 
+                                class="form-input" 
+                                value="{{ current_values.box_color if current_values else '#ffffff' }}" 
+                                style="height: 44px; padding: 4px; cursor: pointer;">
+                        </div>
+                    </div>
+
+                    <!-- Offset & Opacity -->
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="offset" class="form-label">
+                                <i class="fa-solid fa-arrows-up-down"></i> Height Offset (px from bottom):
+                            </label>
+                            <input 
+                                type="number" 
+                                name="offset" 
+                                id="offset" 
+                                class="form-input" 
+                                value="{{ current_values.offset if current_values else 20 }}" 
+                                min="0" 
+                                placeholder="Default: 20">
+                        </div>
+                        <div class="form-group">
+                            <label for="alpha" class="form-label">
+                                <i class="fa-solid fa-circle-half-stroke"></i> Box Opacity (Alpha 0-255):
+                            </label>
+                            <input 
+                                type="number" 
+                                name="alpha" 
+                                id="alpha" 
+                                class="form-input" 
+                                value="{{ current_values.alpha if current_values else 180 }}" 
+                                min="0" 
+                                max="255" 
+                                placeholder="Default: 180">
+                        </div>
+                    </div>
+
+                    <!-- Image Grid Selection -->
+                    {% if images %}
+                        <div class="image-selector-header">
+                            <label class="form-label" style="margin-bottom: 0;">
+                                <i class="fa-regular fa-images"></i> Choose Source Image:
+                            </label>
+                            <span style="font-size: 0.75rem; color: var(--accent);">Select one below</span>
+                        </div>
+
+                        <div class="image-grid">
+                            {% for img in images %}
+                            <label class="image-card" for="img_{{ loop.index }}" onclick="highlightCard(this)">
+                                <input 
+                                    type="radio" 
+                                    name="selected_image" 
+                                    id="img_{{ loop.index }}" 
+                                    value="{{ img }}" 
+                                    {% if current_values and current_values.selected_image == img %}checked{% elif loop.last and not (current_values and current_values.selected_image) %}checked{% endif %}
+                                    required>
+                                <img src="{{ url_for('static', filename='novel_images/' + img) }}" alt="{{ img }}" loading="lazy">
+                                <div class="image-card-footer" title="{{ img }}">{{ img }}</div>
+                            </label>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div style="padding: 24px; text-align: center; color: var(--text-muted); background: rgba(0,0,0,0.2); border-radius: var(--radius-md);">
+                            <i class="fa-solid fa-triangle-exclamation" style="font-size: 1.8rem; margin-bottom: 8px; color: #f59e0b;"></i>
+                            <p>No images found in <code>static/novel_images/</code>. Generate some in Media Studio first!</p>
+                        </div>
+                    {% endif %}
+
+                    <!-- Dual Action Buttons -->
+                    <div class="btn-group">
+                        <button type="submit" name="action" value="add_caption" class="submit-btn secondary-btn">
+                            <i class="fa-regular fa-image"></i> Burn Caption Onto Image
+                        </button>
+                        <button type="submit" name="action" value="create_mp4" class="submit-btn primary-btn">
+                            <i class="fa-solid fa-video"></i> Create MP4 with Voice
+                        </button>
+                    </div>
+                </form>
+            </section>
+
+            <!-- Right Panel: Result Preview -->
+            <section class="panel">
+                <div class="panel-header">
+                    <h2 class="panel-title">
+                        <i class="fa-solid fa-eye" style="color: var(--accent-purple);"></i>
+                        Latest Result Preview
+                    </h2>
+                </div>
+
+                <div class="preview-box">
+                    {% if video_url %}
+                        <div style="width: 100%; text-align: center; margin-bottom: 12px;">
+                            <span style="font-size: 0.85rem; color: var(--accent); font-weight: 600;">
+                                <i class="fa-solid fa-circle-play"></i> Generated Video (MP4)
+                            </span>
+                        </div>
+                        <video controls autoplay class="preview-video" style="width: 100%;">
+                            <source src="{{ video_url }}?t={{ range(1000, 9999)|random }}" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    {% else %}
+                        <img 
+                            src="{{ url_for('static', filename='novel_images/captioned.jpg') }}?t={{ range(1000, 9999)|random }}" 
+                            alt="Captioned Output Preview" 
+                            class="preview-img"
+                            onerror="this.style.display='none'; document.getElementById('no-preview-msg').style.display='block';">
+                        
+                        <div id="no-preview-msg" style="display: none; text-align: center; color: var(--text-muted); padding: 40px;">
+                            <i class="fa-regular fa-image" style="font-size: 3rem; margin-bottom: 12px; color: var(--text-muted);"></i>
+                            <p>No captioned image or video has been generated yet.<br>Select an image, enter your caption, and click a button!</p>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="preview-actions">
+                    {% if video_url %}
+                    <div class="action-row">
+                        <a href="{{ video_url }}" target="_blank" class="nav-btn w-100" style="justify-content: center; flex: 1;">
+                            <i class="fa-solid fa-up-right-from-square"></i> Open Video
+                        </a>
+                        <a href="{{ video_url }}" download="{{ video_name or 'captioned_novel.mp4' }}" class="nav-btn primary w-100" style="justify-content: center; flex: 1;">
+                            <i class="fa-solid fa-download"></i> Download MP4
+                        </a>
+                    </div>
+                    {% endif %}
+
+                    <div class="action-row">
+                        <a href="{{ url_for('static', filename='novel_images/captioned.jpg') }}" target="_blank" class="nav-btn w-100" style="justify-content: center; flex: 1;">
+                            <i class="fa-solid fa-image"></i> Open Image
+                        </a>
+                        <a href="{{ url_for('static', filename='novel_images/captioned.jpg') }}" download="captioned_novel.jpg" class="nav-btn primary w-100" style="justify-content: center; flex: 1;">
+                            <i class="fa-solid fa-download"></i> Download Image
+                        </a>
+                    </div>
+
+                    <!-- Save to REMEMBER -->
+                    <button type="button" class="nav-btn save-remember-btn" style="justify-content: center; padding: 12px;" onclick="saveNovelResultToRemember()">
+                        <i class="fa-solid fa-floppy-disk"></i> 💾 Save to REMEMBER
+                    </button>
+                    <div id="rememberStatus" style="font-size: 0.85rem; text-align: center; color: var(--accent); display: none; margin-top: 4px;"></div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <script>
+        function highlightCard(element) {
+            document.querySelectorAll('.image-card').forEach(c => c.classList.remove('active'));
+            element.classList.add('active');
+        }
+
+        // Initialize active state on checked radio
+        document.addEventListener("DOMContentLoaded", () => {
+            const checked = document.querySelector('.image-card input[type="radio"]:checked');
+            if (checked) {
+                checked.closest('.image-card').classList.add('active');
+            }
+        });
+
+        // 1-Click Save to REMEMBER
+        function saveNovelResultToRemember() {
+            const statusEl = document.getElementById('rememberStatus');
+            const captionText = document.getElementById('caption').value.trim();
+            const voice = document.getElementById('speaker_voice').value;
+            const statusText = statusEl;
+            statusEl.style.display = 'block';
+            statusEl.style.color = '#00f0ff';
+            statusEl.textContent = 'Saving to REMEMBER...';
+
+            const payload = {
+                image_path: 'static/novel_images/captioned.jpg',
+                prompt: captionText || 'Novel Caption Image',
+                settings: {
+                    speaker_voice: voice,
+                    font_size: document.getElementById('font_size').value,
+                    font_name: document.getElementById('font_name').value,
+                    offset: document.getElementById('offset').value,
+                    alpha: document.getElementById('alpha').value,
+                    type: 'novel_caption_studio'
+                }
+            };
+
+            fetch('/api/remember_generated_image', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'ok') {
+                    statusEl.style.color = '#10b981';
+                    statusEl.textContent = '✓ Successfully saved to REMEMBER (Post #' + data.post_id + ')!';
+                } else {
+                    statusEl.style.color = '#ef4444';
+                    statusEl.textContent = 'Failed to save: ' + (data.message || 'Unknown error');
+                }
+            })
+            .catch(err => {
+                statusEl.style.color = '#ef4444';
+                statusEl.textContent = 'Error contacting REMEMBER API.';
+            });
+        }
+    </script>
+</body>
+</html>

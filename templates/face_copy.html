@@ -1,0 +1,37 @@
+<!-- face_copy.html-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Face Copy Results</title>
+</head>
+<body>
+    <h1>Face Copy Results</h1>
+    <p>Source Video: {{ source_video }}</p>
+    <p>Destination Video: {{ destination_video }}</p>
+    <p>Final Video Saved At: {{ final_video }}</p>
+    
+    <h2>Download Final Video:</h2>
+    <a href="{{ final_video }}" download>Download the final video</a>
+
+    <h2>Choose another video:</h2>
+    <form action="/process_face_copy" method="POST">
+        <label for="source_video">Source Video:</label>
+        <select name="source_video" id="source_video">
+            {% for video in video_files %}
+                <option value="{{ video }}">{{ video }}</option>
+            {% endfor %}
+        </select>
+        <br>
+        <label for="destination_video">Destination Video:</label>
+        <select name="destination_video" id="destination_video">
+            {% for video in video_files %}
+                <option value="{{ video }}">{{ video }}</option>
+            {% endfor %}
+        </select>
+        <br>
+        <button type="submit">Process Face Copy</button>
+    </form>
+</body>
+</html>

@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project & Asset Manager - ZoomPan Studio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Bangers&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0f172a;
+            --panel: #1e293b;
+            --panel-border: rgba(255, 255, 255, 0.1);
+            --accent-purple: #8b5cf6;
+            --accent-cyan: #06b6d4;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 24px;
+            background: var(--panel);
+            border: 1px solid var(--panel-border);
+            border-radius: 16px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: white;
+        }
+
+        .logo-icon { font-size: 2rem; }
+
+        .logo-text h1 {
+            font-family: 'Bangers', cursive;
+            font-size: 2.2rem;
+            color: var(--accent-purple);
+            letter-spacing: 1px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            max-width: 100%;
+            white-space: nowrap;
+            padding-bottom: 8px;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .nav-links::-webkit-scrollbar {
+            height: 8px;
+        }
+        .nav-links::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 4px;
+        }
+        .nav-links::-webkit-scrollbar-thumb {
+            background: linear-gradient(90deg, var(--accent-purple), var(--accent-cyan));
+            border-radius: 4px;
+        }
+
+        .nav-btn {
+            padding: 8px 14px;
+            border-radius: 8px;
+            border: 1px solid var(--panel-border);
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-1px);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
+            color: white;
+            padding: 10px 18px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
+
+        .create-project-card {
+            background: var(--panel);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid var(--panel-border);
+            margin-bottom: 24px;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .create-project-card input[type="text"] {
+            flex-grow: 1;
+            padding: 10px 16px;
+            border-radius: 8px;
+            border: 1px solid var(--panel-border);
+            background: rgba(0, 0, 0, 0.3);
+            color: white;
+            font-size: 0.95rem;
+            outline: none;
+        }
+
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .project-card {
+            background: var(--panel);
+            border: 1px solid var(--panel-border);
+            border-radius: 14px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .project-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--accent-purple);
+        }
+
+        .project-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .project-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            background: rgba(0,0,0,0.2);
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .stat-item span {
+            color: var(--accent-cyan);
+            font-weight: bold;
+        }
+
+        .project-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 6px;
+        }
+
+        .project-actions button, .project-actions a {
+            flex: 1;
+            padding: 8px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            text-align: center;
+            text-decoration: none;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            background: var(--panel);
+            border-radius: 16px;
+            border: 1px dashed var(--panel-border);
+        }
+
+        .empty-state div { font-size: 4rem; margin-bottom: 12px; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="/" class="logo-area">
+            <div class="logo-icon">📁</div>
+            <div class="logo-text">
+                <h1>Project & Asset Manager</h1>
+                <span style="font-size: 0.75rem; color: var(--text-muted);">NON-DESTRUCTIVE ORGANIZER</span>
+            </div>
+        </a>
+
+        <nav class="nav-links">
+            <a href="/" class="nav-btn">🏠 Home</a>
+            <a href="/comic" class="nav-btn" style="background: linear-gradient(135deg, #ff6b6b, #c0392b); color: white;">💥 Comic Builder</a>
+            <a href="/projects" class="nav-btn" style="border-color: var(--accent-purple); color: var(--accent-purple);">📁 Projects</a>
+            <a href="/image_gallery" class="nav-btn">🖼️ Image Gallery</a>
+            <a href="/video_gallery" class="nav-btn">🎬 Video Gallery</a>
+            <a href="/generation" class="nav-btn">🎨 AI Gen</a>
+            <a href="/trash" class="nav-btn" style="color: #ef4444;">🗑️ Trash Can</a>
+        </nav>
+    </header>
+
+    <div class="create-project-card">
+        <label style="font-weight: 600;">➕ Create New Project:</label>
+        <input type="text" id="new-project-name" placeholder="e.g. Issue_01_The_Beginning">
+        <button id="btn-create-project" class="btn-primary">Create Workspace</button>
+    </div>
+
+    <div id="projects-container">
+        <!-- Rendered via JS -->
+    </div>
+
+    <script>
+        async function loadProjects() {
+            try {
+                const response = await fetch('/api/projects');
+                const data = await response.json();
+                const container = document.getElementById('projects-container');
+
+                const projects = data.projects || [];
+                if (projects.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <div>📁</div>
+                            <h3>No Projects Yet</h3>
+                            <p>Create a project workspace above to organize your comic issues, original art, pages, and videos.</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                let html = '<div class="projects-grid">';
+                projects.forEach(proj => {
+                    html += `
+                        <div class="project-card">
+                            <div class="project-title">
+                                <span>📁 ${proj.name}</span>
+                            </div>
+                            <div class="project-stats">
+                                <div class="stat-item">Originals: <span>${proj.counts.originals}</span></div>
+                                <div class="stat-item">Pages: <span>${proj.counts.pages}</span></div>
+                                <div class="stat-item">Audio: <span>${proj.counts.audio}</span></div>
+                                <div class="stat-item">Videos: <span>${proj.counts.videos}</span></div>
+                            </div>
+                            <div class="project-actions">
+                                <a href="/comic?project=${encodeURIComponent(proj.name)}" class="nav-btn" style="background: rgba(255,107,107,0.2); color: #ff6b6b;">💥 Open Comic</a>
+                                <a href="/?project=${encodeURIComponent(proj.name)}" class="nav-btn" style="background: rgba(99,102,241,0.2); color: #818cf8;">🎥 Open Studio</a>
+                            </div>
+                        </div>
+                    `;
+                });
+                html += '</div>';
+                container.innerHTML = html;
+            } catch (err) {
+                console.error("Error loading projects:", err);
+            }
+        }
+
+        document.getElementById('btn-create-project').addEventListener('click', async () => {
+            const input = document.getElementById('new-project-name');
+            const name = input.value.trim();
+            if (!name) {
+                alert("Please enter a project name");
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/projects', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name: name })
+                });
+                const res = await response.json();
+                if (response.ok) {
+                    input.value = '';
+                    loadProjects();
+                } else {
+                    alert(res.error || 'Failed to create project');
+                }
+            } catch (err) {
+                alert('Error creating project');
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', loadProjects);
+    </script>
+</body>
+</html>

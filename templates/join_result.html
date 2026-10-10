@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>🎞️ Video Created Successfully</title>
+    <style>
+        body {
+            background-color: #000;
+            color: limegreen;
+            font-family: 'Courier New', monospace;
+            text-align: center;
+            padding: 40px;
+        }
+        h1 {
+            color: limegreen;
+            font-size: 2.5vw;
+        }
+        p {
+            color: #7CFC00;
+            font-size: 1.2vw;
+        }
+        video {
+            margin-top: 20px;
+            width: 70%;
+            max-width: 720px;
+            border: 2px solid limegreen;
+            border-radius: 10px;
+            box-shadow: 0 0 15px limegreen;
+        }
+        .btn {
+            display: inline-block;
+            background-color: limegreen;
+            color: black;
+            padding: 10px 25px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-size: 1.2vw;
+            margin-top: 25px;
+            transition: all 0.2s ease-in-out;
+        }
+        .btn:hover {
+            background-color: #7CFC00;
+            transform: scale(1.05);
+        }
+        .footer {
+            margin-top: 40px;
+            font-size: 1vw;
+            color: #0f0;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <h1>✅ Video Created Successfully! templates/join_results</h1>
+    <p>Your video has been generated and is ready for playback.</p>
+
+    <video controls>
+        <source src="{{ url_for('static', filename=video_filename) }}" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+
+    <br>
+    <a class="btn" href="{{ url_for('static', filename=video_filename) }}" download>⬇️ Download Video</a>
+    <a class="btn" href="{{ url_for('join_image_audio') }}">🔙 Create Another</a>
+
+    <div class="footer">
+        <p>Powered by MoviePy · FFMPEG · Arcanian Tech</p>
+    </div>
+<pre>
+✅ Notes for smooth use:
+
+Make sure your uuid_name MP4 file is placed in a directory Flask can serve (commonly /static or a route using send_from_directory).
+
+If VIDEO_DIRECTORY isn’t under /static, adjust this line:
+    
+</pre>
+
+</body>
+</html>

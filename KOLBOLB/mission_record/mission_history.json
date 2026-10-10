@@ -1,0 +1,70 @@
+[
+  {
+    "turn_index": 0,
+    "scene_id": "scene_000",
+    "command": "MISSION COMMENCED",
+    "story_text": "[ESPERANZA // MISSION CONTROL]: Jack, you are 5 feet below the airlock threshold! The 25-pound Diamond Rotary Drill is balanced in your arms. Ten feet below you on the frozen iron ladder, the Bio-Mechanical Stalker shudders up the rungs like a massive armored mantis, its triple-hinged jaw hissing cold vapor into the darkness!\n\nPROXIMITY RADAR: 2.8 METERS AND CLOSING RAPIDLY!\n\nCRITICAL ACTION REQUIRED:\n\n1. [DROP THE HAMMER]: Trip the drill's manual compressed-air release and ram the 4,000-RPM diamond bit straight down into its face!\n\n2. [COLD-STRIKE FLARE]: Whip the Magnesium Flare from Slot 2, spark it to 2,000\u00b0C, and shove it down its throat to melt its sensory slits!\n\n3. [AIRLOCK BREACH DIVE]: Heave the drill through the hatch, dive across the threshold, and slap the hydraulic slam-lock switch!",
+    "choices": [
+      {
+        "label": "1",
+        "text": "Kick the drill compressed-air trigger and ram the 4,000-RPM diamond bit down into its face!"
+      },
+      {
+        "label": "2",
+        "text": "Cold-strike the Magnesium Flare (Slot 2) and drop it straight into its triple-hinged maw!"
+      },
+      {
+        "label": "3",
+        "text": "Heave the heavy drill into the airlock, dive through, and slam the emergency guillotine hatch shut!"
+      }
+    ],
+    "carried_item": null,
+    "image_url": "",
+    "audio_url": "",
+    "timestamp": 1789839565709
+  },
+  {
+    "turn_index": 1,
+    "scene_id": "scene_001",
+    "command": "1. Kick the drill compressed-air trigger and ram the 4,000-RPM diamond bit down into its face!",
+    "story_text": "Jack gets a shock from the Lydarette scanner and holds it up in front of his eyes to check its readings before making his first move...\n\n[ESPERANZA] \"You're looking at the Aegis-4 courier case. What do you know about that?\" \n\n* Jack turns his head to look at Esperanza, and she grunts in anticipation. He studies her as if she were a puzzle he has yet to solve.*\n\n\"From what I've seen, it seems to be a device used for communication between crew members on the Orpheus-9,\" Jack says, turning to face the drilling rig again. \n\n* The drilling rig's machinery vibrates as Jack moves his arms around it, fingers gliding over the metal surfaces like feathers on an airplane wing.*\n\nHe takes another deep breath, then kicks the drill-compressed-air trigger and pulls back the 4,000 RPM diamond bit. *He lets out a low growl when the hot air and metal shatter him in the face.* \n\n*As he stands there, wearing the Lydaret",
+    "choices": [],
+    "carried_item": null,
+    "image_url": "",
+    "audio_url": "",
+    "timestamp": 1789850870993
+  },
+  {
+    "turn_index": 2,
+    "scene_id": "scene_002",
+    "command": "2. Cold-strike the Magnesium Flare (Slot 2) and drop it straight into its triple-hinged maw!",
+    "story_text": "Jack turns towards Esperanza with a heavy sigh. His eyes dart around as he attempts to process all the options ahead of him.\n\n[ESPERANZA] - Jack, let me help you get your bearings! Do you have any specific directions or tasks?\n\n[ACTION] - I'm not sure where we're supposed to be going but can you at least give me some ideas on how to get this started? [I'll just leave my tools in here.]\n\nThe game becomes more tense when Jack sees there's only one open slot left on the Lydarette scanner.\n\n[Action] - I think I need to find a way to get away from here safely. Any idea if anyone has seen anything that might be useful?\n\n[Esperanza] - Well, there are a few things scattered around. You might want to pick up those wires over there; they could come in handy.\n\nAs Jack picks up the wires, he hears a faint whisper of an unknown voice.\n\n[Esperanza] - There's something else, too. A bit more to the right. You might also",
+    "choices": [],
+    "carried_item": null,
+    "image_url": "",
+    "audio_url": "",
+    "timestamp": 1789851071085
+  },
+  {
+    "turn_index": 3,
+    "scene_id": "scene_003",
+    "command": "1. Kick the drill compressed-air trigger and ram the 4,000-RPM diamond bit down into its face!",
+    "story_text": "[ESPERANZA]: The drilling bit is hot - be careful!\n\n[ESPERANZA]: Do you hear anything?\n\n[ACTION]\nJack kicks the drill compressed air trigger and rams in the 4,000 RPM diamond bit. He feels a sharp jolt of pain as the bit enters his skull cavity. His eyes bulge outward, and sweat beads on his forehead.\n\n[ACTION]\nHe snatches up the lydarette scanner from the ground and takes hold of the magnesium flare, pocketing it securely inside the Aegis-4 courier case.\n*Eep* *Eep* \n\n[Action] \n*Jack kicks the drill compressed-air trigger again!* *The drilling bit has hit bone!*\n\n[ACTION]\nA sudden surge of adrenaline propels him forward, driving his feet out further until they touch the floor. His whole body shakes violently, but he grips the drill firmly, determined to not let go. Just before he reaches the edge of the ceiling hole, he feels the drilling bit stop.\n\n[ACTION]\nHis face becomes blurred and distorted",
+    "choices": [],
+    "carried_item": null,
+    "image_url": "",
+    "audio_url": "",
+    "timestamp": 1789856027276
+  },
+  {
+    "turn_index": 4,
+    "scene_id": "scene_004",
+    "command": "1. Kick the drill compressed-air trigger and ram the 4,000-RPM diamond bit down into its face!",
+    "story_text": "[Jack]:\nAh yes, well, you're doing well, but let me think this through.\nEsperanza: [ESPERANZA] I understand your current state - hands free! That's great news indeed.\n\nLet's analyze the situation. You have several options:\n\nA. Use the lydarette scanner to scan your surroundings.\n\nB. Take the deuterium cell from the Aegis-4 courier case...\n\nC. Perhaps you could use the magnetic ratchet key to help you manipulate some machinery? \n\nDo you want to proceed with option A or B?\n\n[JACK]:\n(Thoughtful) Hmm... I don't know if I should take the lydarette scanner right now. It feels like there might be something important in that box, but also it feels like using up too much energy when I'm just trying to avoid danger. \n\nI'll stick with option B then, right? Thanks for reminding me about the deuterium cell. Would you like to put one on my chest harness?",
+    "choices": [],
+    "carried_item": null,
+    "image_url": "",
+    "audio_url": "",
+    "timestamp": 1789856098313
+  }
+]

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit File - {{ filename }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dark.css') }}">
+</head>
+<body>
+    <h1>Managing Files in {{ current_directory }}</h1>
+    <p>file_manager_edit_file.html</p>
+    <span>
+        <a href="{{ url_for('create_directory', directory=current_directory) }}">Create Directory</a>&nbsp;&nbsp; | &nbsp;&nbsp;
+        <a href="{{ url_for('create_file', directory=current_directory) }}">Create File</a>&nbsp;&nbsp; | &nbsp;&nbsp;
+        <a href="{{ url_for('file_home') }}">Back to directory selection</a>
+    </span>
+
+    <!-- Display Flash Messages (Success/Error) -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <ul>
+            {% for category, message in messages %}
+                <li class="{{ category }}">{{ message }}</li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+
+    <h2>Editing File: {{ filename }}</h2>
+
+    <form action="{{ url_for('save_file') }}" method="post">
+        <input type="hidden" name="directory" value="{{ directory }}">
+        <input type="hidden" name="filename" value="{{ filename }}">
+        <textarea name="file_content" rows="20" cols="80">{{ file_content }}</textarea><br>
+        <button type="submit">Save Changes</button>
+    </form>
+
+    <br><a href="{{ url_for('file_home', directory=directory) }}">Back to File Manager</a>
+</body>
+</html>

@@ -1,0 +1,39 @@
+<!-- green_screen2.html -->
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Video Overlay</title>
+</head>
+<body>
+    <h1>Video Overlay</h1>
+    <form method="POST" enctype="multipart/form-data">
+        <label for="background">Background Video:</label>
+        <input type="file" name="background" id="background" accept="video/*" required>
+        <br>
+        <label for="greenscreen">Greenscreen Video:</label>
+        <input type="file" name="greenscreen" id="greenscreen" accept="video/*" required>
+        <br>
+        <label for="resize_width">Resize Width:</label>
+        <input type="number" name="resize_width" id="resize_width" value="300">
+        <br>
+        <label for="resize_height">Resize Height:</label>
+        <input type="number" name="resize_height" id="resize_height" value="300">
+        <br>
+        <label for="x_offset">X Offset:</label>
+        <input type="number" name="x_offset" id="x_offset" value="0">
+        <br>
+        <label for="y_offset">Y Offset:</label>
+        <input type="number" name="y_offset" id="y_offset" value="0">
+        <br>
+        <button type="submit">Overlay Videos</button>
+    </form>
+    {% if output_video %}
+    <h2>Processed Video:</h2>
+    <video width="640" height="480" controls>
+        <source src="{{ output_video }}" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+    {% endif %}
+</body>
+</html>

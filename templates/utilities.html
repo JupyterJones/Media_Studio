@@ -1,0 +1,1185 @@
+{% extends 'base1.html' %}
+
+{% block title %}Media Studio - Utilities Hub{% endblock %}
+
+{% block content %}
+<style>
+    /* -------------------------------------------------------------
+       UTILITIES HUB MODERN DASHBOARD STYLES
+       ------------------------------------------------------------- */
+    .util-dashboard {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 10px 15px 40px 15px;
+        color: var(--text-main, #e2e8f0);
+    }
+
+    /* Hero Banner */
+    .util-hero {
+        background: linear-gradient(135deg, rgba(14, 18, 34, 0.9) 0%, rgba(26, 26, 50, 0.85) 100%);
+        border: 1px solid var(--border-color, rgba(255, 255, 255, 0.12));
+        border-radius: var(--radius-lg, 16px);
+        padding: 28px 32px;
+        margin-bottom: 24px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .util-hero::before {
+        content: '';
+        position: absolute;
+        top: -60px;
+        right: -60px;
+        width: 220px;
+        height: 220px;
+        background: radial-gradient(circle, rgba(0, 240, 255, 0.15) 0%, transparent 70%);
+        pointer-events: none;
+    }
+
+    .util-hero-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 16px;
+    }
+
+    .util-hero-title-group h2 {
+        margin: 0 0 6px 0;
+        font-size: 1.85rem;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        background: linear-gradient(135deg, #ffffff 30%, #38bdf8 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .util-hero-title-group p {
+        margin: 0;
+        color: #94a3b8;
+        font-size: 0.95rem;
+        font-family: inherit;
+        line-height: 1.4;
+    }
+
+    .util-stats {
+        display: flex;
+        gap: 12px;
+    }
+
+    .stat-badge {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 16px;
+        background: rgba(15, 23, 42, 0.75);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 30px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #38bdf8;
+    }
+
+    .stat-badge .stat-num {
+        color: #f59e0b;
+        font-weight: 800;
+        font-size: 1rem;
+    }
+
+    /* Controls: Search & Category Pills */
+    .util-controls {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        margin-bottom: 28px;
+    }
+
+    .search-bar-wrapper {
+        position: relative;
+        width: 100%;
+    }
+
+    .search-icon {
+        position: absolute;
+        left: 16px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 1.1rem;
+        color: #64748b;
+        pointer-events: none;
+    }
+
+    .search-input {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 14px 44px 14px 46px;
+        background: rgba(15, 23, 42, 0.85) !important;
+        border: 1px solid rgba(255, 255, 255, 0.15) !important;
+        border-radius: 12px !important;
+        color: #f8fafc !important;
+        font-size: 1rem;
+        transition: all 0.2s ease;
+        outline: none;
+    }
+
+    .search-input:focus {
+        border-color: #00f0ff !important;
+        box-shadow: 0 0 16px rgba(0, 240, 255, 0.25);
+        background: rgba(15, 23, 42, 0.95) !important;
+    }
+
+    .clear-search-btn {
+        position: absolute;
+        right: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        color: #94a3b8;
+        font-size: 1.2rem;
+        cursor: pointer;
+        display: none;
+        padding: 4px 8px;
+        border-radius: 4px;
+    }
+
+    .clear-search-btn:hover {
+        color: #f8fafc;
+    }
+
+    .filter-pills {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+
+    .filter-pill {
+        padding: 7px 15px;
+        border-radius: 20px;
+        background: rgba(30, 41, 59, 0.6);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        color: #cbd5e1;
+        font-size: 0.85rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.18s ease;
+        user-select: none;
+    }
+
+    .filter-pill:hover {
+        background: rgba(51, 65, 85, 0.8);
+        border-color: rgba(255, 255, 255, 0.2);
+        color: #fff;
+    }
+
+    .filter-pill.active {
+        background: linear-gradient(135deg, rgba(0, 240, 255, 0.2) 0%, rgba(56, 189, 248, 0.25) 100%);
+        border-color: #38bdf8;
+        color: #38bdf8;
+        font-weight: 700;
+        box-shadow: 0 0 12px rgba(56, 189, 248, 0.2);
+    }
+
+    /* Section Groups */
+    .util-section {
+        margin-bottom: 36px;
+    }
+
+    .section-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 16px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .section-icon {
+        font-size: 1.4rem;
+    }
+
+    .section-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #f1f5f9;
+        margin: 0;
+        letter-spacing: -0.01em;
+    }
+
+    .section-badge {
+        font-size: 0.75rem;
+        font-weight: 700;
+        padding: 3px 10px;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.07);
+        color: #94a3b8;
+        border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    /* Cards Grid */
+    .util-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 16px;
+    }
+
+    /* Tool Card */
+    .util-card {
+        background: rgba(18, 22, 38, 0.85);
+        border: 1px solid rgba(255, 255, 255, 0.09);
+        border-radius: var(--radius, 12px);
+        padding: 16px 18px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        gap: 14px;
+        text-decoration: none;
+        color: inherit;
+        transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .util-card:hover {
+        transform: translateY(-3px);
+        border-color: #38bdf8;
+        background: rgba(26, 32, 54, 0.95);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4), 0 0 16px rgba(56, 189, 248, 0.2);
+    }
+
+    .util-card-top {
+        display: flex;
+        align-items: flex-start;
+        gap: 14px;
+    }
+
+    .util-card-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        flex-shrink: 0;
+        transition: transform 0.2s ease;
+    }
+
+    .util-card:hover .util-card-icon {
+        transform: scale(1.08);
+        background: rgba(56, 189, 248, 0.1);
+        border-color: rgba(56, 189, 248, 0.3);
+    }
+
+    .util-card-details {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .util-card-title {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #f8fafc;
+        margin: 0 0 4px 0;
+        line-height: 1.3;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .util-card-desc {
+        font-size: 0.82rem;
+        color: #94a3b8;
+        line-height: 1.4;
+        margin: 0;
+        font-family: inherit;
+    }
+
+    .util-card-bottom {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-top: 10px;
+        border-top: 1px solid rgba(255, 255, 255, 0.06);
+        font-size: 0.75rem;
+    }
+
+    .util-card-route {
+        font-family: monospace;
+        color: #38bdf8;
+        background: rgba(56, 189, 248, 0.1);
+        padding: 3px 8px;
+        border-radius: 4px;
+        word-break: break-all;
+    }
+
+    .util-card-action {
+        color: #f59e0b;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        transition: color 0.15s ease;
+    }
+
+    .util-card:hover .util-card-action {
+        color: #00f0ff;
+    }
+
+    /* No Results Box */
+    .no-results {
+        display: none;
+        text-align: center;
+        padding: 48px 24px;
+        background: rgba(18, 22, 38, 0.6);
+        border: 1px dashed rgba(255, 255, 255, 0.15);
+        border-radius: 12px;
+        margin-top: 20px;
+    }
+
+    .no-results h3 {
+        margin: 0 0 8px 0;
+        color: #f8fafc;
+    }
+
+    .no-results p {
+        color: #94a3b8;
+        margin: 0 0 16px 0;
+        font-size: 0.95rem;
+    }
+
+    .reset-btn {
+        background: var(--accent-gradient, linear-gradient(135deg, #00f0ff, #b800ff));
+        color: #080812;
+        font-weight: 700;
+        padding: 8px 20px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+    }
+</style>
+
+<div class="util-dashboard">
+    <!-- Hero Banner -->
+    <div class="util-hero">
+        <div class="util-hero-header">
+            <div class="util-hero-title-group">
+                <h2>🛠️ Utilities & Tool Hub</h2>
+                <p>Curated control center for AI generation, multimedia processing, audio synthesis, file operations, and diagnostics.</p>
+            </div>
+            <div class="util-stats">
+                <div class="stat-badge">
+                    <span>Tools:</span>
+                    <span class="stat-num" id="visibleCount">46</span>
+                </div>
+                <div class="stat-badge">
+                    <span>Toolkits:</span>
+                    <span class="stat-num">6</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search and Category Filters -->
+    <div class="util-controls">
+        <div class="search-bar-wrapper">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="utilSearch" class="search-input" placeholder="Search utilities (e.g. bash, mp3, capture, crop, captions, gc, prompt)..." oninput="filterUtilities()">
+            <button id="clearSearchBtn" class="clear-search-btn" onclick="clearSearch()" title="Clear search">&times;</button>
+        </div>
+
+        <div class="filter-pills">
+            <div class="filter-pill active" onclick="setCategory('all', this)">✨ All (46)</div>
+            <div class="filter-pill" onclick="setCategory('ai', this)">🪄 AI & Prompts</div>
+            <div class="filter-pill" onclick="setCategory('image', this)">🖼️ Image Tools</div>
+            <div class="filter-pill" onclick="setCategory('audio', this)">🎙️ Audio & Voice</div>
+            <div class="filter-pill" onclick="setCategory('video', this)">🎬 Video & Capture</div>
+            <div class="filter-pill" onclick="setCategory('files', this)">📁 File Management</div>
+            <div class="filter-pill" onclick="setCategory('system', this)">⚙️ Diagnostics & Dev</div>
+        </div>
+    </div>
+
+    <!-- Category 1: AI, Prompts & Narrative -->
+    <div class="util-section" data-category="ai">
+        <div class="section-header">
+            <span class="section-icon">🪄</span>
+            <h3 class="section-title">AI, Prompts & Narrative</h3>
+            <span class="section-badge">5 Tools</span>
+        </div>
+        <div class="util-grid">
+            <a href="{{ url_for('ask_gemini') }}" class="util-card" style="border-color: rgba(168, 85, 247, 0.3);">
+                <div class="util-card-top">
+                    <div class="util-card-icon" style="background: rgba(168, 85, 247, 0.15);">✨</div>
+                    <div class="util-card-details">
+                        <div class="util-card-title" style="color: #c084fc;">Ask Gemini (Heavy-Duty AI)</div>
+                        <p class="util-card-desc">Drop or paste whole files, audit route declarations, write screenplays, and multimodal vision analysis with 0% local RAM load.</p>
+                    </div>
+                </div>
+                <div class="util-card-bottom">
+                    <span class="util-card-route">/ask_gemini</span>
+                    <span class="util-card-action" style="color: #c084fc;">Launch &rarr;</span>
+                </div>
+            </a>
+
+            <a href="/mk_prompt" class="util-card">
+                <div class="util-card-top">
+                    <div class="util-card-icon">✨</div>
+                    <div class="util-card-details">
+                        <div class="util-card-title">Generate New Prompt</div>
+                        <p class="util-card-desc">Interactive AI prompt builder and modifier for Stable Diffusion and creative image synthesis.</p>
+                    </div>
+                </div>
+                <div class="util-card-bottom">
+                    <span class="util-card-route">/mk_prompt</span>
+                    <span class="util-card-action">Launch &rarr;</span>
+                </div>
+            </a>
+
+            <a href="{{ url_for('demos_and_narratives') }}" class="util-card">
+                <div class="util-card-top">
+                    <div class="util-card-icon">📖</div>
+                    <div class="util-card-details">
+                        <div class="util-card-title">Demos & Narratives</div>
+                        <p class="util-card-desc">Narrative script generation, automated storytelling pipelines, and interactive concept demos.</p>
+                    </div>
+                </div>
+                <div class="util-card-bottom">
+                    <span class="util-card-route">/demos_and_narratives</span>
+                    <span class="util-card-action">Launch &rarr;</span>
+                </div>
+            </a>
+
+            <a href="{{ url_for('story') }}" class="util-card">
+                <div class="util-card-top">
+                    <div class="util-card-icon">🎧</div>
+                    <div class="util-card-details">
+                        <div class="util-card-title">Listen Story</div>
+                        <p class="util-card-desc">Audio narrative playback player with synchronized voice storytelling and track previewing.</p>
+                    </div>
+                </div>
+                <div class="util-card-bottom">
+                    <span class="util-card-route">/story</span>
+                    <span class="util-card-action">Launch &rarr;</span>
+                </div>
+            </a>
+
+            <a href="{{ url_for('get_trends') }}" class="util-card">
+                <div class="util-card-top">
+                    <div class="util-card-icon">📈</div>
+                    <div class="util-card-details">
+                        <div class="util-card-title">Google Search Trends</div>
+                        <p class="util-card-desc">Live Google Search trends scraper to discover trending topics and fresh ideas for prompt generation.</p>
+                    </div>
+                </div>
+                <div class="util-card-bottom">
+                    <span class="util-card-route">/get_trends</span>
+                    <span class="util-card-action">Launch &rarr;</span>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <!-- Category 2: Image Tools & Graphics -->
+    <div class="util-section" data-category="image">
+        <div class="section-header">
+            <span class="section-icon">🖼️</span>
+            <h3 class="section-title">Image Tools & Graphics</h3>
+            <span class="section-badge">8 Tools</span>
+        </div>
+        <div class="util-grid">
+            <a href="{{ url_for('crop_archive_image') }}" class="util-card">
+                <div class="util-card-top">
+                    <div class="util-card-icon">✂️</div>
+                    <div class="util-card-details">
+                        <div class="util-card-title">Crop Archive Image</div>
+                        <p class="util-card-desc">Select archived images and apply precision coordinate crops resized to 512&times;768.</p>
+                    </div>
+                </div>
+                <div class="util-card-bottom">
+                    <span class="util-card-route">/crop_archive_image</span>
+                    <span class="util-card-action">Launch &rarr;</span>
+                </div>
+            </a>
+
+            <a href="{{ url_for('convert_text') }}" class="util-card">
+                <div class="util-card-top">
+                    <div class="util-card-icon">🔤</div>
+                    <div class="util-card-details">
+                        <div class="util-card-title">Create Text Image</div>
+                        <p class="util-card-desc">Rasterize dynamic typography and text layouts into stylized graphic image overlays.</p>
+                    </div>
+                </div>
+                <div class="util-card-bottom">
+                    <span class="util-card-route">/convert_text</span>
+                    <span class="util-card-action">Launch &rarr;</span>
+                </div>
+            </a>
+
+            <a href="{{ url_for('uploadfile') }}" class="util-card">
+                <div class="util-card-top">
+                    <div class="util-card-icon">🧩</div>
+                    <div class="util-card-details">
+                        <div class="util-card-title">Segment Image</div>
+                        <p class="util-card-desc">Semantic object segmentation and foreground mask extraction for image compositing.</p>
+                    </div>
+                </div>
+                <div class="util-card-bottom">
+                    <span class="util-card-route">/uploadfile</span>
+                    <span class="util-card-action">Launch &rarr;</span>
+                </div>
+            </a>
+
+            <a href="{{ url_for('outlinefile') }}" class="util-card">
+                <div class="util-card-top">
+                    <div class="util-card-icon">✒️</div>
+                    <div class="util-card-details">
+                        <div class="util-card-title">Outline Image</div>
+                        <p class="util-card-desc">Edge-detection filter that extracts clear vector-style contours and outlines from photos.</p>
+                    </div>
+                </div>
+                <div class="util-card-bottom">
+                    <span class="util-card-route">/outlinefile</span>
+                    <span class="util-card-action">Launch &rarr;</span>
+                </div>
+            </a>
+
+            <a href="{{ url_for('styling') }}" class="util-card">
+                <div class="util-card-top">
+                    <div class="util-card-icon">🎨</div>
+                    <div class="util-card-details">
+                        <div class="util-card-title">Stylized Filters</div>
+                        <p class="util-card-desc">Apply artistic style transfers, color gradings, and visual enhancement filters to images.</p>
+                    </div>
+                </div>
+                <div class="util-card-bottom">
+                    <span class="util-card-route">/styling</span>
+                    <span class="util-card-action">Launch &rarr;</span>
+                </div>
+            </a>
+
+            <a href="{{ url_for('rorschach') }}" class="util-card">
+                <div class="util-card-top">
+                    <div class="util-card-icon">🦋</div>
+                    <div class="util-card-details">
+                        <div class="util-card-title">Create Rorschach</div>
+                        <p class="util-card-desc">Bilateral symmetry generator creating abstract Rorschach inkblots from image inputs.</p>
+                    </div>
+                </div>
+                <div class="util-card-bottom">
+                    <span class="util-card-route">/rorschach</span>
+                    <span class="util-card-action">Launch &rarr;</span>
+                </div>
+            </a>
+
+            <a href="/copy" class="util-card">
+                <div class="util-card-top">
+                    <div class="util-card-icon">📥</div>
+                    <div class="util-card-details">
+                        <div class="util-card-title">Copy Images to Resources</div>
+                        <p class="util-card-desc">Sync and copy generated novel images into reusable static resource image repositories.</p>
+                    </div>
+                </div>
+                <div class="util-card-bottom">
+                    <span class="util-card-route">/copy</span>
+                    <span class="util-card-action">Launch &rarr;</span>
+                </div>
+            </a>
+
+            <a href="{{ url_for('clean_archives') }}" class="util-card">
+                <div class="util-card-top">
+                    <div class="util-card-icon">🧹</div>
+                    <div class="util-card-details">
+                        <div class="util-card-title">Clean Archives</div>
+                        <p class="util-card-desc">Maintenance utility to purge orphaned intermediate cache files and tidy archive folders.</p>
+                    </div>
+                </div>
+                <div class="util-card-bottom">
+                    <span class="util-card-route">/clean_archives</span>
+                    <span class="util-card-action">Launch &rarr;</span>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <!-- Category 3: Audio, Voice & Speech -->
+    <div class="util-section" data-category="audio">
+        <div class="section-header">
+            <span class="section-icon">🎙️</span>
+            <h3 class="section-title">Audio, Speech & Soundtracks</h3>
+            <span class="section-badge">6 Tools</span>
+        </div>
+        <div class="util-grid">
+            <a href="{{ url_for('text_mp3') }}" class="util-card">
+                <div class="util-card-top">
+                    <div class="util-card-icon">🗣️</div>
+                    <div class="util-card-details">
+                        <div class="util-card-title">Text to MP3 (gTTS)</div>
+                        <p class="util-card-desc">Convert script paragraphs or narrative texts into spoken MP3 voice audio files.</p>
+                    </div>
+                </div>
+                <div class="util-card-bottom">
+                    <span class="util-card-route">/text_mp3</span>
+                    <span class="util-card-action">Launch &rarr;</span>
+                </div>
+            </a>
+
+            <a href="{{ url_for('text_to_mp3') }}" class="util-card">
+                <div class="util-card-top">
+                    <div class="util-card-icon">🗣️</div>
+                    <div class="util-card-details">
+                        <div class="util-card-title">Kokoro Neural TTS</div>
+                        <p class="util-card-desc">High-speed neural speech synthesis engine with 50+ voices and speed control, running locally in Docker.</p>
+                    </div>
+                </div>
+                <div class="util-card-bottom">
+                    <span class="util-card-route">/text_to_mp3</span>
+                    <span class="util-card-action">Launch &rarr;</span>
+                </div>
+            </a>
+
+            <a href="{{ url_for('mp3_upload') }}" class="util-card">
+                <div class="util-card-top">
+                    <div class="util-card-icon">📤</div>
+                    <div class="util-card-details">
+                        <div class="util-card-title">Upload MP3</div>
+                        <p class="util-card-desc">Upload background music tracks and sound effects directly to the media audio library.</p>
+                    </div>
+                </div>
+                <div class="util-card-bottom">
+                    <span class="util-card-route">/mp3_upload</span>
+                    <span class="util-card-action">Launch &rarr;</span>
+                </div>
+            </a>
+
+            <a href="{{ url_for('sound2_image') }}" class="util-card">
+                <div class="util-card-top">
+                    <div class="util-card-icon">🎵</div>
+                    <div class="util-card-details">
+                        <div class="util-card-title">Sound to Image</div>
+                        <p class="util-card-desc">Combine still image art with soundtrack audio to generate shareable MP4 video posts.</p>
+                    </div>
+                </div>
+                <div class="util-card-bottom">
+                    <span class="util-card-route">/sound2_image</span>
+                    <span class="util-card-action">Launch &rarr;</span>
+                </div>
+            </a>
+
+            <a href="/add_sound_image" class="util-card">
+                <div class="util-card-top">
+                    <div class="util-card-icon">🎛️</div>
+                    <div class="util-card-details">
+                        <div class="util-card-title">Add Sound to Image Form</div>
+                        <p class="util-card-desc">Dedicated form interface to bind audio tracks and custom duration parameters to images.</p>
+                    </div>
+                </div>
+                <div class="util-card-bottom">
+                    <span class="util-card-route">/add_sound_image</span>
+                    <span class="util-card-action">Launch &rarr;</span>
+                </div>
+            </a>
+
+            <a href="{{ url_for('sound_2_video') }}" class="util-card">
+                <div class="util-card-top">
+                    <div class="util-card-icon">🎬</div>
+                    <div class="util-card-details">
+                        <div class="util-card-title">Add MP3 to Video</div>
+                        <p class="util-card-desc">Multiplex audio tracks and sound effects onto existing MP4 video files with FFmpeg.</p>
+                    </div>
+                </div>
+                <div class="util-card-bottom">
+                    <span class="util-card-route">/sound_2_video</span>
+                    <span class="util-card-action">Launch &rarr;</span>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <!-- Category 4: Video & Capture Studio -->
+    <div class="util-section" data-category="video">
+        <div class="section-header">
+            <span class="section-icon">🎬</span>
+            <h3 class="section-title">Video Tools & Capture Studio</h3>
+            <span class="section-badge">7 Tools</span>
+        </div>
+        <div class="util-grid">
+            <a href="{{ url_for('start_ffmpeg') }}" class="util-card">
+                <div class="util-card-top">
+                    <div class="util-card-icon">🔴</div>
+                    <div class="util-card-details">
+                        <div class="util-card-title">Start Recording</div>
+                        <p class="util-card-desc">Launch background desktop screen or video stream recording session via FFmpeg.</p>
+                    </div>
+                </div>
+                <div class="util-card-bottom">
+                    <span class="util-card-route">/start_ffmpeg</span>
+                    <span class="util-card-action">Launch &rarr;</span>
+                </div>
+            </a>
+
+            <a href="{{ url_for('stop_ffmpeg') }}" class="util-card">
+                <div class="util-card-top">
+                    <div class="util-card-icon">⏹️</div>
+                    <div class="util-card-details">
+                        <div class="util-card-title">Stop Recording</div>
+                        <p class="util-card-desc">Gracefully terminate the active FFmpeg screen recorder and finalize the video container.</p>
+                    </div>
+                </div>
+                <div class="util-card-bottom">
+                    <span class="util-card-route">/stop_ffmpeg</span>
+                    <span class="util-card-action">Launch &rarr;</span>
+                </div>
+            </a>
+
+            <a href="{{ url_for('youtube_videos') }}" class="util-card">
+                <div class="util-card-top">
+                    <div class="util-card-icon">▶️</div>
+                    <div class="util-card-details">
+                        <div class="util-card-title">YouTube Studio</div>
+                        <p class="util-card-desc">Search, stream, and manage saved YouTube video embeds and associated metadata.</p>
+                    </div>
+                </div>
+                <div class="util-card-bottom">
+                    <span class="util-card-route">/youtube_videos</span>
+                    <span class="util-card-action">Launch &rarr;</span>
+                </div>
+            </a>
+
+            <a href="{{ url_for('stop_motion') }}" class="util-card">
+                <div class="util-card-top">
+                    <div class="util-card-icon">🎞️</div>
+                    <div class="util-card-details">
+                        <div class="util-card-title">Stop Motion Creator</div>
+                        <p class="util-card-desc">Assemble image frame sequences into smooth stop-motion animated video reels.</p>
+                    </div>
+                </div>
+                <div class="util-card-bottom">
+                    <span class="util-card-route">/stop_motion</span>
+                    <span class="util-card-action">Launch &rarr;</span>
+                </div>
+            </a>
+
+            <a href="{{ url_for('fish_video_maker') }}" class="util-card">
+                <div class="util-card-top">
+                    <div class="util-card-icon">🐠</div>
+                    <div class="util-card-details">
+                        <div class="util-card-title">Fish Video Maker</div>
+                        <p class="util-card-desc">Animated aquatic generator compositing floating fish models over background scenes.</p>
+                    </div>
+                </div>
+                <div class="util-card-bottom">
+                    <span class="util-card-route">/fish_video_maker</span>
+                    <span class="util-card-action">Launch &rarr;</span>
+                </div>
+            </a>
+
+            <a href="{{ url_for('mk_captions') }}" class="util-card">
+                <div class="util-card-top">
+                    <div class="util-card-icon">💬</div>
+                    <div class="util-card-details">
+                        <div class="util-card-title">Make Captions</div>
+                        <p class="util-card-desc">Generate subtitle cues and text banners to overlay onto video reels and stories.</p>
+                    </div>
+                </div>
+                <div class="util-card-bottom">
+                    <span class="util-card-route">/mk_captions</span>
+                    <span class="util-card-action">Launch &rarr;</span>
+                </div>
+            </a>
+
+            <a href="{{ url_for('view_captions') }}" class="util-card">
+                <div class="util-card-top">
+                    <div class="util-card-icon">👁️</div>
+                    <div class="util-card-details">
+                        <div class="util-card-title">View Captions</div>
+                        <p class="util-card-desc">Browse, review, and manage the collection of saved subtitle and caption files.</p>
+                    </div>
+                </div>
+                <div class="util-card-bottom">
+                    <span class="util-card-route">/view_captions</span>
+                    <span class="util-card-action">Launch &rarr;</span>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <!-- Category 5: File & Project Management -->
+    <div class="util-section" data-category="files">
+        <div class="section-header">
+            <span class="section-icon">📁</span>
+            <h3 class="section-title">File & Project Management</h3>
+            <span class="section-badge">8 Tools</span>
+        </div>
+        <div class="util-grid">
+            <a href="{{ url_for('file_home') }}" class="util-card">
+                <div class="util-card-top">
+                    <div class="util-card-icon">📂</div>
+                    <div class="util-card-details">
+                        <div class="util-card-title">File Manager Home</div>
+                        <p class="util-card-desc">Comprehensive web file manager for browsing directories, deleting, and renaming assets.</p>
+                    </div>
+                </div>
+                <div class="util-card-bottom">
+                    <span class="util-card-route">/file_home</span>
+                    <span class="util-card-action">Launch &rarr;</span>
+                </div>
+            </a>
+
+            <a href="{{ url_for('file_manager', directory='static') }}" class="util-card">
+                <div class="util-card-top">
+                    <div class="util-card-icon">🖼️</div>
+                    <div class="util-card-details">
+                        <div class="util-card-title">Manage Static Files</div>
+                        <p class="util-card-desc">Direct file manager access focused on the static/ assets, video clips, and images.</p>
+                    </div>
+                </div>
+                <div class="util-card-bottom">
+                    <span class="util-card-route">/file_manager?dir=static</span>
+                    <span class="util-card-action">Launch &rarr;</span>
+                </div>
+            </a>
+
+            <a href="{{ url_for('file_manager', directory='templates') }}" class="util-card">
+                <div class="util-card-top">
+                    <div class="util-card-icon">📑</div>
+                    <div class="util-card-details">
+                        <div class="util-card-title">Manage Templates</div>
+                        <p class="util-card-desc">Direct file manager navigation targeting the templates/ HTML frontend files.</p>
+                    </div>
+                </div>
+                <div class="util-card-bottom">
+                    <span class="util-card-route">/file_manager?dir=templates</span>
+                    <span class="util-card-action">Launch &rarr;</span>
+                </div>
+            </a>
+
+            <a href="{{ url_for('transfer_directories') }}" class="util-card">
+                <div class="util-card-top">
+                    <div class="util-card-icon">🔁</div>
+                    <div class="util-card-details">
+                        <div class="util-card-title">Transfer Directories</div>
+                        <p class="util-card-desc">Batch copy and migrate file directories between source and destination paths.</p>
+                    </div>
+                </div>
+                <div class="util-card-bottom">
+                    <span class="util-card-route">/transfer_directories</span>
+                    <span class="util-card-action">Launch &rarr;</span>
+                </div>
+            </a>
+
+            <a href="{{ url_for('create_text_file') }}" class="util-card">
+                <div class="util-card-top">
+                    <div class="util-card-icon">📝</div>
+                    <div class="util-card-details">
+                        <div class="util-card-title">Create a Text File</div>
+                        <p class="util-card-desc">Quick in-browser text notepad to draft prompts, notes, or configuration files.</p>
+                    </div>
+                </div>
+                <div class="util-card-bottom">
+                    <span class="util-card-route">/create_text_file</span>
+                    <span class="util-card-action">Launch &rarr;</span>
+                </div>
+            </a>
+
+            <a href="{{ url_for('edit_html') }}" class="util-card">
+                <div class="util-card-top">
+                    <div class="util-card-icon">✏️</div>
+                    <div class="util-card-details">
+                        <div class="util-card-title">Edit HTML Files</div>
+                        <p class="util-card-desc">Web-based code editor to make quick modifications to HTML templates in-place.</p>
+                    </div>
+                </div>
+                <div class="util-card-bottom">
+                    <span class="util-card-route">/edit_html</span>
+                    <span class="util-card-action">Launch &rarr;</span>
+                </div>
+            </a>
+
+            <a href="{{ url_for('search_templates_route') }}" class="util-card">
+                <div class="util-card-top">
+                    <div class="util-card-icon">🔎</div>
+                    <div class="util-card-details">
+                        <div class="util-card-title">Search Templates</div>
+                        <p class="util-card-desc">Find text patterns, CSS classes, or route tags across all Jinja2 HTML templates.</p>
+                    </div>
+                </div>
+                <div class="util-card-bottom">
+                    <span class="util-card-route">/search_templates</span>
+                    <span class="util-card-action">Launch &rarr;</span>
+                </div>
+            </a>
+
+            <a href="{{ url_for('search_file') }}" class="util-card">
+                <div class="util-card-top">
+                    <div class="util-card-icon">🔦</div>
+                    <div class="util-card-details">
+                        <div class="util-card-title">App Search</div>
+                        <p class="util-card-desc">Search files and filenames across the full Media Studio project tree.</p>
+                    </div>
+                </div>
+                <div class="util-card-bottom">
+                    <span class="util-card-route">/search_file</span>
+                    <span class="util-card-action">Launch &rarr;</span>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <!-- Category 6: Diagnostics, Inspection & System -->
+    <div class="util-section" data-category="system">
+        <div class="section-header">
+            <span class="section-icon">⚙️</span>
+            <h3 class="section-title">Diagnostics, Inspection & System</h3>
+            <span class="section-badge">12 Tools</span>
+        </div>
+        <div class="util-grid">
+            <a href="{{ url_for('index_bash') }}" class="util-card">
+                <div class="util-card-top">
+                    <div class="util-card-icon">💻</div>
+                    <div class="util-card-details">
+                        <div class="util-card-title">Run Bash Command</div>
+                        <p class="util-card-desc">Integrated web shell terminal to execute system bash commands directly from the browser.</p>
+                    </div>
+                </div>
+                <div class="util-card-bottom">
+                    <span class="util-card-route">/index_bash</span>
+                    <span class="util-card-action">Launch &rarr;</span>
+                </div>
+            </a>
+
+            <a href="{{ url_for('show_gc_logs') }}" class="util-card">
+                <div class="util-card-top">
+                    <div class="util-card-icon">📊</div>
+                    <div class="util-card-details">
+                        <div class="util-card-title">Garbage Collection Logs</div>
+                        <p class="util-card-desc">Inspect real-time Python garbage collection tracking logs and memory footprint.</p>
+                    </div>
+                </div>
+                <div class="util-card-bottom">
+                    <span class="util-card-route">/gc_logs</span>
+                    <span class="util-card-action">Launch &rarr;</span>
+                </div>
+            </a>
+
+            <a href="{{ url_for('gc_plot') }}" class="util-card">
+                <div class="util-card-top">
+                    <div class="util-card-icon">📈</div>
+                    <div class="util-card-details">
+                        <div class="util-card-title">GC Collection Plot</div>
+                        <p class="util-card-desc">Generate visual graph plots of object counts and Python memory allocation over time.</p>
+                    </div>
+                </div>
+                <div class="util-card-bottom">
+                    <span class="util-card-route">/gc_plot</span>
+                    <span class="util-card-action">Launch &rarr;</span>
+                </div>
+            </a>
+
+            <a href="{{ url_for('about') }}" class="util-card">
+                <div class="util-card-top">
+                    <div class="util-card-icon">ℹ️</div>
+                    <div class="util-card-details">
+                        <div class="util-card-title">About Media Studio</div>
+                        <p class="util-card-desc">System documentation, architecture breakdown, and application capability guide.</p>
+                    </div>
+                </div>
+                <div class="util-card-bottom">
+                    <span class="util-card-route">/about</span>
+                    <span class="util-card-action">Launch &rarr;</span>
+                </div>
+            </a>
+
+            <a href="{{ url_for('edit_description') }}" class="util-card">
+                <div class="util-card-top">
+                    <div class="util-card-icon">📝</div>
+                    <div class="util-card-details">
+                        <div class="util-card-title">Edit About Page</div>
+                        <p class="util-card-desc">Direct in-browser editor to update documentation and user guides for the studio.</p>
+                    </div>
+                </div>
+                <div class="util-card-bottom">
+                    <span class="util-card-route">/edit_description</span>
+                    <span class="util-card-action">Launch &rarr;</span>
+                </div>
+            </a>
+
+            <a href="{{ url_for('moviepy_route') }}" class="util-card">
+                <div class="util-card-top">
+                    <div class="util-card-icon">🎞️</div>
+                    <div class="util-card-details">
+                        <div class="util-card-title">MoviePy Info</div>
+                        <p class="util-card-desc">Inspect MoviePy video engine status, version, and rendering capabilities.</p>
+                    </div>
+                </div>
+                <div class="util-card-bottom">
+                    <span class="util-card-route">/moviepy_info</span>
+                    <span class="util-card-action">Launch &rarr;</span>
+                </div>
+            </a>
+
+            <a href="{{ url_for('moviepy_fx_route') }}" class="util-card">
+                <div class="util-card-top">
+                    <div class="util-card-icon">✨</div>
+                    <div class="util-card-details">
+                        <div class="util-card-title">MoviePy FX Info</div>
+                        <p class="util-card-desc">Diagnostic overview of available MoviePy visual effects and filter plugins.</p>
+                    </div>
+                </div>
+                <div class="util-card-bottom">
+                    <span class="util-card-route">/moviepy_fx_info</span>
+                    <span class="util-card-action">Launch &rarr;</span>
+                </div>
+            </a>
+
+            <a href="{{ url_for('flask_info_route') }}" class="util-card">
+                <div class="util-card-top">
+                    <div class="util-card-icon">🌶️</div>
+                    <div class="util-card-details">
+                        <div class="util-card-title">Flask Info</div>
+                        <p class="util-card-desc">View registered Flask route rules, request environment parameters, and dependencies.</p>
+                    </div>
+                </div>
+                <div class="util-card-bottom">
+                    <span class="util-card-route">/flask_info</span>
+                    <span class="util-card-action">Launch &rarr;</span>
+                </div>
+            </a>
+
+            <a href="{{ url_for('PIL_info_route') }}" class="util-card">
+                <div class="util-card-top">
+                    <div class="util-card-icon">🖼️</div>
+                    <div class="util-card-details">
+                        <div class="util-card-title">PIL (Pillow) Info</div>
+                        <p class="util-card-desc">Inspect Pillow image processing libraries, supported encoders, and color spaces.</p>
+                    </div>
+                </div>
+                <div class="util-card-bottom">
+                    <span class="util-card-route">/PIL_info</span>
+                    <span class="util-card-action">Launch &rarr;</span>
+                </div>
+            </a>
+
+            <a href="{{ url_for('all_html') }}" class="util-card">
+                <div class="util-card-top">
+                    <div class="util-card-icon">📜</div>
+                    <div class="util-card-details">
+                        <div class="util-card-title">View All HTML</div>
+                        <p class="util-card-desc">Consolidated multi-template HTML viewer displaying all frontend templates.</p>
+                    </div>
+                </div>
+                <div class="util-card-bottom">
+                    <span class="util-card-route">/all_html</span>
+                    <span class="util-card-action">Launch &rarr;</span>
+                </div>
+            </a>
+
+            <a href="{{ url_for('all_code') }}" class="util-card">
+                <div class="util-card-top">
+                    <div class="util-card-icon">🧬</div>
+                    <div class="util-card-details">
+                        <div class="util-card-title">View All Code</div>
+                        <p class="util-card-desc">Read and review the complete backend Python codebase within a single view.</p>
+                    </div>
+                </div>
+                <div class="util-card-bottom">
+                    <span class="util-card-route">/all_code</span>
+                    <span class="util-card-action">Launch &rarr;</span>
+                </div>
+            </a>
+
+            <a href="{{ url_for('edit_post', post_id=864) }}" class="util-card">
+                <div class="util-card-top">
+                    <div class="util-card-icon">📰</div>
+                    <div class="util-card-details">
+                        <div class="util-card-title">Edit Post #864</div>
+                        <p class="util-card-desc">Direct shortcut to launch the blog post editor for post identifier 864.</p>
+                    </div>
+                </div>
+                <div class="util-card-bottom">
+                    <span class="util-card-route">/edit_post/864</span>
+                    <span class="util-card-action">Launch &rarr;</span>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <!-- Empty Results Fallback -->
+    <div id="noResultsBox" class="no-results">
+        <h3>🔍 No utilities found</h3>
+        <p>No tools matched your search criteria. Try a different query or reset your filter.</p>
+        <button class="reset-btn" onclick="resetAllFilters()">Reset All Filters</button>
+    </div>
+</div>
+
+<script>
+    let activeCategory = 'all';
+
+    function setCategory(category, el) {
+        activeCategory = category;
+        document.querySelectorAll('.filter-pill').forEach(pill => pill.classList.remove('active'));
+        if (el) el.classList.add('active');
+        filterUtilities();
+    }
+
+    function filterUtilities() {
+        const queryInput = document.getElementById('utilSearch');
+        const query = queryInput.value.toLowerCase().trim();
+        const clearBtn = document.getElementById('clearSearchBtn');
+        if (clearBtn) clearBtn.style.display = query ? 'block' : 'none';
+
+        const sections = document.querySelectorAll('.util-section');
+        let totalCount = 0;
+
+        sections.forEach(section => {
+            const secCat = section.getAttribute('data-category');
+            const catMatches = (activeCategory === 'all' || activeCategory === secCat);
+            const cards = section.querySelectorAll('.util-card');
+            let secMatches = 0;
+
+            cards.forEach(card => {
+                const text = card.textContent.toLowerCase();
+                const textMatches = !query || text.includes(query);
+
+                if (catMatches && textMatches) {
+                    card.style.display = 'flex';
+                    secMatches++;
+                    totalCount++;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+
+            section.style.display = (secMatches > 0) ? 'block' : 'none';
+        });
+
+        const noResults = document.getElementById('noResultsBox');
+        if (noResults) {
+            noResults.style.display = (totalCount === 0) ? 'block' : 'none';
+        }
+
+        const visibleCountEl = document.getElementById('visibleCount');
+        if (visibleCountEl) {
+            visibleCountEl.textContent = totalCount;
+        }
+    }
+
+    function clearSearch() {
+        const queryInput = document.getElementById('utilSearch');
+        if (queryInput) {
+            queryInput.value = '';
+            queryInput.focus();
+        }
+        filterUtilities();
+    }
+
+    function resetAllFilters() {
+        clearSearch();
+        const allPill = document.querySelector('.filter-pill');
+        if (allPill) setCategory('all', allPill);
+    }
+</script>
+{% endblock %}

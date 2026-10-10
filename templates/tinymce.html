@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flask TinyMCE Editor</title>
+    <!-- TinyMCE CDN Script -->
+    <script src="https://cdn.tiny.cloud/1/klj4pmi87en4g4fi3ua3sa9zy98emvjtdjfbrat5mxtqg63e/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dark.css') }}"> 
+    <link rel="stylesheet" href="{{ url_for('static', filename='tinymce/skins/myskin/skin.min.css') }}">
+    <style>
+      html {
+       background-color: gray;  
+      }
+      a {
+       font-size: 24px; 
+}
+
+    </style>
+</head>
+<body>
+
+<h1>Edit Content</h1>
+<a href="https://django-tinymce.readthedocs.io/en/latest/installation.html#prerequisites">tinymce</a>;&nbsp;|&nbsp;<a href="https://github.com/TinyMCE/django-tinymce">django-tinymce</a>&nbsp;|&nbsp;<a href="https://www.tiny.cloud/docs/">tiny.cloud</a>&nbsp;|&nbsp;<a href="https://tinymce.com/">tinymce.com</a>&nbsp;|&nbsp;<a href="/">Home</a>
+<form method="POST" action="/submit">
+    <textarea id="editor" name="content">Welcome to TinyMCE!</textarea>
+    <button type="submit">Submit</button>
+</form>
+
+<script>
+  tinymce.init({
+    selector: '#editor',
+    plugins: [
+      'advlist', 'autolink', 'link', 'image', 'lists', 'charmap', 'preview', 'anchor', 'pagebreak',
+      'searchreplace', 'wordcount', 'visualblocks', 'visualchars', 'code', 'fullscreen', 'insertdatetime',
+      'media', 'table', 'emoticons', 'help'
+    ],
+    toolbar: 'undo redo | bold italic underline | link image media | numlist bullist | removeformat',
+    tinycomments_mode: 'embedded',
+    tinycomments_author: 'Author name',
+
+    // Use custom skin
+    //skin: 'myskin',  // Name of your skin folder
+    //skin_url: '/static/tinymce/skins/myskin',  // Path to the custom skin
+    //skin_url: '/static/tinymce/skins/myskin',
+    content_css: '/static/tinymce/skins/myskin/content.min.css',
+
+
+    setup: (editor) => {
+      editor.on('init', () => console.log('Editor initialized with custom skin.'));
+      editor.on('Error', (err) => console.error('Editor Error:', err));
+    }
+  });
+</script>
+
+</body>
+</html>

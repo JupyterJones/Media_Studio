@@ -1,0 +1,21 @@
+{
+    "next_image_id": 2,
+    "runs": [
+        {
+            "image_id": 1,
+            "file": "madnessLCMV1_v10_safetensors_txt2img_img_000001.png",
+            "timestamp": "2026-09-17T05:57:14.289441",
+            "mode": "txt2img",
+            "prompt": "a beautiful serene mountain landscape at sunset, golden hour",
+            "negative_prompt": null,
+            "steps": 4,
+            "guidance_scale": 1.5,
+            "seed": 12345,
+            "width": 512,
+            "height": 512,
+            "model": "/media/jack/9930-14E1/models/checkpoints/madnessLCMV1_v10.safetensors",
+            "strength": null,
+            "init_image": null
+        }
+    ]
+}

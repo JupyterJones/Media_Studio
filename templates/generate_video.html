@@ -1,0 +1,41 @@
+<!-- generate_video.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Generate AI Video</title>
+</head>
+<body style="background-color: #111; color: white; font-family: sans-serif; text-align: center; padding: 40px;">
+    <h1>🛠️ Create Video with Frame Overlay</h1>
+          
+          {% for image in image_files %}
+
+                 <img src="{{image}}" width="256" height=auto>
+
+              <!--img src="{{ url_for('static', filename='images/newai/'+image) }}" alt="{{ image }}" width="200" height="200"><br/-->
+          {% endfor %}
+
+    <form method="POST">
+        <p>
+            <label>Image Folder Path:</label><br>
+            <input type="text" name="image_dir" value="static/jun2leo" style="width: 60%; padding: 6px;">
+        </p>
+        <p>
+            <label>Audio File Path:</label><br>
+            <input type="text" name="audio_path" value="static/results/The_air_is_thick_with_tension_bf_emma.mp3" style="width: 60%; padding: 6px;">
+        </p>
+        <p>
+            <button type="submit" style="padding: 10px 30px; font-size: 18px; background-color: lime; color: black;">🎬 Generate Video</button>
+        </p>
+    </form>
+
+    {% if video_url %}
+    <h2>🎥 Your Generated Video</h2>
+    <video width="640" height="360" controls autoplay loop>
+        <source src="{{ video_url }}" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+    <p>Saved at: <b>{{ video_url }}</b></p>
+    <a href="/generate_video" style="color: lime;">Create Another</a>
+    {% endif %}
+</body>
+</html>

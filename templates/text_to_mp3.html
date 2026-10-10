@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kokoro TTS - Voice Speech Synthesis</title>
+    <link rel="stylesheet" href="/static/css/themed.css">
+    <style>
+        :root {
+            --bg-body: #0d0e15;
+            --bg-card: rgba(22, 24, 38, 0.85);
+            --border-card: rgba(255, 255, 255, 0.08);
+            --accent: #00f0ff;
+            --accent-purple: #9d00ff;
+            --text-main: #e2e8f0;
+            --text-muted: #8a8fba;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            margin: 0;
+            padding: 24px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .header-nav {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-card);
+        }
+
+        .header-nav a {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-card);
+            padding: 8px 16px;
+            border-radius: 8px;
+            color: var(--text-main);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .header-nav a:hover {
+            border-color: var(--accent);
+            background: rgba(0, 240, 255, 0.1);
+            color: #fff;
+        }
+
+        .header-nav a.active {
+            background: linear-gradient(135deg, rgba(0, 240, 255, 0.2), rgba(157, 0, 255, 0.2));
+            border-color: var(--accent);
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        .title-section {
+            margin-bottom: 24px;
+        }
+
+        .title-section h1 {
+            font-size: 1.8rem;
+            margin: 0 0 6px 0;
+            background: linear-gradient(135deg, #00f0ff, #c084fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .title-section p {
+            color: var(--text-muted);
+            margin: 0;
+            font-size: 0.95rem;
+        }
+
+        .grid-layout {
+            display: grid;
+            grid-template-columns: 1fr 340px;
+            gap: 24px;
+        }
+
+        @media (max-width: 900px) {
+            .grid-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-card);
+            border-radius: 12px;
+            padding: 24px;
+            backdrop-filter: blur(12px);
+            margin-bottom: 24px;
+        }
+
+        .card h2 {
+            font-size: 1.2rem;
+            margin-top: 0;
+            margin-bottom: 16px;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        label {
+            display: block;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+
+        textarea {
+            width: 100%;
+            height: 180px;
+            background: rgba(10, 11, 18, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 8px;
+            color: #fff;
+            padding: 14px;
+            font-size: 1rem;
+            font-family: inherit;
+            line-height: 1.5;
+            box-sizing: border-box;
+            resize: vertical;
+            transition: border-color 0.2s;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 10px rgba(0, 240, 255, 0.2);
+        }
+
+        .form-row {
+            display: flex;
+            gap: 16px;
+            margin-top: 16px;
+            flex-wrap: wrap;
+        }
+
+        .form-group {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        select {
+            width: 100%;
+            background: #181b29;
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-size: 0.95rem;
+            box-sizing: border-box;
+            cursor: pointer;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        optgroup {
+            background: #111320;
+            color: var(--accent);
+            font-weight: bold;
+        }
+
+        option {
+            background: #181b29;
+            color: #fff;
+            font-weight: normal;
+        }
+
+        .btn-submit {
+            background: linear-gradient(135deg, #00f0ff, #7000ff);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 28px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: transform 0.15s, box-shadow 0.2s;
+            margin-top: 20px;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 20px rgba(0, 240, 255, 0.35);
+        }
+
+        .flash-msg {
+            background: rgba(0, 240, 255, 0.1);
+            border-left: 4px solid var(--accent);
+            padding: 12px 16px;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 20px;
+            color: #e2e8f0;
+            font-size: 0.9rem;
+        }
+
+        .audio-player-box {
+            background: rgba(0, 240, 255, 0.05);
+            border: 1px solid rgba(0, 240, 255, 0.25);
+            border-radius: 10px;
+            padding: 18px;
+            margin-top: 16px;
+        }
+
+        audio {
+            width: 100%;
+            height: 40px;
+            margin: 10px 0;
+            border-radius: 20px;
+        }
+
+        .btn-avatar-stage {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--accent);
+            color: #080812;
+            font-weight: 700;
+            text-decoration: none;
+            padding: 10px 18px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            margin-top: 8px;
+        }
+
+        .btn-avatar-stage:hover {
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.5);
+            transform: translateY(-1px);
+        }
+
+        .voice-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            max-height: 480px;
+            overflow-y: auto;
+        }
+
+        .voice-item {
+            padding: 10px 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.85rem;
+        }
+
+        .voice-item:last-child {
+            border-bottom: none;
+        }
+
+        .voice-item:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .voice-filename {
+            word-break: break-all;
+            color: var(--text-main);
+            font-weight: 500;
+        }
+
+        .tag-bar {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin-bottom: 8px;
+            align-items: center;
+        }
+
+        .tag-bar-title {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-right: 2px;
+        }
+
+        .tag-pill {
+            background: rgba(0, 240, 255, 0.08);
+            border: 1px solid rgba(0, 240, 255, 0.25);
+            color: var(--accent);
+            border-radius: 6px;
+            padding: 4px 8px;
+            font-size: 0.78rem;
+            font-family: monospace;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .tag-pill:hover {
+            background: rgba(0, 240, 255, 0.2);
+            border-color: var(--accent);
+            transform: translateY(-1px);
+        }
+
+        .tag-pill.sample {
+            background: rgba(157, 0, 255, 0.15);
+            border-color: rgba(157, 0, 255, 0.4);
+            color: #d8b4fe;
+            margin-left: auto;
+            font-weight: 600;
+        }
+
+        .tag-pill.sample:hover {
+            background: rgba(157, 0, 255, 0.3);
+            border-color: #c084fc;
+        }
+
+        .cheatsheet-card {
+            background: rgba(14, 16, 26, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 8px;
+            padding: 14px 16px;
+            margin-top: 20px;
+        }
+
+        .cheatsheet-card h3 {
+            margin: 0 0 8px 0;
+            font-size: 0.92rem;
+            color: #c084fc;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .cheatsheet-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.82rem;
+        }
+
+        .cheatsheet-table td {
+            padding: 4px 6px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            color: var(--text-main);
+        }
+
+        .cheatsheet-table code {
+            color: var(--accent);
+            background: rgba(0, 240, 255, 0.08);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.82rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Header Navigation -->
+    <div class="header-nav">
+        <a href="/">🏠 Media Studio Home</a>
+        <a href="/upload_media">🎭 Avatar Studio</a>
+        <a href="/text_to_mp3" class="active">🗣️ Kokoro Voice Synthesis</a>
+        <a href="/mk_videos">🎬 Video Processing</a>
+        <a href="/remember" target="remember_app">💾 Remember DB</a>
+        <a href="/effects" target="effects_studio">🪄 Effects Studio</a>
+    </div>
+
+    <!-- Title Section -->
+    <div class="title-section">
+        <h1>🗣️ Kokoro TTS - Voice Speech Synthesis</h1>
+        <p>Synthesize expressive neural speech with 50+ selectable voices, adjustable speed, and instant staging to <code>static/projects/use.mp3</code> for avatar lipsync.</p>
+    </div>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        {% for message in messages %}
+          <div class="flash-msg">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <div class="grid-layout">
+        <!-- Main Form Column -->
+        <div>
+            <div class="card">
+                <h2>✍️ Text Input & Voice Controls</h2>
+                <form method="post" id="ttsForm">
+                    <div class="tag-bar">
+                        <span class="tag-bar-title">⚡ Quick Tags:</span>
+                        <button type="button" class="tag-pill" onclick="insertTag('[pause=1.0]')">[pause=1.0]</button>
+                        <button type="button" class="tag-pill" onclick="insertTag('[pause=2.0]')">[pause=2.0]</button>
+                        <button type="button" class="tag-pill" onclick="insertTag('[slow]')">[slow]</button>
+                        <button type="button" class="tag-pill" onclick="insertTag('[fast]')">[fast]</button>
+                        <button type="button" class="tag-pill" onclick="insertTag('[loud]')">[loud]</button>
+                        <button type="button" class="tag-pill" onclick="insertTag('[soft]')">[soft]</button>
+                        <button type="button" class="tag-pill" onclick="insertTag('[voice=am_adam]')">[voice=am_adam]</button>
+                        <button type="button" class="tag-pill" onclick="insertTag('[voice=af_sarah]')">[voice=af_sarah]</button>
+                        <button type="button" class="tag-pill" onclick="insertTag('[voice=bf_alice]')">[voice=bf_alice]</button>
+                        <button type="button" class="tag-pill sample" onclick="loadSampleScript()">📜 Load Arcane Sample Script</button>
+                    </div>
+                    <label for="text">Speech Text / Script</label>
+                    <textarea name="text" id="text" placeholder="Type or paste dialogue or narration. You can use multi-character tags like [voice=am_adam] or precise pauses like [pause=1.5]..." required>{{ text }}</textarea>
+
+                    <div class="form-row">
+                        <!-- Voice Dropdown -->
+                        <div class="form-group" style="flex: 2;">
+                            <label for="voice">🎭 Default Voice Character</label>
+                            <select name="voice" id="voice">
+                                {% for group_name, voices in voice_groups.items() %}
+                                <optgroup label="{{ group_name }}">
+                                    {% for v_id, v_label in voices %}
+                                    <option value="{{ v_id }}" {% if selected_voice == v_id %}selected{% endif %}>
+                                        {{ v_label }}
+                                    </option>
+                                    {% endfor %}
+                                </optgroup>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <!-- Speed Selector -->
+                        <div class="form-group" style="flex: 1;">
+                            <label for="speed">⚡ Base Speed</label>
+                            <select name="speed" id="speed">
+                                <option value="0.85" {% if speed == 0.85 %}selected{% endif %}>0.85x (Slow / Calm)</option>
+                                <option value="1.0" {% if speed == 1.0 or not speed %}selected{% endif %}>1.00x (Normal)</option>
+                                <option value="1.15" {% if speed == 1.15 %}selected{% endif %}>1.15x (Energetic)</option>
+                                <option value="1.25" {% if speed == 1.25 %}selected{% endif %}>1.25x (Fast)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-submit" id="submitBtn">
+                        <span>🎙️ Generate Voice MP3</span>
+                    </button>
+                </form>
+
+                <!-- Markup Cheatsheet Card -->
+                <div class="cheatsheet-card">
+                    <h3>⚡ Production Script Markup Cheatsheet</h3>
+                    <p style="margin: 0 0 10px 0; color: var(--text-muted); font-size: 0.8rem;">
+                        Combine pause timings and multi-voice actors directly in your script:
+                    </p>
+                    <table class="cheatsheet-table">
+                        <tr>
+                            <td style="width: 175px;"><code>[voice=am_adam]</code></td>
+                            <td>Switches speaker character for this line (e.g. <code>af_heart</code>, <code>af_sarah</code>, <code>bf_emma</code>, <code>bm_george</code>)</td>
+                        </tr>
+                        <tr>
+                            <td><code>[pause=2.5]</code></td>
+                            <td>Inserts exact silence duration in seconds (e.g. <code>[pause=0.5]</code>, <code>[pause=2.0]</code>)</td>
+                        </tr>
+                        <tr>
+                            <td><code>[slow]</code> / <code>[fast]</code></td>
+                            <td>Paces line slower (0.85x) or faster (1.15x). Or use custom <code>[speed=0.95]</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>[loud]</code> / <code>[soft]</code></td>
+                            <td>Volume gain (+4dB boost) or soften into whisper (-4dB / 0.6x)</td>
+                        </tr>
+                    </table>
+                </div>
+
+                {% if mp3_file %}
+                <div class="audio-player-box">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="color: var(--accent); font-weight: 700;">✅ Newly Generated Speech</span>
+                        <span style="font-size: 0.8rem; background: rgba(0, 240, 255, 0.15); padding: 2px 8px; border-radius: 4px; color: var(--accent);">{{ selected_voice }}</span>
+                    </div>
+                    <audio controls autoplay>
+                        <source src="{{ url_for('serve_file', filename=mp3_file) }}" type="audio/mpeg">
+                    </audio>
+                    <p style="margin: 4px 0 10px; font-size: 0.85rem; color: var(--text-muted); word-break: break-all;">
+                        Saved to: <code>static/voice/{{ mp3_file }}</code> & staged to <code>static/projects/use.mp3</code>
+                    </p>
+                    <a href="/upload_media" class="btn-avatar-stage">
+                        🎭 Launch Avatar Studio with this Voice ↗
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Sidebar: Recent Voices -->
+        <div>
+            <div class="card">
+                <h2>📁 Recent Voice Clips</h2>
+                <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: -8px; margin-bottom: 12px;">Archived in <code>static/voice/</code></p>
+                <ul class="voice-list">
+                    {% for rf in recent_voices %}
+                    <li class="voice-item">
+                        <div>
+                            <div class="voice-filename">{{ rf }}</div>
+                            <audio controls style="height: 28px; width: 220px; margin-top: 6px;">
+                                <source src="/static/voice/{{ rf }}" type="audio/mpeg">
+                            </audio>
+                        </div>
+                    </li>
+                    {% else %}
+                    <li style="padding: 12px; color: var(--text-muted); font-size: 0.85rem;">No recent voice clips yet.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function insertTag(tag) {
+        const textarea = document.getElementById('text');
+        const start = textarea.selectionStart;
+        const end = textarea.selectionEnd;
+        const text = textarea.value;
+        textarea.value = text.substring(0, start) + tag + text.substring(end);
+        textarea.focus();
+        textarea.selectionStart = textarea.selectionEnd = start + tag.length;
+    }
+
+    function loadSampleScript() {
+        const sample = `[voice=am_adam]Welcome to Arcane Stories. The voice inflection series.[pause=1.5]
+[voice=af_sarah][slow]Today, we dive into the secrets of the ancient world.[pause=1.5]
+[voice=am_adam]Some artifacts defy explanation and hint at lost civilizations.[pause=1.0]
+[voice=af_sarah][fast]The crystal skulls, mudfloods, and strange tools appear across history.[pause=1.5]
+[voice=am_adam]THINGS ARE MOVING FAST.[loud][pause=1.0]
+[voice=af_sarah][soft]That was a bit loud Adam, I just learned to speak in a whisper.[pause=0.75]
+[voice=bf_alice]Yes, I am here Sarah. This is a new adventure for me.[pause=0.75]
+[voice=af_heart]Good to hear you Alice. Now we can tell our stories with pure CPU neural voices.[pause=0.5]`;
+        const textarea = document.getElementById('text');
+        textarea.value = sample;
+        textarea.focus();
+    }
+
+    document.getElementById('ttsForm').addEventListener('submit', function() {
+        const btn = document.getElementById('submitBtn');
+        btn.disabled = true;
+        btn.innerHTML = '<span>⏳ Synthesizing Voice...</span>';
+    });
+</script>
+
+</body>
+</html>

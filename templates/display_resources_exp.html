@@ -1,0 +1,95 @@
+<! -- templates3/display_resources_exp.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Display Archived Resources</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='dark.css') }}">
+    <style>
+        body {
+            background-color: #121212;
+            color: #e0e0e0;
+            font-family: 'Merriweather Sans', sans-serif;
+        }
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            padding-top: 20px;
+        }
+        .image-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+        }
+        .image-item {
+            margin: 10px;
+            text-align: center;
+        }
+        .image-item img {
+            max-width: 200px;
+            max-height: 300px;
+            display: block;
+            margin-bottom: 10px;
+            border: 2px solid #444;
+            border-radius: 8px;
+        }
+        .image-item input[type="checkbox"] {
+            margin-top: 5px;
+        }
+        .submit-btn {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #444;
+            color: #e0e0e0;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .submit-btn:hover {
+            background-color: #666;
+        }
+        .refresh-button {
+            display: inline-block;
+            margin-bottom: 10px;
+            padding: 10px 20px;
+            background-color: #444;
+            color: #e0e0e0;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        .refresh-button:hover {
+            background-color: #666;
+        }
+        .siznmov {
+            margin-left: 30px;
+            width: 35px;
+            height: 35px;
+
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+
+    <h1>Archived Resources templates3/display_resources_exp.html</h1>
+    <a href="{{ url_for('index') }}" class="refresh-button">HOME</a>
+    
+    <form action="{{ url_for('copy_images') }}" method="POST">
+        <div class="image-container">
+            {% for image_path in image_paths %}
+                <div class="image-item">
+                    <!-- Corrected src path -->
+                    <img src="{{ url_for('static', filename=image_path.split('static/')[1]) }}" alt="Image">
+                    <input class="siznmov" type="checkbox" name="selected_images" value="{{ image_path }}">
+                </div>
+            {% else %}
+                <p>No images available in the archive.</p>
+            {% endfor %}
+        </div>
+        <button class="sticky" type="submit" class="submit-btn">Submit Selected Images</button>
+    </form>
+</div>
+
+</body>
+</html>

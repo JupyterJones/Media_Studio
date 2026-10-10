@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSON Zoom & Pan Studio | Media Studio</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/themed.css') }}">
+    <link rel="icon" href="/favicon.ico?v=1">
+    <script src="{{ url_for('static', filename='js/theme.js') }}"></script>
+    <style>
+        .studio-header {
+            text-align: center;
+            padding: 24px 20px 16px;
+            margin-bottom: 20px;
+        }
+        .studio-nav {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 24px;
+        }
+        .studio-nav a {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            padding: 10px 18px;
+            border-radius: var(--radius-sm);
+            color: var(--text-bright);
+            font-family: 'Outfit', sans-serif;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all var(--transition-speed);
+            text-decoration: none;
+        }
+        .studio-nav a:hover {
+            background: var(--accent-glow);
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 15px var(--accent-glow);
+            transform: translateY(-2px);
+            color: var(--text-bright);
+        }
+        .studio-nav a.primary {
+            background: var(--accent-gradient);
+            color: #080812;
+            border: none;
+            box-shadow: var(--shadow-glow);
+        }
+        .studio-nav a.primary:hover {
+            filter: brightness(1.15);
+            color: #000;
+        }
+
+        .studio-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            align-items: start;
+        }
+
+        @media (max-width: 980px) {
+            .studio-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-group label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--text-bright);
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.95rem;
+        }
+
+        select.studio-select {
+            width: 100%;
+            padding: 12px 14px;
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            color: var(--text-bright);
+            font-size: 0.95rem;
+            font-family: 'Inter', sans-serif;
+            outline: none;
+            transition: border-color var(--transition-speed);
+        }
+
+        select.studio-select:focus {
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 10px var(--accent-glow);
+        }
+
+        textarea.code-editor {
+            width: 100%;
+            padding: 14px;
+            background: var(--bg-code);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            color: var(--text-code);
+            font-family: 'JetBrains Mono', 'Courier New', monospace;
+            font-size: 0.88rem;
+            line-height: 1.5;
+            outline: none;
+            resize: vertical;
+            min-height: 320px;
+            box-sizing: border-box;
+            transition: border-color var(--transition-speed);
+        }
+
+        textarea.code-editor:focus {
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 12px var(--accent-glow);
+        }
+
+        .editor-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 8px;
+            align-items: center;
+        }
+
+        .btn-action {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 6px 12px !important;
+            border-radius: var(--radius-sm);
+            font-size: 0.82rem !important;
+            cursor: pointer;
+            transition: all var(--transition-speed);
+        }
+
+        .btn-action:hover {
+            background: var(--accent-glow);
+            border-color: var(--accent-primary);
+            color: var(--text-bright);
+        }
+
+        .btn-generate {
+            width: 100%;
+            background: var(--accent-gradient) !important;
+            color: #080812 !important;
+            font-size: 1.05rem !important;
+            font-weight: 700 !important;
+            padding: 14px 24px !important;
+            border: none !important;
+            border-radius: var(--radius) !important;
+            box-shadow: var(--shadow-glow);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 14px !important;
+            transition: all var(--transition-speed);
+        }
+
+        .btn-generate:hover:not(:disabled) {
+            filter: brightness(1.15);
+            transform: translateY(-2px);
+        }
+
+        .btn-generate:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .preview-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 18px;
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .preview-card h3 {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 1.05rem;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .badge {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid var(--border-subtle);
+            border-radius: 20px;
+            padding: 3px 10px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--accent-primary);
+            max-width: 250px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .preview-media-container {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            background: #000;
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+            border: 1px solid var(--border-subtle);
+            min-height: 220px;
+            align-items: center;
+        }
+
+        .preview-media-container img {
+            max-width: 100%;
+            max-height: 380px;
+            object-fit: contain;
+            display: block;
+        }
+
+        .preview-media-container video {
+            width: 100%;
+            max-height: 480px;
+            background: #000;
+            border-radius: var(--radius-sm);
+            outline: none;
+            display: block;
+        }
+
+        .status-box {
+            padding: 14px 18px;
+            border-radius: var(--radius-sm);
+            margin-top: 16px;
+            font-size: 0.92rem;
+            display: none;
+        }
+
+        .status-box.info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(0, 240, 255, 0.1);
+            border: 1px solid var(--accent-primary);
+            color: var(--accent-primary);
+        }
+
+        .status-box.success {
+            display: block;
+            background: rgba(0, 255, 102, 0.1);
+            border: 1px solid var(--success-color);
+            color: var(--success-color);
+        }
+
+        .status-box.error {
+            display: block;
+            background: rgba(255, 51, 102, 0.1);
+            border: 1px solid var(--error-color);
+            color: var(--error-color);
+        }
+
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(0, 240, 255, 0.3);
+            border-top: 3px solid var(--accent-primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            flex-shrink: 0;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .info-accordion {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-sm);
+            padding: 12px 16px;
+            margin-top: 16px;
+            font-size: 0.88rem;
+            color: var(--text-muted);
+        }
+
+        .info-accordion summary {
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--text-bright);
+            outline: none;
+        }
+
+        .info-accordion p, .info-accordion ul {
+            margin-top: 8px;
+        }
+
+        .info-accordion ul {
+            padding-left: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="studio-header">
+        <h1>🔍 JSON Zoom & Pan Studio</h1>
+        <p style="color: var(--text-muted); font-size: 1.05rem; margin-top: 6px;">
+            Keyframe camera interpolation, cinematic motion, video sharpening & border stabilization
+        </p>
+    </div>
+
+    <div class="studio-nav">
+        <a href="/">🏠 Home</a>
+        <a href="{{ url_for('mk_videos') }}">🎬 Video Processing</a>
+        <a href="/upload_media">🎭 Avatar Studio</a>
+        <a href="{{ url_for('mk_novel') }}">📖 Novel Studio</a>
+        <a href="{{ url_for('clean_storage_route') }}">🖼️ Image Processing</a>
+        <a href="/effects" target="effects_studio">🪄 Effects Studio</a>
+        <a href="/remember" target="remember_app">💾 Remember DB</a>
+    </div>
+
+    <div class="studio-grid">
+        <!-- Left Column: Controls and Keyframe JSON -->
+        <div class="card">
+            <h2>Keyframe Configuration</h2>
+            <form id="animationForm">
+                <div class="form-group">
+                    <label for="image_choice">
+                        <span>Select Source Image</span>
+                        <span class="badge" id="imageCountBadge">{{ images|length }} images</span>
+                    </label>
+                    <select name="image" id="image_choice" class="studio-select" required onchange="updateImageDisplay()">
+                        {% if images %}
+                            {% for image in images %}
+                                <option value="{{ image }}">{{ image }}</option>
+                            {% endfor %}
+                        {% else %}
+                            <option value="" disabled selected>No images found in static/novel_images</option>
+                        {% endif %}
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="animationData">
+                        <span>Animation Keyframes (JSON)</span>
+                        <span class="badge" id="keyframeCountBadge">0 keyframes</span>
+                    </label>
+                    <textarea class="code-editor" id="animationData" name="animationData" spellcheck="false">{{ default_animation_data | safe }}</textarea>
+                    
+                    <div class="editor-actions">
+                        <span style="font-size: 0.8rem; color: var(--text-muted); margin-right: 4px;">Presets:</span>
+                        <select id="presetSelect" class="studio-select" style="width: auto; padding: 4px 10px; font-size: 0.82rem;" onchange="loadPreset(this.value)">
+                            <option value="default">Default Tour (18 frames)</option>
+                            <option value="zoom_in">Slow Center Zoom</option>
+                            <option value="pan_lr">Left to Right Pan</option>
+                            <option value="corner_tour">4-Corner Orbit</option>
+                            <option value="dramatic">Dramatic Zoom Pulse</option>
+                        </select>
+                        <button type="button" class="btn-action" onclick="formatJSON()">Format JSON</button>
+                        <button type="button" class="btn-action" onclick="resetDefault()">Reset Default</button>
+                        <button type="button" class="btn-action" onclick="subdivideKeyframes()" title="Insert intermediate small-step keyframes into the JSON editor">
+                            ✨ Subdivide to Small Steps
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Smoothness & Motion Parameters Card -->
+                <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); padding: 14px 16px; margin-top: 14px; margin-bottom: 14px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <span style="font-weight: 600; color: var(--accent-primary); font-size: 0.95rem;">🌊 Motion Smoothing & Step Settings</span>
+                        <span class="badge" style="font-size: 0.72rem;">Sub-Pixel Bicubic</span>
+                    </div>
+
+                    <!-- Steps per Transition (Speed & Micro-Steps) -->
+                    <div style="margin-bottom: 12px;">
+                        <div style="display: flex; justify-content: space-between; font-size: 0.86rem; color: var(--text-bright); margin-bottom: 4px;">
+                            <span>Motion Speed & Granularity:</span>
+                            <span id="stepsDisplay" style="font-weight: 700; color: var(--accent-primary);">120 steps (0.5x Half Speed)</span>
+                        </div>
+                        <input type="range" id="interpolationSteps" min="20" max="240" step="10" value="120"
+                               style="width: 100%; accent-color: var(--accent-primary); cursor: pointer;"
+                               oninput="updateStepsDisplay(this.value); updateDurationEstimate();">
+                        
+                        <!-- Quick Speed Presets -->
+                        <div style="display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap; align-items: center;">
+                            <span style="font-size: 0.75rem; color: var(--text-muted);">Presets:</span>
+                            <button type="button" class="btn-action speed-btn" onclick="setSpeed(120, '0.5x Half Speed', this)" style="padding: 3px 8px !important; font-size: 0.76rem !important; background: var(--accent-glow); border-color: var(--accent-primary); color: var(--text-bright);">
+                                🐌 0.5x Half Speed (120)
+                            </button>
+                            <button type="button" class="btn-action speed-btn" onclick="setSpeed(160, '0.38x Very Slow', this)" style="padding: 3px 8px !important; font-size: 0.76rem !important;">
+                                🐢 0.38x Slow (160)
+                            </button>
+                            <button type="button" class="btn-action speed-btn" onclick="setSpeed(80, '0.75x Moderate', this)" style="padding: 3px 8px !important; font-size: 0.76rem !important;">
+                                0.75x Moderate (80)
+                            </button>
+                            <button type="button" class="btn-action speed-btn" onclick="setSpeed(60, '1.0x Normal Speed', this)" style="padding: 3px 8px !important; font-size: 0.76rem !important;">
+                                ⚡ 1.0x Normal (60)
+                            </button>
+                        </div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px;">
+                            Higher step count cuts camera speed in half and doubles interpolation frames for a slow, cinematic glide.
+                        </div>
+                    </div>
+
+                    <!-- Motion Easing Curve -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 10px;">
+                        <div>
+                            <label style="font-size: 0.82rem; color: var(--text-bright); display: block; margin-bottom: 4px;">Motion Easing:</label>
+                            <select id="easingSelect" class="studio-select" style="padding: 6px 10px; font-size: 0.85rem;">
+                                <option value="cosine" selected>Cosine Ease In/Out (Silky Smooth)</option>
+                                <option value="smoothstep">Hermite Smoothstep</option>
+                                <option value="cubic">Cubic Acceleration</option>
+                                <option value="linear">Linear (Constant Speed)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="font-size: 0.82rem; color: var(--text-bright); display: block; margin-bottom: 4px;">Framerate (FPS):</label>
+                            <select id="fpsSelect" class="studio-select" style="padding: 6px 10px; font-size: 0.85rem;" onchange="updateDurationEstimate();">
+                                <option value="25" selected>25 FPS (Smooth Cinematic)</option>
+                                <option value="30">30 FPS (Standard 60Hz Smooth)</option>
+                                <option value="15">15 FPS (Stylized Pace)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 6px; border-top: 1px solid var(--border-subtle);">
+                        <label style="display: flex; align-items: center; gap: 8px; font-size: 0.84rem; color: var(--text-main); cursor: pointer;">
+                            <input type="checkbox" id="borderToggle" checked style="accent-color: var(--accent-primary); width: 16px; height: 16px;">
+                            Apply 512x768 Portrait Frame Overlay
+                        </label>
+                        <span id="estDuration" style="font-size: 0.8rem; color: var(--accent-primary); font-weight: 500;">Est: ~0s</span>
+                    </div>
+                </div>
+
+                <button type="submit" id="generateBtn" class="btn-generate">
+                    <span id="btnIcon">🚀</span>
+                    <span id="btnText">Create Smooth Animation Video</span>
+                </button>
+
+                <!-- Status / Progress notification -->
+                <div id="statusBox" class="status-box"></div>
+
+                <!-- Guidance Accordion -->
+                <details class="info-accordion">
+                    <summary>ℹ️ Keyframe Guide & Parameters</summary>
+                    <p>Each item in the JSON array represents a camera keyframe:</p>
+                    <ul>
+                        <li><code>zoom</code>: Zoom factor (e.g. <code>1.0</code> is unzoomed 100%, <code>2.0</code> is 2x zoom).</li>
+                        <li><code>pan</code>: <code>[x, y]</code> coordinates from <code>0.0</code> (top-left) to <code>1.0</code> (bottom-right).</li>
+                        <li>Transitions between adjacent keyframes are smoothly interpolated with <strong>sub-pixel bicubic warping</strong> and cosine easing curve to remove sharp turns or jitter.</li>
+                        <li>The output video is sharpened with an unsharp mask and optionally styled with the standard 512x768 border frame.</li>
+                    </ul>
+                </details>
+            </form>
+        </div>
+
+        <!-- Right Column: Visual Previews -->
+        <div>
+            <!-- Image Preview Card -->
+            <div class="preview-card">
+                <h3>
+                    <span>Source Image Preview</span>
+                    <span class="badge" id="selectedImageBadge">
+                        {% if images %}{{ images[0] }}{% else %}None{% endif %}
+                    </span>
+                </h3>
+                <div class="preview-media-container">
+                    {% if images %}
+                        <img id="selectedImage" src="{{ url_for('static', filename='novel_images/' + images[0]) }}" alt="Selected Source Image" onerror="this.src='/static/assets/logo.png'">
+                    {% else %}
+                        <img id="selectedImage" src="/static/assets/logo.png" alt="No image selected">
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Video Preview Card -->
+            <div class="preview-card">
+                <h3>
+                    <span>Generated Video Preview</span>
+                    <span class="badge" id="videoBadge">final_zoomyyX.mp4</span>
+                </h3>
+                <div class="preview-media-container">
+                    <video id="videoPlayer" controls autoplay loop playsinline>
+                        <source id="videoSource" src="/static/temp_exp/final_zoomyyX.mp4" type="video/mp4">
+                        Your browser does not support HTML5 video.
+                    </video>
+                </div>
+                
+                <!-- Player Speed Controller -->
+                <div style="display: flex; gap: 8px; align-items: center; justify-content: center; margin-top: 10px; width: 100%;">
+                    <span style="font-size: 0.8rem; color: var(--text-muted);">Player Speed:</span>
+                    <button type="button" class="btn-action player-speed-btn" onclick="setPlayerSpeed(0.5, this)" style="padding: 3px 8px !important; font-size: 0.78rem !important;">0.5x</button>
+                    <button type="button" class="btn-action player-speed-btn" onclick="setPlayerSpeed(0.75, this)" style="padding: 3px 8px !important; font-size: 0.78rem !important;">0.75x</button>
+                    <button type="button" class="btn-action player-speed-btn active-speed" onclick="setPlayerSpeed(1.0, this)" style="padding: 3px 8px !important; font-size: 0.78rem !important; background: var(--accent-glow); border-color: var(--accent-primary);">1.0x</button>
+                    <button type="button" class="btn-action player-speed-btn" onclick="setPlayerSpeed(1.25, this)" style="padding: 3px 8px !important; font-size: 0.78rem !important;">1.25x</button>
+                </div>
+
+                <div style="display: flex; gap: 10px; margin-top: 10px; width: 100%; justify-content: center; flex-wrap: wrap;">
+                    <a id="downloadVideoBtn" href="/static/temp_exp/final_zoomyyX.mp4" download="final_zoomyyX.mp4" class="btn-action" style="text-decoration: none;">
+                        ⬇️ Download MP4
+                    </a>
+                    <button type="button" class="btn-action" onclick="reloadVideo()">
+                        🔄 Reload Player
+                    </button>
+                    <a id="openVideoBtn" href="/static/temp_exp/final_zoomyyX.mp4" target="_blank" class="btn-action" style="text-decoration: none;">
+                        🔗 Full Window
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<button class="theme-switch-btn" onclick="toggleTheme()" title="Toggle Theme">
+    🎨 <span id="themeName">Theme</span>
+</button>
+
+<script>
+    const defaultData = {{ default_animation_data | safe }};
+
+    const PRESETS = {
+        default: defaultData,
+        zoom_in: [
+            {"zoom": 1.0, "pan": [0.5, 0.5]},
+            {"zoom": 1.5, "pan": [0.5, 0.5]},
+            {"zoom": 2.2, "pan": [0.5, 0.5]},
+            {"zoom": 3.0, "pan": [0.5, 0.5]},
+            {"zoom": 1.0, "pan": [0.5, 0.5]}
+        ],
+        pan_lr: [
+            {"zoom": 1.4, "pan": [0.0, 0.5]},
+            {"zoom": 1.4, "pan": [0.3, 0.5]},
+            {"zoom": 1.4, "pan": [0.7, 0.5]},
+            {"zoom": 1.4, "pan": [1.0, 0.5]},
+            {"zoom": 1.0, "pan": [0.5, 0.5]}
+        ],
+        corner_tour: [
+            {"zoom": 1.8, "pan": [0.1, 0.1]},
+            {"zoom": 1.8, "pan": [0.9, 0.1]},
+            {"zoom": 1.8, "pan": [0.9, 0.9]},
+            {"zoom": 1.8, "pan": [0.1, 0.9]},
+            {"zoom": 1.0, "pan": [0.5, 0.5]}
+        ],
+        dramatic: [
+            {"zoom": 1.0, "pan": [0.5, 0.5]},
+            {"zoom": 3.2, "pan": [0.2, 0.2]},
+            {"zoom": 1.1, "pan": [0.8, 0.8]},
+            {"zoom": 3.2, "pan": [0.5, 0.7]},
+            {"zoom": 1.0, "pan": [0.5, 0.5]}
+        ]
+    };
+
+    function updateStepsDisplay(val) {
+        let speedLabel = '';
+        const num = parseInt(val);
+        if (num >= 180) speedLabel = ' (0.3x Ultra Slow)';
+        else if (num >= 110) speedLabel = ' (0.5x Half Speed)';
+        else if (num >= 75) speedLabel = ' (0.75x Moderate)';
+        else if (num <= 35) speedLabel = ' (2.0x Fast)';
+        else speedLabel = ' (1.0x Normal)';
+
+        document.getElementById('stepsDisplay').innerText = `${val} steps${speedLabel}`;
+    }
+
+    function setSpeed(steps, label, btn) {
+        const slider = document.getElementById('interpolationSteps');
+        slider.value = steps;
+        updateStepsDisplay(steps);
+        updateDurationEstimate();
+
+        document.querySelectorAll('.speed-btn').forEach(b => {
+            b.style.background = 'rgba(255, 255, 255, 0.08)';
+            b.style.borderColor = 'var(--border-color)';
+            b.style.color = 'var(--text-main)';
+        });
+        if (btn) {
+            btn.style.background = 'var(--accent-glow)';
+            btn.style.borderColor = 'var(--accent-primary)';
+            btn.style.color = 'var(--text-bright)';
+        }
+    }
+
+    function setPlayerSpeed(rate, btn) {
+        const player = document.getElementById('videoPlayer');
+        if (player) {
+            player.playbackRate = rate;
+        }
+        document.querySelectorAll('.player-speed-btn').forEach(b => {
+            b.style.background = 'rgba(255, 255, 255, 0.08)';
+            b.style.borderColor = 'var(--border-color)';
+            b.style.color = 'var(--text-main)';
+        });
+        if (btn) {
+            btn.style.background = 'var(--accent-glow)';
+            btn.style.borderColor = 'var(--accent-primary)';
+            btn.style.color = 'var(--text-bright)';
+        }
+    }
+
+    function updateDurationEstimate() {
+        try {
+            const raw = document.getElementById('animationData').value.trim();
+            const parsed = JSON.parse(raw);
+            if (Array.isArray(parsed) && parsed.length >= 2) {
+                const transitions = parsed.length - 1;
+                const steps = parseInt(document.getElementById('interpolationSteps').value) || 120;
+                const fps = parseFloat(document.getElementById('fpsSelect').value) || 25;
+                const totalFrames = transitions * steps;
+                const seconds = (totalFrames / fps).toFixed(1);
+                document.getElementById('estDuration').innerText = `Est: ~${seconds}s (${totalFrames} frames)`;
+            } else {
+                document.getElementById('estDuration').innerText = "Est: ~0s";
+            }
+        } catch (e) {
+            document.getElementById('estDuration').innerText = "Est: --";
+        }
+    }
+
+    function updateKeyframeCount() {
+        try {
+            const raw = document.getElementById('animationData').value.trim();
+            const parsed = JSON.parse(raw);
+            if (Array.isArray(parsed)) {
+                document.getElementById('keyframeCountBadge').innerText = `${parsed.length} keyframes`;
+                document.getElementById('keyframeCountBadge').style.color = "var(--accent-primary)";
+            } else {
+                document.getElementById('keyframeCountBadge').innerText = "Must be array";
+                document.getElementById('keyframeCountBadge').style.color = "var(--error-color)";
+            }
+        } catch (e) {
+            document.getElementById('keyframeCountBadge').innerText = "Invalid JSON";
+            document.getElementById('keyframeCountBadge').style.color = "var(--error-color)";
+        }
+        updateDurationEstimate();
+    }
+
+    function updateImageDisplay() {
+        const select = document.getElementById('image_choice');
+        const selectedImage = select.value;
+        const imgElem = document.getElementById('selectedImage');
+        const badge = document.getElementById('selectedImageBadge');
+
+        if (selectedImage) {
+            imgElem.src = '/static/novel_images/' + selectedImage;
+            badge.innerText = selectedImage;
+        }
+    }
+
+    function formatJSON() {
+        try {
+            const textarea = document.getElementById('animationData');
+            const parsed = JSON.parse(textarea.value);
+            textarea.value = JSON.stringify(parsed, null, 2);
+            updateKeyframeCount();
+            showStatus('success', 'JSON formatted successfully.');
+        } catch (e) {
+            showStatus('error', 'Cannot format invalid JSON: ' + e.message);
+        }
+    }
+
+    function resetDefault() {
+        const textarea = document.getElementById('animationData');
+        textarea.value = JSON.stringify(defaultData, null, 2);
+        document.getElementById('presetSelect').value = 'default';
+        updateKeyframeCount();
+        showStatus('info', 'Reset keyframes to default sequence.');
+    }
+
+    function loadPreset(key) {
+        if (PRESETS[key]) {
+            const textarea = document.getElementById('animationData');
+            textarea.value = JSON.stringify(PRESETS[key], null, 2);
+            updateKeyframeCount();
+            showStatus('info', `Loaded "${key}" animation preset.`);
+        }
+    }
+
+    // Subdivides keyframes into smaller discrete step increments right inside the JSON editor
+    function subdivideKeyframes() {
+        try {
+            const textarea = document.getElementById('animationData');
+            const parsed = JSON.parse(textarea.value);
+            if (!Array.isArray(parsed) || parsed.length < 2) {
+                showStatus('error', 'Need at least 2 keyframes to subdivide.');
+                return;
+            }
+
+            const subdivided = [];
+            const subSteps = 3; // Inserts 3 small steps between each keyframe
+
+            for (let i = 0; i < parsed.length - 1; i++) {
+                const k1 = parsed[i];
+                const k2 = parsed[i + 1];
+
+                const z1 = Number(k1.zoom) || 1.0;
+                const z2 = Number(k2.zoom) || 1.0;
+                const p1 = Array.isArray(k1.pan) ? k1.pan : [0.5, 0.5];
+                const p2 = Array.isArray(k2.pan) ? k2.pan : [0.5, 0.5];
+
+                for (let s = 0; s < subSteps; s++) {
+                    const t = s / subSteps;
+                    // Cosine ease
+                    const easeT = (1.0 - Math.cos(t * Math.PI)) / 2.0;
+                    const z = Number((z1 + (z2 - z1) * easeT).toFixed(3));
+                    const px = Number((p1[0] + (p2[0] - p1[0]) * easeT).toFixed(3));
+                    const py = Number((p1[1] + (p2[1] - p1[1]) * easeT).toFixed(3));
+                    subdivided.push({ zoom: z, pan: [px, py] });
+                }
+            }
+            // Add the final keyframe
+            const last = parsed[parsed.length - 1];
+            subdivided.push({
+                zoom: Number(last.zoom) || 1.0,
+                pan: Array.isArray(last.pan) ? last.pan : [0.5, 0.5]
+            });
+
+            textarea.value = JSON.stringify(subdivided, null, 2);
+            updateKeyframeCount();
+            showStatus('success', `✨ Subdivided keyframes into ${subdivided.length} fine small steps!`);
+        } catch (e) {
+            showStatus('error', 'Error subdividing: ' + e.message);
+        }
+    }
+
+    function showStatus(type, message, showSpinner = false) {
+        const box = document.getElementById('statusBox');
+        box.className = `status-box ${type}`;
+        if (showSpinner) {
+            box.innerHTML = `<div class="spinner"></div><div>${message}</div>`;
+        } else {
+            box.innerText = message;
+        }
+        box.style.display = type === 'info' && showSpinner ? 'flex' : 'block';
+    }
+
+    function reloadVideo(customPath) {
+        const player = document.getElementById('videoPlayer');
+        const source = document.getElementById('videoSource');
+        const downloadBtn = document.getElementById('downloadVideoBtn');
+        const openBtn = document.getElementById('openVideoBtn');
+        const badge = document.getElementById('videoBadge');
+
+        const basePath = customPath || source.src.split('?')[0];
+        const newSrc = basePath + '?t=' + Date.now();
+
+        source.src = newSrc;
+        player.src = newSrc;
+        downloadBtn.href = basePath;
+        openBtn.href = newSrc;
+
+        const filename = basePath.split('/').pop();
+        if (badge) badge.innerText = filename;
+
+        player.load();
+        player.play().catch(() => {});
+    }
+
+    document.getElementById('animationData').addEventListener('input', updateKeyframeCount);
+
+    document.getElementById('animationForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+        const generateBtn = document.getElementById('generateBtn');
+        const btnText = document.getElementById('btnText');
+        const btnIcon = document.getElementById('btnIcon');
+
+        try {
+            const animationDataRaw = document.getElementById('animationData').value.trim();
+            const selectedImage = document.getElementById('image_choice').value;
+            const steps = parseInt(document.getElementById('interpolationSteps').value) || 60;
+            const fps = parseFloat(document.getElementById('fpsSelect').value) || 25;
+            const easing = document.getElementById('easingSelect').value || 'cosine';
+            const applyBorder = document.getElementById('borderToggle').checked;
+
+            if (!selectedImage) {
+                showStatus('error', 'Please choose an image from the dropdown.');
+                return;
+            }
+
+            let animationData;
+            try {
+                animationData = JSON.parse(animationDataRaw);
+            } catch (jsonErr) {
+                showStatus('error', 'JSON Syntax Error: ' + jsonErr.message);
+                return;
+            }
+
+            if (!Array.isArray(animationData) || animationData.length < 2) {
+                showStatus('error', 'Animation data must be a JSON array with at least 2 keyframes.');
+                return;
+            }
+
+            // Set loading state
+            generateBtn.disabled = true;
+            btnIcon.innerText = "⏳";
+            btnText.innerText = `Rendering ${steps} Steps/KF (${easing} easing)...`;
+            showStatus('info', `Rendering smooth sub-pixel camera glide with ${steps} micro-steps per keyframe at ${fps} FPS... Please wait (20-40s).`, true);
+
+            fetch('/create_animation', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    image: selectedImage,
+                    animation_data: animationData,
+                    interpolation_steps: steps,
+                    frame_rate: fps,
+                    easing: easing,
+                    apply_border: applyBorder
+                })
+            })
+            .then(response => {
+                return response.json().then(data => {
+                    if (!response.ok) {
+                        throw new Error(data.error || `HTTP ${response.status}`);
+                    }
+                    return data;
+                });
+            })
+            .then(data => {
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+                const videoPath = data.video_path || '/static/temp_exp/final_zoomyyX.mp4';
+                showStatus('success', `✨ ${data.message || 'Animation created successfully!'} File saved: ${videoPath}`);
+                reloadVideo(videoPath);
+            })
+            .catch(error => {
+                showStatus('error', 'Generation Error: ' + error.message);
+            })
+            .finally(() => {
+                generateBtn.disabled = false;
+                btnIcon.innerText = "🚀";
+                btnText.innerText = "Create Smooth Animation Video";
+            });
+
+        } catch (error) {
+            showStatus('error', 'Form submission error: ' + error.message);
+            generateBtn.disabled = false;
+            btnIcon.innerText = "🚀";
+            btnText.innerText = "Create Smooth Animation Video";
+        }
+    });
+
+    window.onload = function() {
+        updateKeyframeCount();
+        updateImageDisplay();
+    };
+</script>
+
+</body>
+</html>

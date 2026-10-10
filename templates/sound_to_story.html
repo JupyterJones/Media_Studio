@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Sound to Image</title>
+    <link rel="stylesheet" href="/static/css/dark.css">
+    <style>
+        .image-preview {
+            max-width: 250px;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 1.6vw;
+            cursor: pointer;
+        }
+
+        .media-container {
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .media-item {
+            margin: 10px;
+            text-align: center;
+        }
+
+        audio {
+            display: block;
+            margin-top: 10px;
+        }
+    </style>
+  <script>
+    function previewImage(imgSrc) {
+        const preview = document.getElementById('image-preview');
+        preview.src = imgSrc;
+        preview.style.display = 'block';
+    }
+
+    function playAudio(audioFile) {
+        const audioElement = document.getElementById(`audio_${audioFile}`);
+        const audios = document.querySelectorAll('audio');
+        audios.forEach(audio => {
+            if (!audio.paused) {
+                audio.pause();
+                audio.currentTime = 0;
+            }
+        });
+        audioElement.style.display = 'block';
+        audioElement.play();
+    }
+</script>
+
+<body>
+    <h1>Add Sound to Image / sound_to_story.html</h1>
+    <a href="/"><button>Home</button></a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="/add_sound_story"><button>Refresh</button></a>
+    <p>Refresh this page to see new images and audio files</p>
+
+    <form id="video-audio-form" action="/add_sound_to_story" method="post">
+        <label for="image_path">Select Image:</label><br />
+        <div class="media-container">
+            {% for image in image_files %}
+            <div class="media-item">
+                <input type="radio" name="image_path" id="{{ image }}" value="{{ image }}"
+                    onclick="previewImage('static/novel_images/{{ image }}')" required>
+                <label for="{{ image }}">
+                    <img src="static/novel_images/{{ image }}" class="image-preview" alt="{{ image }}">
+                    {{ image }}
+                </label>
+            </div>
+            {% endfor %}
+        </div>
+        <img id="image-preview" class="image-preview" style="display:none;" alt="Image Preview"><br /><br />
+
+        <label for="audio_path">Select Audio:</label><br />
+        <div class="media-container">
+            {% for audio in audio_files %}
+            <div class="media-item">
+                <button type="button" onclick="playAudio('{{ audio }}')">Preview</button>
+                <audio id="audio_{{ audio }}" controls style="display:none;">
+                    <source src="/static/text2audio/{{ audio }}" type="audio/mpeg">
+                    Your browser does not support the audio element.
+                </audio>
+                <input type="radio" name="audio_path" value="{{ audio }}" required> <span style="color:orange;word-wrap: break-word;" >{{ audio }}</span>
+            </div>
+            {% endfor %}
+        </div>
+
+        <button type="button" id="create-video">Create Video</button>
+    </form>
+
+    <h2>Output Video</h2>
+    <div id="output-video-section"></div>
+
+    <script>
+        document.getElementById('create-video').addEventListener('click', function () {
+            const form = document.getElementById('video-audio-form');
+            const formData = new FormData(form);
+
+            const imageSelected = formData.get('image_path');
+            const audioSelected = formData.get('audio_path');
+
+            if (!imageSelected || !audioSelected) {
+                alert("Please select both an image and audio before proceeding.");
+                return;
+            }
+
+            fetch('/combine_story', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('output-video-section').innerHTML = `
+                        <h3>Combined Video:</h3>
+                        <video style="width:250px;height:auto;" controls>
+                            <source src="${data.output_video}" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    `;
+                } else {
+                    alert(data.error);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    </script>
+
+</body>
+
+</html>
+<!-- Compare this snippet from templates/sound_to_video.html: -->

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Selection</title>
+    <style>
+        body {
+            background-color: var(--bg-card);
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+
+        .video-gallery {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+
+        .video-item {
+            flex: 1 0 20%;
+            margin: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            padding: 10px;
+            background-color: rgba(170, 160, 150, 0.5);
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .video-item video {
+            width: 100%;
+            max-width: 300px;
+            height: auto;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Video Files:</h2>
+
+        <a href="{{ url_for('title') }}">Refresh</a>
+
+        <form action="{{ url_for('title_route') }}" method="post">
+            <h3>Main Files:</h3>
+            <div class="video-gallery">
+                {% for file in main_files %}
+                    <div class="video-item">
+                        <label>
+                            <input type="radio" name="main_file" value="{{ file }}">
+                            <video controls>
+                                <source src="{{ 'static/temp_exp/' }}/{{ file }}" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+                            <figcaption>{{ file }}</figcaption>
+                        </label>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <h3>Title Files:</h3>
+            <div class="video-gallery">
+                {% for file in title_files %}
+                    <div class="video-item">
+                        <label>
+                            <input type="radio" name="title_file" value="{{ file }}">
+                            <video controls>
+                                <source src="{{ 'static/overlay_zooms/title/' }}/{{ file }}" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+                            <figcaption>{{ file }}</figcaption>
+                        </label>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <button type="submit">Concatenate</button>
+        </form>
+                                    <video style="width:300;height:auto;" controls>
+                                <source src="{{ video }}" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Video</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+:root {
+    --bg-base: #080b11;
+    --bg-surface: #0f1524;
+    --bg-card: rgba(22, 30, 49, 0.7);
+    --bg-card-hover: rgba(29, 40, 65, 0.85);
+    --border-color: rgba(255, 255, 255, 0.08);
+    --border-glow: rgba(99, 102, 241, 0.15);
+
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+
+    --primary: #6366f1;
+    --primary-hover: #4f46e5;
+    --primary-glow: rgba(99, 102, 241, 0.4);
+
+    --secondary: #8b5cf6;
+    --secondary-hover: #7c3aed;
+
+    --accent: #14b8a6;
+    --accent-glow: rgba(20, 184, 166, 0.3);
+
+    --success: #10b981;
+    --danger: #ef4444;
+
+    --radius-sm: 8px;
+    --radius-md: 14px;
+    --radius-lg: 20px;
+
+    --shadow-sm: 0 2px 8px -2px rgba(0,0,0,0.5);
+    --shadow-md: 0 10px 25px -5px rgba(0,0,0,0.6);
+    --shadow-lg: 0 20px 40px -10px rgba(0,0,0,0.8);
+
+    --transition-fast: 0.15s ease;
+    --transition-normal: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background-color: var(--bg-base);
+    color: var(--text-primary);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+    background-image:
+        radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(139, 92, 246, 0.08) 0%, transparent 40%);
+    background-attachment: fixed;
+}
+
+h1, h2, h3, h4 {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+}
+
+header {
+    width: 100%;
+    max-width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.5rem;
+    background-color: rgba(15, 21, 36, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border-color);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.nav-links {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    overflow-x: auto;
+    max-width: 100%;
+    white-space: nowrap;
+    padding-bottom: 6px;
+    -webkit-overflow-scrolling: touch;
+}
+
+.nav-links::-webkit-scrollbar {
+    height: 8px;
+}
+.nav-links::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 4px;
+}
+.nav-links::-webkit-scrollbar-thumb {
+    background: linear-gradient(90deg, #6366f1, #8b5cf6);
+    border-radius: 4px;
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.logo-icon {
+    width: 2.25rem;
+    height: 2.25rem;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    box-shadow: 0 0 15px var(--primary-glow);
+}
+
+.logo-text {
+    font-size: 0.75rem;
+    font-weight: 400;
+    background: linear-gradient(to right, #ffffff, #c7d2fe);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.logo-badge {
+    font-size: 0.60rem;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    background: rgba(99, 102, 241, 0.15);
+    color: #a5b4fc;
+    padding: 0.2rem 0.5rem;
+    border-radius: 25px;
+    border: 1px solid rgba(99, 102, 241, 0.3);
+}
+
+/* ---------------------------------------------------------
+   MAIN LAYOUT
+   Widened from 440px so the grids below actually have room
+   to lay out multiple columns instead of collapsing to one.
+   --------------------------------------------------------- */
+main {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    max-width: 1400px;
+    width: 100%;
+    margin: 0 auto;
+    gap: 1.5rem;
+    padding: 1.5rem;
+    height: auto;
+    overflow-y: auto;
+}
+
+.card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 1.25rem;
+    box-shadow: var(--shadow-sm);
+    transition: border-color var(--transition-normal), box-shadow var(--transition-normal);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    text-align: left;
+}
+
+.card:hover {
+    border-color: var(--border-glow);
+    box-shadow: var(--shadow-md);
+}
+
+.card-title {
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: var(--text-primary);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding-bottom: 0.5rem;
+}
+
+/* Buttons */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+    color: white;
+    border: none;
+    border-radius: var(--radius-md);
+    padding: 0.75rem 1.25rem;
+    font-family: inherit;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    text-decoration: none;
+    box-shadow: 0 4px 15px var(--primary-glow);
+    transition: all var(--transition-normal);
+    text-align: center;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(99, 102, 241, 0.6);
+}
+
+.btn:active {
+    transform: translateY(1px);
+}
+
+.btn-accent {
+    background: linear-gradient(135deg, var(--accent) 0%, #0d9488 100%);
+    box-shadow: 0 4px 15px var(--accent-glow);
+}
+
+.btn-accent:hover {
+    box-shadow: 0 6px 20px rgba(20, 184, 166, 0.5);
+}
+
+.btn-block {
+    display: flex;
+    width: 100%;
+}
+
+/* ---------------------------------------------------------
+   IMAGES GRID
+   auto-fill + minmax = as many 150px+ columns as fit, all
+   stretched evenly. This is what turns 200 images into
+   rows/columns instead of one tall list.
+   --------------------------------------------------------- */
+.images-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.image-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    background: rgba(15, 21, 36, 0.6);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    padding: 0.75rem;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.image-card:hover {
+    border-color: var(--primary);
+    background: rgba(29, 40, 65, 0.5);
+}
+
+.image-card img {
+    width: 100%;
+    height: 140px;
+    object-fit: cover;
+    border-radius: 4px;
+    border: 1px solid rgba(255,255,255,0.05);
+}
+
+.image-controls {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.checkbox-container {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.checkbox-container input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: var(--accent);
+}
+
+.sequence-input-container {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.sequence-input-container input[type="number"] {
+    width: 60px;
+    background-color: rgba(15, 21, 36, 0.8);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    color: var(--text-primary);
+    padding: 0.25rem 0.5rem;
+    font-family: inherit;
+    font-size: 0.85rem;
+    outline: none;
+    text-align: center;
+}
+
+.sequence-input-container input[type="number"]:focus {
+    border-color: var(--primary);
+}
+
+/* ---------------------------------------------------------
+   AUDIO GRID
+   Wider min column (260px) since each card holds a filename
+   + a native <audio> player, which gets squished below that.
+   --------------------------------------------------------- */
+.audio-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 0.75rem;
+    margin-top: 1rem;
+}
+
+.audio-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    background: rgba(15, 21, 36, 0.6);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    padding: 0.75rem;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.audio-card:hover {
+    border-color: var(--primary);
+    background: rgba(29, 40, 65, 0.5);
+}
+
+.audio-card input[type="radio"] {
+    margin-top: 0.25rem;
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: var(--primary);
+}
+
+.audio-info {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    min-width: 0;
+}
+
+.audio-name {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.audio-player audio {
+    width: 100%;
+    height: 32px;
+    border-radius: 4px;
+}
+
+/* ---------------------------------------------------------
+   VIDEO GRID
+   Separate class from .audio-list (the HTML currently reuses
+   .audio-list for this panel too — give it this class name
+   instead so video and audio layouts don't fight each other).
+   Wider min-width since these are meant to be watched, not
+   thumbnail-browsed like the images.
+   --------------------------------------------------------- */
+.video-list-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.video-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    background: rgba(15, 21, 36, 0.6);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    padding: 1rem;
+    transition: all var(--transition-fast);
+}
+
+.video-card:hover {
+    border-color: var(--primary);
+    background: rgba(29, 40, 65, 0.5);
+}
+
+/* Scrollbars */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 99px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+@media (max-width: 768px) {
+    header {
+        flex-direction: column;
+        gap: 0.75rem;
+        padding: 0.75rem 1rem;
+        align-items: stretch;
+    }
+    .logo-container { justify-content: center; }
+    header > div:last-child {
+        display: flex;
+        overflow-x: auto;
+        white-space: nowrap;
+        padding-bottom: 4px;
+        -webkit-overflow-scrolling: touch;
+    }
+    main { padding: 1rem 0.75rem; }
+    .images-list { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); }
+    .audio-list { grid-template-columns: 1fr; }
+    .video-list-grid { grid-template-columns: 1fr; }
+}
+    </style>
+</head>
+<body>
+    <header>
+        <a href="/" class="logo-container" style="text-decoration: none;">
+            <div class="logo-icon">🎬</div>
+            <div>
+                <h1 class="logo-text" style="font-size: 0.95rem; font-weight:700;">Video Sequencer</h1>
+                <span class="logo-badge">MoviePy</span>
+            </div>
+        </a>
+        <nav class="nav-links">
+            <a href="/" class="btn btn-accent" style="padding: 0.5rem 1rem; font-size: 0.8rem; background: linear-gradient(135deg, #6366f1, #8b5cf6); color: #fff;">🏠 Home</a>
+            <a href="/comic" class="btn btn-accent" style="padding: 0.5rem 1rem; font-size: 0.8rem; background: linear-gradient(135deg, #ff6b6b, #c0392b); color: #fff;">💥 Comic Builder</a>
+            <a href="/projects" class="btn btn-accent" style="padding: 0.5rem 1rem; font-size: 0.8rem;">📁 Projects</a>
+            <a href="/trash" class="btn btn-accent" style="padding: 0.5rem 1rem; font-size: 0.8rem; color: #ef4444;">🗑️ Trash Can</a>
+            <a href="/frame_video" class="btn btn-accent" style="padding: 0.5rem 1rem; font-size: 0.8rem;">🖼️ Frame Video</a>
+            <a href="/video_gallery" class="btn btn-accent" style="padding: 0.5rem 1rem; font-size: 0.8rem;">📹 Video Gallery</a>
+            <a href="/image_gallery" class="btn btn-accent" style="padding: 0.5rem 1rem; font-size: 0.8rem;">🖼️ Image Gallery</a>
+            <a href="/generation" class="btn btn-accent" style="padding: 0.5rem 1rem; font-size: 0.8rem;">🎨 Image Gen</a>
+            <a href="/text_to_mp3" class="btn btn-accent" style="padding: 0.5rem 1rem; font-size: 0.8rem;">🗣️ Kokoro TTS</a>
+        </nav>
+    </header>
+
+    <main>
+        <form action="/create_video" method="POST" enctype="multipart/form-data">
+            <!-- Images Panel -->
+            <div class="card" style="margin-bottom: 1.5rem;">
+                <div class="card-title">
+                    <span>Select Images</span>
+                    <span style="font-size: 0.75rem; color: var(--accent); font-weight: 500;">Exactly 7 Required</span>
+                </div>
+                <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.5rem;">Choose 7 images and set sequence (1-7):</p>
+                <div class="images-list">
+                    {% for image in images %}
+                    <div class="image-card" onclick="const chk = document.getElementById('chk_{{ image }}'); chk.checked = !chk.checked; event.stopPropagation();">
+                        <img loading="lazy" src="{{ url_for('static', filename='uploads/' + image) }}" alt="{{ image }}">
+                        <div class="image-controls" onclick="event.stopPropagation();">
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="chk_{{ image }}" name="images" value="{{ image }}">
+                                <span>Select Image</span>
+                            </label>
+                            <div class="sequence-input-container">
+                                <span>Sequence:</span>
+                                <input type="number" name="sequence_{{ image }}" min="1" max="100" placeholder="-">
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Audio Panel -->
+            <div class="card" style="margin-bottom: 1.5rem;">
+                <div class="card-title">
+                    <span>Select Audio Track</span>
+                </div>
+                <div class="audio-list">
+                    {% for mp3 in mp3s %}
+                    <div class="audio-card" onclick="document.getElementById('rad_{{ mp3 }}').click();">
+                        <input type="radio" id="rad_{{ mp3 }}" name="audio" value="{{ mp3 }}">
+                        <div class="audio-info" onclick="event.stopPropagation();">
+                            <span class="audio-name" title="{{ mp3 }}">{{ mp3 }}</span>
+                            <div class="audio-player">
+                                <audio controls>
+                                    <source src="{{ url_for('serve_audio_file', filename=mp3) }}" type="audio/mp3">
+                                    Your browser does not support audio.
+                                </audio>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <!-- Video Panel -->
+            <div class="card" style="margin-bottom: 1.5rem;">
+                <div class="card-title">
+                    <span>Available Videos</span>
+                </div>
+                <div class="video-list-grid">
+                    {% for mp4 in mp4s %}
+                    <div class="video-card">
+                        <div class="audio-info">
+                            <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; gap: 1rem;">
+                                <span class="audio-name" title="{{ mp4 }}" style="flex-grow: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ mp4 }}</span>
+                                <a href="{{ url_for('serve_video', filename=mp4) }}" target="_blank" class="btn btn-accent" style="padding: 0.35rem 0.7rem; font-size: 0.75rem; border-radius: var(--radius-sm); box-shadow: none; white-space: nowrap; text-decoration: none;">
+                                    ↗ Open in New Tab
+                                </a>
+                            </div>
+                            <div style="margin-top: 0.5rem; width: 100%;">
+                                <video controls style="width: 100%; border-radius: var(--radius-sm); border: 1px solid var(--border-color); display: block; position: relative; z-index: 10; pointer-events: auto;">
+                                    <source src="{{ url_for('serve_video', filename=mp4) }}" type="video/mp4">
+                                    Your browser does not support the video tag.
+                                </video>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <!-- Create Button -->
+            <button type="submit" class="btn btn-block" style="padding: 1.1rem;">
+                <span>Assemble & Create Video</span>
+            </button>
+        </form>
+    </main>
+</body>
+</html>

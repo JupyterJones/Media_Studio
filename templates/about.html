@@ -1,0 +1,1680 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="cyber">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Media Studio - Application Overview & Function Reference</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/themed.css') }}">
+    <style>
+        :root {
+            --bg-color: #080812;
+            --bg-surface: #0e1222;
+            --bg-card: rgba(18, 18, 35, 0.82);
+            --bg-card-hover: rgba(26, 26, 50, 0.95);
+            --accent-primary: #00f0ff;
+            --accent-secondary: #b800ff;
+            --accent-gradient: linear-gradient(135deg, #00f0ff 0%, #b800ff 100%);
+            --text-main: #e2e8f0;
+            --text-muted: #8a8fba;
+            --text-bright: #ffffff;
+            --border-color: rgba(255, 255, 255, 0.12);
+            --border-focus: rgba(0, 240, 255, 0.6);
+            --radius: 10px;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            background-image: radial-gradient(circle at 15% 15%, rgba(0, 240, 255, 0.08) 0%, transparent 40%),
+                              radial-gradient(circle at 85% 85%, rgba(184, 0, 255, 0.08) 0%, transparent 40%);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 2rem 1rem;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+
+        /* Top Header */
+        .header-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 1.75rem 2rem;
+            margin-bottom: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .header-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2.2rem;
+            font-weight: 800;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .header-subtitle {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin: 0.25rem 0 0 0;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 0.6rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-nav {
+            padding: 0.55rem 1.1rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .btn-nav-primary {
+            background: var(--accent-gradient);
+            color: #080812;
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.3);
+        }
+        .btn-nav-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 22px rgba(0, 240, 255, 0.5);
+            color: #080812;
+        }
+
+        .btn-nav-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+        }
+        .btn-nav-secondary:hover {
+            background: rgba(0, 240, 255, 0.1);
+            border-color: var(--accent-primary);
+            color: var(--accent-primary);
+            transform: translateY(-2px);
+        }
+
+        /* Search Filter */
+        .search-box {
+            position: relative;
+            margin-bottom: 2rem;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.9rem 1.25rem 0.9rem 2.8rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            color: var(--text-bright);
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+            box-sizing: border-box;
+        }
+        .search-input:focus {
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.25);
+        }
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            pointer-events: none;
+        }
+
+        /* Module Section Cards */
+        .module-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            margin-bottom: 1.75rem;
+            overflow: hidden;
+            transition: border-color 0.2s ease;
+        }
+        .module-card:hover {
+            border-color: rgba(0, 240, 255, 0.4);
+        }
+
+        .module-header {
+            padding: 1.25rem 1.5rem;
+            background: rgba(255, 255, 255, 0.02);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .module-title-wrap {
+            display: flex;
+            align-items: center;
+            gap: 0.85rem;
+        }
+
+        .module-icon {
+            font-size: 1.5rem;
+            width: 42px;
+            height: 42px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 240, 255, 0.08);
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            border-radius: 8px;
+        }
+
+        .module-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-bright);
+            margin: 0;
+        }
+
+        .module-desc {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin: 0.2rem 0 0 0;
+        }
+
+        .module-count {
+            background: rgba(0, 240, 255, 0.15);
+            color: var(--accent-primary);
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 0.25rem 0.6rem;
+            border-radius: 20px;
+            border: 1px solid rgba(0, 240, 255, 0.3);
+        }
+
+        .module-body {
+            padding: 1.25rem 1.5rem;
+        }
+
+        /* Functions Table */
+        .func-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.88rem;
+        }
+
+        .func-table th {
+            text-align: left;
+            padding: 0.75rem 1rem;
+            color: var(--text-muted);
+            font-weight: 600;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .func-table td {
+            padding: 0.85rem 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            vertical-align: top;
+        }
+
+        .func-table tr:hover td {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .route-badge {
+            display: inline-block;
+            font-family: 'JetBrains Mono', monospace;
+            background: rgba(0, 240, 255, 0.08);
+            border: 1px solid rgba(0, 240, 255, 0.25);
+            color: var(--accent-primary);
+            padding: 0.2rem 0.55rem;
+            border-radius: 6px;
+            font-size: 0.82rem;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+        .route-badge:hover {
+            background: rgba(0, 240, 255, 0.2);
+            box-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
+            color: #ffffff;
+        }
+
+        .func-name {
+            font-family: 'JetBrains Mono', monospace;
+            color: #b800ff;
+            font-weight: 600;
+        }
+
+        .func-desc {
+            color: var(--text-main);
+            line-height: 1.45;
+        }
+
+        .btn-launch {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid var(--border-color);
+            color: var(--text-bright);
+            padding: 0.25rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+        .btn-launch:hover {
+            background: var(--accent-gradient);
+            color: #080812;
+            font-weight: 600;
+        }
+
+        /* Kokoro Neural TTS Showcase & Cheatsheet Styles */
+        .kokoro-showcase {
+            background: linear-gradient(135deg, rgba(0, 240, 255, 0.04) 0%, rgba(184, 0, 255, 0.05) 100%);
+            border: 1px solid rgba(0, 240, 255, 0.25);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            margin-bottom: 1.75rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+        }
+
+        .kokoro-badge-row {
+            display: flex;
+            gap: 0.6rem;
+            flex-wrap: wrap;
+            margin-bottom: 1.25rem;
+        }
+
+        .engine-pill {
+            background: rgba(0, 240, 255, 0.1);
+            border: 1px solid rgba(0, 240, 255, 0.35);
+            color: var(--accent-primary);
+            font-size: 0.78rem;
+            font-weight: 700;
+            padding: 0.35rem 0.8rem;
+            border-radius: 20px;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            letter-spacing: 0.3px;
+        }
+
+        .engine-pill.purple {
+            background: rgba(184, 0, 255, 0.12);
+            border-color: rgba(184, 0, 255, 0.35);
+            color: #d8b4fe;
+        }
+
+        .engine-pill.green {
+            background: rgba(16, 185, 129, 0.12);
+            border-color: rgba(16, 185, 129, 0.35);
+            color: #34d399;
+        }
+
+        .cheatsheet-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .cheat-card {
+            background: rgba(10, 14, 28, 0.75);
+            border: 1px solid rgba(255, 255, 255, 0.09);
+            border-radius: 8px;
+            padding: 1rem 1.2rem;
+            transition: all 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .cheat-card:hover {
+            border-color: var(--accent-primary);
+            box-shadow: 0 4px 18px rgba(0, 240, 255, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .cheat-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0.6rem;
+        }
+
+        .cheat-tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.92rem;
+            font-weight: 700;
+            color: var(--accent-primary);
+            background: rgba(0, 240, 255, 0.12);
+            padding: 0.25rem 0.6rem;
+            border-radius: 6px;
+            border: 1px solid rgba(0, 240, 255, 0.3);
+        }
+
+        .cheat-category {
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .cheat-card p {
+            margin: 0 0 0.6rem 0;
+            font-size: 0.85rem;
+            color: var(--text-main);
+            line-height: 1.45;
+        }
+
+        .cheat-example {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.78rem;
+            background: rgba(0, 0, 0, 0.5);
+            border-left: 3px solid var(--accent-secondary);
+            padding: 0.45rem 0.65rem;
+            color: #d8b4fe;
+            border-radius: 0 5px 5px 0;
+            word-break: break-all;
+        }
+
+        .voice-section {
+            margin-top: 1.5rem;
+            background: rgba(10, 14, 28, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 8px;
+            padding: 1.25rem 1.5rem;
+        }
+
+        .voice-category-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text-bright);
+            margin: 1rem 0 0.45rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .voice-category-title:first-of-type {
+            margin-top: 0.25rem;
+        }
+
+        .voice-chips-wrap {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.45rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .voice-chip {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.78rem;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.09);
+            color: var(--text-main);
+            padding: 0.25rem 0.55rem;
+            border-radius: 5px;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            transition: all 0.15s;
+        }
+
+        .voice-chip:hover {
+            border-color: var(--accent-primary);
+            background: rgba(0, 240, 255, 0.12);
+            color: #ffffff;
+        }
+
+        .voice-chip.recommended {
+            border-color: rgba(0, 240, 255, 0.4);
+            background: rgba(0, 240, 255, 0.08);
+            color: var(--accent-primary);
+            font-weight: 600;
+        }
+
+        .voice-desc {
+            color: var(--text-muted);
+            font-size: 0.72rem;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .script-demo-box {
+            margin-top: 1.5rem;
+            background: #06070d;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .script-demo-header {
+            background: rgba(255, 255, 255, 0.04);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 0.65rem 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .script-demo-title {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.82rem;
+            color: var(--accent-primary);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .btn-copy {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 0.25rem 0.65rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .btn-copy:hover {
+            background: var(--accent-primary);
+            color: #080812;
+            font-weight: 600;
+        }
+
+        .script-code {
+            padding: 1.1rem;
+            margin: 0;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.82rem;
+            line-height: 1.65;
+            color: #e2e8f0;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            background: transparent;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 3rem;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            border-top: 1px solid var(--border-color);
+            padding-top: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Header -->
+    <div class="header-card">
+        <div class="header-top">
+            <div>
+                <h1 class="header-title">⚡ Media Studio Architecture & Reference</h1>
+                <p class="header-subtitle">Comprehensive functional catalog of backend routes, transition pipelines, AI engines, and media utilities.</p>
+            </div>
+            <div class="nav-links">
+                <a href="{{ url_for('index') }}" class="btn-nav btn-nav-secondary">🏠 Home Dashboard</a>
+                <a href="/text_to_mp3" class="btn-nav btn-nav-primary">🗣️ Kokoro Voice Studio</a>
+                <a href="{{ url_for('mk_videos') }}" class="btn-nav btn-nav-secondary">🎬 Video Studio</a>
+                <a href="{{ url_for('stable_diffusion') }}" class="btn-nav btn-nav-primary">✨ Stable Diffusion</a>
+                <a href="/upload_media" class="btn-nav btn-nav-secondary">🎭 Avatar Studio</a>
+                <a href="/zoompan" target="zoompan_app" class="btn-nav btn-nav-primary">🔍 ZoomPan & Comics</a>
+                <a href="/effects" target="effects_studio" class="btn-nav btn-nav-secondary">🪄 Effects Studio</a>
+                <a href="/remember" target="remember_app" class="btn-nav btn-nav-secondary">💾 Remember DB</a>
+                <a href="{{ url_for('gallery') }}" class="btn-nav btn-nav-secondary">🖼️ Media Gallery</a>
+                <a href="{{ url_for('edit_description') }}" class="btn-nav btn-nav-secondary">✏️ Edit This Page</a>
+            </div>
+        </div>
+        <!-- Architecture Highlights Banner -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 0.85rem; margin-top: 1.25rem; padding-top: 1.25rem; border-top: 1px solid var(--border-color);">
+            <div style="background: rgba(0, 240, 255, 0.06); border: 1px solid rgba(0, 240, 255, 0.2); border-radius: 8px; padding: 0.85rem 1rem;">
+                <div style="font-weight: 700; color: var(--accent-primary); font-size: 0.95rem; margin-bottom: 0.2rem;">⚡ Port 5200 Unified Hub</div>
+                <div style="font-size: 0.82rem; color: var(--text-muted);">All 4 studios (Media Studio, ZoomPan, Effects, Remember DB) served seamlessly under a single port.</div>
+            </div>
+            <div style="background: rgba(184, 0, 255, 0.06); border: 1px solid rgba(184, 0, 255, 0.2); border-radius: 8px; padding: 0.85rem 1rem;">
+                <div style="font-weight: 700; color: var(--accent-secondary); font-size: 0.95rem; margin-bottom: 0.2rem;">🔒 100% Self-Contained</div>
+                <div style="font-size: 0.82rem; color: var(--text-muted);">Independent local virtualenv (<code>venv/</code>) &amp; models repository (24 checkpoints, 62 LoRAs, VAEs, AnimateDiff). Zero external broken links.</div>
+            </div>
+            <div style="background: rgba(16, 185, 129, 0.06); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 8px; padding: 0.85rem 1rem;">
+                <div style="font-weight: 700; color: #10b981; font-size: 0.95rem; margin-bottom: 0.2rem;">🚀 Background Server Controls</div>
+                <div style="font-size: 0.82rem; color: var(--text-muted);">Start and stop cleanly in background with <code>./start_studio.sh</code>, <code>./stop_studio.sh</code>, and <code>./status_studio.sh</code>.</div>
+            </div>
+            <div style="background: rgba(245, 158, 11, 0.06); border: 1px solid rgba(245, 158, 11, 0.2); border-radius: 8px; padding: 0.85rem 1rem;">
+                <div style="font-weight: 700; color: #f59e0b; font-size: 0.95rem; margin-bottom: 0.2rem;">🎬 High-Fidelity Diffusion &amp; EMA</div>
+                <div style="font-size: 0.82rem; color: var(--text-muted);">Equipped with automatic Exponential Moving Average (EMA) weight extraction for sharper, cleaner image rendering.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search Input -->
+    <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="searchInput" class="search-input" placeholder="Search functions, endpoints, or descriptions (e.g., 'zoompan', 'comic', 'kokoro', 'pause', 'voice', 'avatar', 'wav2lip', 'remember', 'tube', 'tts')..." onkeyup="filterFunctions()">
+    </div>
+
+    <!-- MODULE 1: OFFLINE STABLE DIFFUSION & AI -->
+    <div class="module-card">
+        <div class="module-header">
+            <div class="module-title-wrap">
+                <div class="module-icon">🤖</div>
+                <div>
+                    <h2 class="module-title">Offline Stable Diffusion & AI Image Synthesis</h2>
+                    <p class="module-desc">Local Diffusers generative pipeline with live Comfy-UI checkpoint discovery, dual LoRA fusion, custom VAE loading, and img2img transformations.</p>
+                </div>
+            </div>
+            <span class="module-count">6 Endpoints</span>
+        </div>
+        <div class="module-body">
+            <table class="func-table">
+                <thead>
+                    <tr>
+                        <th style="width: 25%;">Endpoint / Route</th>
+                        <th style="width: 22%;">Function Handler</th>
+                        <th style="width: 43%;">Description & Capabilities</th>
+                        <th style="width: 10%;">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><a href="/stable_diffusion" class="route-badge">/stable_diffusion</a></td>
+                        <td><span class="func-name">stable_diffusion()</span></td>
+                        <td class="func-desc">Main web client for local AI image synthesis. Supports Text-to-Image (<code>txt2img</code>) and Image-to-Image (<code>img2img</code>) with interactive strength sliders, live model picker, and direct output sending.</td>
+                        <td><a href="/stable_diffusion" class="btn-launch">Launch ↗</a></td>
+                    </tr>
+                    <tr>
+                        <td><a href="/models" class="route-badge">/models</a></td>
+                        <td><span class="func-name">models()</span></td>
+                        <td class="func-desc">Scans <code>/home/jack/Desktop/Comfy-UI/models/</code> dynamically and returns JSON arrays of available Checkpoints, LoRAs, and VAEs.</td>
+                        <td><a href="/models" class="btn-launch">View API ↗</a></td>
+                    </tr>
+                    <tr>
+                        <td><span class="route-badge">/generate_image</span></td>
+                        <td><span class="func-name">generate_image()</span></td>
+                        <td class="func-desc">POST endpoint executing offline <code>generate.py</code>. Enforces 4 CPU execution threads, 500s timeout, VAE tiling/slicing, and saves output to <code>static/novel_images/</code>.</td>
+                        <td><span style="color:var(--text-muted); font-size:0.75rem;">POST Only</span></td>
+                    </tr>
+                    <tr>
+                        <td><a href="/sdgallery" class="route-badge">/sdgallery</a></td>
+                        <td><span class="func-name">sdgallery()</span></td>
+                        <td class="func-desc">Dedicated full-screen gallery showcasing newly synthesized Stable Diffusion images with generation metadata.</td>
+                        <td><a href="/sdgallery" class="btn-launch">Open ↗</a></td>
+                    </tr>
+                    <tr>
+                        <td><a href="/mk_prompt" class="route-badge">/mk_prompt</a></td>
+                        <td><span class="func-name">mk_prompt_route()</span></td>
+                        <td class="func-desc">Interactive creative prompt builder supporting prompt expansions, negative prompts, and style presets.</td>
+                        <td><a href="/mk_prompt" class="btn-launch">Open ↗</a></td>
+                    </tr>
+                    <tr>
+                        <td><a href="/ai_path" class="route-badge">/ai_path</a></td>
+                        <td><span class="func-name">ai_path()</span></td>
+                        <td class="func-desc">Orchestrates automated AI storyboard generation, sequencing still images and speech synthesis into full narrative videos.</td>
+                        <td><a href="/ai_path" class="btn-launch">Open ↗</a></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- MODULE 2: VIDEO GENERATION & TRANSITIONS ENGINE -->
+    <div class="module-card">
+        <div class="module-header">
+            <div class="module-title-wrap">
+                <div class="module-icon">🎬</div>
+                <div>
+                    <h2 class="module-title">Video Generation & Cinematic Transitions Engine</h2>
+                    <p class="module-desc">Multi-directional wipes, camera zooms, door portals, flipbooks, cross-fades, and seamless video concatenators.</p>
+                </div>
+            </div>
+            <span class="module-count">18 Key Pipelines</span>
+        </div>
+        <div class="module-body">
+            <table class="func-table">
+                <thead>
+                    <tr>
+                        <th style="width: 25%;">Endpoint / Route</th>
+                        <th style="width: 22%;">Function Handler</th>
+                        <th style="width: 43%;">Description & Capabilities</th>
+                        <th style="width: 10%;">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><a href="/mk_videos" class="route-badge">/mk_videos</a></td>
+                        <td><span class="func-name">mk_videos()</span></td>
+                        <td class="func-desc">Central video processing workstation. Lets users select transition styles, set durations, attach background music, and trigger renders.</td>
+                        <td><a href="/mk_videos" class="btn-launch">Open ↗</a></td>
+                    </tr>
+                    <tr>
+                        <td><a href="/slide" class="route-badge">/slide</a></td>
+                        <td><span class="func-name">slide_route()</span></td>
+                        <td class="func-desc">Multi-axis directional sliding transition (left, right, up, down) with customizable boundary padding and smooth acceleration.</td>
+                        <td><a href="/slide" class="btn-launch">Run ↗</a></td>
+                    </tr>
+                    <tr>
+                        <td><a href="/fadem" class="route-badge">/fadem</a></td>
+                        <td><span class="func-name">fadem()</span></td>
+                        <td class="func-desc">High-quality cross-fade dissolve generator smoothly blending adjacent images across configurable frame durations.</td>
+                        <td><a href="/fadem" class="btn-launch">Run ↗</a></td>
+                    </tr>
+                    <tr>
+                        <td><a href="/zoomx4" class="route-badge">/zoomx4</a> / <a href="/zoomy4" class="route-badge">/zoomy4</a></td>
+                        <td><span class="func-name">zoomx4_route() / zoomy4_route()</span></td>
+                        <td class="func-desc">Dynamic 4-quadrant continuous horizontal and vertical scale zooms creating deep cinematic camera push-ins.</td>
+                        <td><a href="/zoomx4" class="btn-launch">Run ↗</a></td>
+                    </tr>
+                    <tr>
+                        <td><a href="/diagonal-transition" class="route-badge">/diagonal-transition</a></td>
+                        <td><span class="func-name">diagonal_transition_route()</span></td>
+                        <td class="func-desc">Angular geometric diagonal wipes revealing incoming images across angled slit trajectories.</td>
+                        <td><a href="/diagonal-transition" class="btn-launch">Run ↗</a></td>
+                    </tr>
+                    <tr>
+                        <td><a href="/circular_transition" class="route-badge">/circular_transition</a></td>
+                        <td><span class="func-name">circular_transition_route()</span></td>
+                        <td class="func-desc">Expanding and contracting radial iris mask transitions revealing secondary scenes from focal centers.</td>
+                        <td><a href="/circular_transition" class="btn-launch">Run ↗</a></td>
+                    </tr>
+                    <tr>
+                        <td><a href="/square_transition" class="route-badge">/square_transition</a></td>
+                        <td><span class="func-name">square_transition_route()</span></td>
+                        <td class="func-desc">Expanding rectangular and square mask transition effects with configurable aspect proportions.</td>
+                        <td><a href="/square_transition" class="btn-launch">Run ↗</a></td>
+                    </tr>
+                    <tr>
+                        <td><a href="/open_doors" class="route-badge">/open_doors</a></td>
+                        <td><span class="func-name">open_doors_route()</span></td>
+                        <td class="func-desc">Splits the foreground image down the center into animated dual sliding doors, revealing the next scene behind it.</td>
+                        <td><a href="/open_doors" class="btn-launch">Run ↗</a></td>
+                    </tr>
+                    <tr>
+                        <td><a href="/vertical-scroll" class="route-badge">/vertical-scroll</a></td>
+                        <td><span class="func-name">vertical_scroll_route()</span></td>
+                        <td class="func-desc">Stitches multiple images into seamless feathered panoramic strips and generates smooth vertical scrolling video streams.</td>
+                        <td><a href="/vertical-scroll" class="btn-launch">Run ↗</a></td>
+                    </tr>
+                    <tr>
+                        <td><a href="/best-flipbook" class="route-badge">/best-flipbook</a></td>
+                        <td><span class="func-name">best_flipbook_route()</span></td>
+                        <td class="func-desc">Assembles high-speed animated flipbook montages from sequential frames with automated dimension normalization.</td>
+                        <td><a href="/best-flipbook" class="btn-launch">Run ↗</a></td>
+                    </tr>
+                    <tr>
+                        <td><a href="/blendem" class="route-badge">/blendem</a></td>
+                        <td><span class="func-name">blendem_route()</span></td>
+                        <td class="func-desc">Composites two video tracks or an image sequence with custom alpha masks, blending layers with variable opacity.</td>
+                        <td><a href="/blendem" class="btn-launch">Run ↗</a></td>
+                    </tr>
+                    <tr>
+                        <td><a href="/join-video" class="route-badge">/join-video</a></td>
+                        <td><span class="func-name">join_video_route()</span></td>
+                        <td class="func-desc">Concatenates all individually rendered transition clips into a single continuous master MP4 video.</td>
+                        <td><a href="/join-video" class="btn-launch">Run ↗</a></td>
+                    </tr>
+                    <tr>
+                        <td><a href="/refresh-video" class="route-badge">/refresh-video</a></td>
+                        <td><span class="func-name">refresh_video()</span></td>
+                        <td class="func-desc">Subprocess worker triggering <code>refresh_video.py</code> to regenerate clips and update video resource caches.</td>
+                        <td><a href="/refresh-video" class="btn-launch">Run ↗</a></td>
+                    </tr>
+                    <tr>
+                        <td><a href="/trim-video" class="route-badge">/trim-video</a></td>
+                        <td><span class="func-name">trim_video()</span></td>
+                        <td class="func-desc">Precision FFmpeg video cutter trimming beginning, end, or intermediate video segments with accurate timestamps.</td>
+                        <td><a href="/trim-video" class="btn-launch">Open ↗</a></td>
+                    </tr>
+                    <tr>
+                        <td><a href="/reverse_video" class="route-badge">/reverse_video</a></td>
+                        <td><span class="func-name">reverse_video()</span></td>
+                        <td class="func-desc">Renders reverse-motion video tracks by reversing video frame sequences via MoviePy/FFmpeg.</td>
+                        <td><a href="/reverse_video" class="btn-launch">Run ↗</a></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- MODULE 3: MASKING, SHAPES & CUTOUTS -->
+    <div class="module-card">
+        <div class="module-header">
+            <div class="module-title-wrap">
+                <div class="module-icon">🎭</div>
+                <div>
+                    <h2 class="module-title">Masking, Alpha Channels & Cutout Studio</h2>
+                    <p class="module-desc">Creation and management of grayscale, binary, circular, and geometric alpha masks for multi-layer video compositing.</p>
+                </div>
+            </div>
+            <span class="module-count">8 Tools</span>
+        </div>
+        <div class="module-body">
+            <table class="func-table">
+                <thead>
+                    <tr>
+                        <th style="width: 25%;">Endpoint / Route</th>
+                        <th style="width: 22%;">Function Handler</th>
+                        <th style="width: 43%;">Description & Capabilities</th>
+                        <th style="width: 10%;">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><a href="/mk_mask" class="route-badge">/mk_mask</a></td>
+                        <td><span class="func-name">mk_mask()</span></td>
+                        <td class="func-desc">Interactive canvas interface for generating grayscale luminance masks and binary thresholded matte cutouts.</td>
+                        <td><a href="/mk_mask" class="btn-launch">Open ↗</a></td>
+                    </tr>
+                    <tr>
+                        <td><span class="route-badge">/create_circle_mask</span></td>
+                        <td><span class="func-name">create_circle_mask()</span></td>
+                        <td class="func-desc">Generates radial circular alpha masks with adjustable radius, feathering blur radius, and center coordinates.</td>
+                        <td><span style="color:var(--text-muted); font-size:0.75rem;">POST Only</span></td>
+                    </tr>
+                    <tr>
+                        <td><span class="route-badge">/create_rectangle_mask</span></td>
+                        <td><span class="func-name">create_rectangle_mask()</span></td>
+                        <td class="func-desc">Generates rectangular geometric matte masks with custom aspect ratios, corner bevels, and feathered edges.</td>
+                        <td><span style="color:var(--text-muted); font-size:0.75rem;">POST Only</span></td>
+                    </tr>
+                    <tr>
+                        <td><a href="/select_mask_image" class="route-badge">/select_mask_image</a></td>
+                        <td><span class="func-name">select_mask_image()</span></td>
+                        <td class="func-desc">Visual picker allowing users to select an image from the library and generate custom alpha masks from its contours.</td>
+                        <td><a href="/select_mask_image" class="btn-launch">Open ↗</a></td>
+                    </tr>
+                    <tr>
+                        <td><a href="/view_masks" class="route-badge">/view_masks</a></td>
+                        <td><span class="func-name">view_masks()</span></td>
+                        <td class="func-desc">Gallery and archive viewer for all generated mask files stored in <code>static/archived-masks/</code>.</td>
+                        <td><a href="/view_masks" class="btn-launch">Open ↗</a></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- MODULE 4: IMAGE PROCESSING, FILTERS & OVERLAYS -->
+    <div class="module-card">
+        <div class="module-header">
+            <div class="module-title-wrap">
+                <div class="module-icon">🎨</div>
+                <div>
+                    <h2 class="module-title">Image Processing, Filters & Overlays</h2>
+                    <p class="module-desc">Edge effects, face detection, chroma-key green screen, size blurring, decorative frames, and overlays.</p>
+                </div>
+            </div>
+            <span class="module-count">12 Tools</span>
+        </div>
+        <div class="module-body">
+            <table class="func-table">
+                <thead>
+                    <tr>
+                        <th style="width: 25%;">Endpoint / Route</th>
+                        <th style="width: 22%;">Function Handler</th>
+                        <th style="width: 43%;">Description & Capabilities</th>
+                        <th style="width: 10%;">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><a href="/img_processing" class="route-badge">/img_processing</a></td>
+                        <td><span class="func-name">img_processing_route()</span></td>
+                        <td class="func-desc">Image manipulation workstation offering color grading, brightness, contrast, inversion, and filter effects.</td>
+                        <td><a href="/img_processing" class="btn-launch">Open ↗</a></td>
+                    </tr>
+                    <tr>
+                        <td><span class="route-badge">/torn_edge</span></td>
+                        <td><span class="func-name">create_torn_edge_effect()</span></td>
+                        <td class="func-desc">Applies an organic, distressed torn-paper border effect around image perimeters for vintage collage looks.</td>
+                        <td><span style="color:var(--text-muted); font-size:0.75rem;">POST Only</span></td>
+                    </tr>
+                    <tr>
+                        <td><a href="/face_detect" class="route-badge">/face_detect</a></td>
+                        <td><span class="func-name">face_detect()</span></td>
+                        <td class="func-desc">OpenCV Haar-Cascade facial recognition pipeline identifying faces, extracting portraits, and highlighting facial features.</td>
+                        <td><a href="/face_detect" class="btn-launch">Open ↗</a></td>
+                    </tr>
+                    <tr>
+                        <td><a href="/size_blur" class="route-badge">/size_blur</a></td>
+                        <td><span class="func-name">size_blur()</span></td>
+                        <td class="func-desc">Resizes non-standard aspect images by embedding them over an aesthetically blurred, enlarged duplicate background.</td>
+                        <td><a href="/size_blur" class="btn-launch">Open ↗</a></td>
+                    </tr>
+                    <tr>
+                        <td><a href="/green_screen" class="route-badge">/green_screen</a></td>
+                        <td><span class="func-name">greenscreen()</span></td>
+                        <td class="func-desc">Chroma-key matte extractor subtracting green/blue backgrounds and replacing them with selected scenic backgrounds.</td>
+                        <td><a href="/green_screen" class="btn-launch">Open ↗</a></td>
+                    </tr>
+                    <tr>
+                        <td><a href="/png_overlay" class="route-badge">/png_overlay</a></td>
+                        <td><span class="func-name">png_overlay()</span></td>
+                        <td class="func-desc">Layers transparent PNG watermarks, HUD overlays, textures, and borders over still images and MP4 video streams.</td>
+                        <td><a href="/png_overlay" class="btn-launch">Open ↗</a></td>
+                    </tr>
+                    <tr>
+                        <td><a href="/inkblot" class="route-badge">/inkblot</a></td>
+                        <td><span class="func-name">rorschach()</span></td>
+                        <td class="func-desc">Generates procedurally mirrored bilateral Rorschach inkblot patterns for artistic overlays and masks.</td>
+                        <td><a href="/inkblot" class="btn-launch">Open ↗</a></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- MODULE 5: KOKORO NEURAL TTS, SPEECH & AUDIO STUDIO -->
+    <div class="module-card" id="module-kokoro">
+        <div class="module-header">
+            <div class="module-title-wrap">
+                <div class="module-icon">🎙️</div>
+                <div>
+                    <h2 class="module-title">Kokoro Neural TTS, Speech Synthesis & Audio Studio</h2>
+                    <p class="module-desc">High-performance offline neural speech engine powered by Kokoro ONNX on CPU. Supports precise millisecond pause injection, multi-character screenplay tags, 50 voices, and instant lipsync staging.</p>
+                </div>
+            </div>
+            <span class="module-count">11 Functions & 50 Voices</span>
+        </div>
+        <div class="module-body">
+            <!-- KOKORO SHOWCASE CARD -->
+            <div class="kokoro-showcase">
+                <div class="kokoro-badge-row">
+                    <span class="engine-pill">⚡ 15×–20× Real-Time CPU</span>
+                    <span class="engine-pill green">📦 Zero Docker Overhead</span>
+                    <span class="engine-pill">🎯 Millisecond Pause Accuracy</span>
+                    <span class="engine-pill purple">🎭 50 Neural Voice Vectors</span>
+                    <span class="engine-pill">💾 Self-Contained Local Weights</span>
+                    <span class="engine-pill green">👄 Instant Avatar Lipsync Staging</span>
+                </div>
+
+                <div style="font-size: 0.9rem; line-height: 1.6; color: var(--text-main); margin-bottom: 1.25rem;">
+                    <strong style="color: var(--accent-primary);">Native Kokoro ONNX Architecture:</strong>
+                    Media Studio features an offline, CPU-optimized speech generation pipeline running directly on AMD Ryzen via ONNX Runtime without container latency or CUDA GPU locks. Weights are fully self-contained in <code>models/kokoro/kokoro-v1.0.onnx</code> (311 MB) and <code>models/kokoro/voices-v1.0.bin</code> (25 MB). The synthesis engine operates <strong>100% in RAM</strong>—evaluating screenplay markup, generating float32 audio buffers, inserting exact NumPy silence gaps, applying volume gain, preventing digital clipping, and exporting pristine 192k MP3s directly to <code>static/voice/</code> and <code>static/projects/use.mp3</code> for 1-click Wav2Lip avatar lipsync.
+                </div>
+
+                <!-- CHEATSHEET CARDS GRID -->
+                <h3 style="font-family: 'Outfit', sans-serif; font-size: 1.15rem; color: var(--text-bright); margin: 1.25rem 0 0.5rem 0; display: flex; align-items: center; gap: 0.5rem;">
+                    ⚡ Production Script Markup Cheatsheet
+                </h3>
+                <p style="font-size: 0.84rem; color: var(--text-muted); margin: 0 0 1rem 0;">
+                    Embed these production tags anywhere in your dialogue or narration script in <a href="/text_to_mp3" style="color: var(--accent-primary); text-decoration: none; font-weight: 600;">/text_to_mp3</a>:
+                </p>
+
+                <div class="cheatsheet-grid">
+                    <!-- Cheat 1: Voice Switching -->
+                    <div class="cheat-card">
+                        <div>
+                            <div class="cheat-card-header">
+                                <span class="cheat-tag">[voice=NAME]</span>
+                                <span class="cheat-category">Speaker Cast</span>
+                            </div>
+                            <p>Switches the speaker persona for this sentence or line. Allows multiple characters to hold realistic multi-turn conversations in a single rendered MP3.</p>
+                        </div>
+                        <div class="cheat-example">[voice=am_adam]Welcome to the series.[voice=af_sarah]I'm excited to explore with you.</div>
+                    </div>
+
+                    <!-- Cheat 2: Pause Duration -->
+                    <div class="cheat-card">
+                        <div>
+                            <div class="cheat-card-header">
+                                <span class="cheat-tag">[pause=SECONDS]</span>
+                                <span class="cheat-category">Precision Silence</span>
+                            </div>
+                            <p>Inserts exact floating-point digital silence between phrases or at line ends. Can also be placed alone on a line for dramatic scene pauses without speech.</p>
+                        </div>
+                        <div class="cheat-example">[pause=1.5] (1.5s gap) &bull; [pause=0.5] (500ms) &bull; [pause=2.25] (scene change)</div>
+                    </div>
+
+                    <!-- Cheat 3: Pacing & Speed -->
+                    <div class="cheat-card">
+                        <div>
+                            <div class="cheat-card-header">
+                                <span class="cheat-tag">[slow] / [fast]</span>
+                                <span class="cheat-category">Tempo & Speed</span>
+                            </div>
+                            <p>Controls delivery pacing. <code>[slow]</code> delivers at 0.85× calm speed for thoughtful moments; <code>[fast]</code> speaks at 1.15× energetic rate. Or use exact <code>[speed=0.95]</code>.</p>
+                        </div>
+                        <div class="cheat-example">[slow]We dive into ancient mysteries.[fast]Things are moving rapidly!</div>
+                    </div>
+
+                    <!-- Cheat 4: Volume & Inflection -->
+                    <div class="cheat-card">
+                        <div>
+                            <div class="cheat-card-header">
+                                <span class="cheat-tag">[loud] / [soft]</span>
+                                <span class="cheat-category">Acoustic Inflection</span>
+                            </div>
+                            <p>Modulates acoustic energy. <code>[loud]</code> amplifies audio by +4dB (1.5× boost) with soft-clipping safety; <code>[soft]</code> drops volume to a gentle whisper (-4dB / 0.6×).</p>
+                        </div>
+                        <div class="cheat-example">[loud]BE CAREFUL![soft]Shh, don't wake the guardians.</div>
+                    </div>
+
+                    <!-- Cheat 5: Whisper Mode -->
+                    <div class="cheat-card">
+                        <div>
+                            <div class="cheat-card-header">
+                                <span class="cheat-tag">[whisper]</span>
+                                <span class="cheat-category">Dramatic Whisper</span>
+                            </div>
+                            <p>Combines intimate volume reduction (0.45× amplitude) with relaxed speaking tempo (0.85× speed) for secrets, dramatic suspense, and confessionals.</p>
+                        </div>
+                        <div class="cheat-example">[whisper]Did you see what just moved in the dark ruins?[pause=1.0]</div>
+                    </div>
+
+                    <!-- Cheat 6: Tag Auto-Stripping -->
+                    <div class="cheat-card">
+                        <div>
+                            <div class="cheat-card-header">
+                                <span class="cheat-tag">Regex Normalization</span>
+                                <span class="cheat-category">Zero Audio Leak</span>
+                            </div>
+                            <p>All bracketed markup <code>[...]</code> is automatically stripped by regex before text passes to Kokoro. The synthesized speech never reads brackets aloud.</p>
+                        </div>
+                        <div class="cheat-example">Input: [voice=am_adam]Hello[pause=1.0] &rarr; Speaks: "Hello" + 1.0s silence</div>
+                    </div>
+                </div>
+
+                <!-- 50 VOICE CHARACTER DIRECTORY -->
+                <div class="voice-section">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.5rem;">
+                        <h3 style="font-family: 'Outfit', sans-serif; font-size: 1.15rem; color: var(--text-bright); margin: 0; display: flex; align-items: center; gap: 0.5rem;">
+                            🎭 Complete 50-Voice Character Directory
+                        </h3>
+                        <span style="font-size: 0.78rem; color: var(--accent-primary); background: rgba(0, 240, 255, 0.1); padding: 0.25rem 0.6rem; border-radius: 4px; border: 1px solid rgba(0, 240, 255, 0.25);">
+                            All 50 vectors loaded from models/kokoro/voices-v1.0.bin
+                        </span>
+                    </div>
+
+                    <!-- Recommended -->
+                    <div class="voice-category-title">⭐ Top Recommended Cast</div>
+                    <div class="voice-chips-wrap">
+                        <span class="voice-chip recommended">af_heart <span class="voice-desc">(Warm, expressive female narrator)</span></span>
+                        <span class="voice-chip recommended">af_bella <span class="voice-desc">(Natural, conversational female)</span></span>
+                        <span class="voice-chip recommended">af_nicole <span class="voice-desc">(Crisp, friendly female)</span></span>
+                        <span class="voice-chip recommended">af_sarah <span class="voice-desc">(Engaging storyteller female)</span></span>
+                        <span class="voice-chip recommended">am_adam <span class="voice-desc">(Deep, authoritative male narrator)</span></span>
+                        <span class="voice-chip recommended">am_echo <span class="voice-desc">(Balanced, clear male)</span></span>
+                        <span class="voice-chip recommended">am_michael <span class="voice-desc">(Warm, friendly natural male)</span></span>
+                        <span class="voice-chip recommended">am_onyx <span class="voice-desc">(Rich cinematic baritone male)</span></span>
+                        <span class="voice-chip recommended">bf_emma <span class="voice-desc">(BBC documentary British female)</span></span>
+                        <span class="voice-chip recommended">bm_george <span class="voice-desc">(Classic refined British male)</span></span>
+                        <span class="voice-chip recommended">bm_daniel <span class="voice-desc">(Articulate British male)</span></span>
+                    </div>
+
+                    <!-- American English -->
+                    <div class="voice-category-title">🇺🇸 American English Characters</div>
+                    <div class="voice-chips-wrap">
+                        <span class="voice-chip">af_alloy</span>
+                        <span class="voice-chip">af_aoede</span>
+                        <span class="voice-chip">af_bella</span>
+                        <span class="voice-chip">af_heart</span>
+                        <span class="voice-chip">af_jessica</span>
+                        <span class="voice-chip">af_kore</span>
+                        <span class="voice-chip">af_nicole</span>
+                        <span class="voice-chip">af_nova</span>
+                        <span class="voice-chip">af_river</span>
+                        <span class="voice-chip">af_sarah</span>
+                        <span class="voice-chip">af_sky</span>
+                        <span class="voice-chip">am_adam</span>
+                        <span class="voice-chip">am_echo</span>
+                        <span class="voice-chip">am_eric</span>
+                        <span class="voice-chip">am_fenrir</span>
+                        <span class="voice-chip">am_liam</span>
+                        <span class="voice-chip">am_michael</span>
+                        <span class="voice-chip">am_onyx</span>
+                        <span class="voice-chip">am_puck</span>
+                        <span class="voice-chip">am_santa</span>
+                    </div>
+
+                    <!-- British English -->
+                    <div class="voice-category-title">🇬🇧 British English Characters</div>
+                    <div class="voice-chips-wrap">
+                        <span class="voice-chip">bf_alice</span>
+                        <span class="voice-chip">bf_emma</span>
+                        <span class="voice-chip">bf_isabella</span>
+                        <span class="voice-chip">bf_lily</span>
+                        <span class="voice-chip">bm_daniel</span>
+                        <span class="voice-chip">bm_fable</span>
+                        <span class="voice-chip">bm_george</span>
+                        <span class="voice-chip">bm_lewis</span>
+                    </div>
+
+                    <!-- European Accents -->
+                    <div class="voice-category-title">🌍 European Accents (French, Spanish, Italian)</div>
+                    <div class="voice-chips-wrap">
+                        <span class="voice-chip">ff_siwis <span class="voice-desc">(French Female)</span></span>
+                        <span class="voice-chip">ef_dora <span class="voice-desc">(Spanish Female)</span></span>
+                        <span class="voice-chip">em_alex <span class="voice-desc">(Spanish Male)</span></span>
+                        <span class="voice-chip">em_santa <span class="voice-desc">(Spanish Male)</span></span>
+                        <span class="voice-chip">if_sara <span class="voice-desc">(Italian Female)</span></span>
+                        <span class="voice-chip">im_nicola <span class="voice-desc">(Italian Male)</span></span>
+                    </div>
+
+                    <!-- Brazilian Portuguese -->
+                    <div class="voice-category-title">🇧🇷 Brazilian Portuguese</div>
+                    <div class="voice-chips-wrap">
+                        <span class="voice-chip">pf_dora <span class="voice-desc">(Portuguese Female)</span></span>
+                        <span class="voice-chip">pm_alex <span class="voice-desc">(Portuguese Male)</span></span>
+                        <span class="voice-chip">pm_santa <span class="voice-desc">(Portuguese Male)</span></span>
+                    </div>
+
+                    <!-- Asian Languages -->
+                    <div class="voice-category-title">🌏 Asian Characters (Japanese, Chinese, Hindi)</div>
+                    <div class="voice-chips-wrap">
+                        <span class="voice-chip">jf_alpha <span class="voice-desc">(Japanese Female)</span></span>
+                        <span class="voice-chip">jf_gongitsune <span class="voice-desc">(Japanese Female)</span></span>
+                        <span class="voice-chip">jf_nezumi <span class="voice-desc">(Japanese Female)</span></span>
+                        <span class="voice-chip">jf_tebukuro <span class="voice-desc">(Japanese Female)</span></span>
+                        <span class="voice-chip">jm_kumo <span class="voice-desc">(Japanese Male)</span></span>
+                        <span class="voice-chip">zf_xiaobei <span class="voice-desc">(Mandarin Female)</span></span>
+                        <span class="voice-chip">zf_xiaoni <span class="voice-desc">(Mandarin Female)</span></span>
+                        <span class="voice-chip">zf_xiaoxiao <span class="voice-desc">(Mandarin Female)</span></span>
+                        <span class="voice-chip">zf_xiaoyi <span class="voice-desc">(Mandarin Female)</span></span>
+                        <span class="voice-chip">zm_yunjian <span class="voice-desc">(Mandarin Male)</span></span>
+                        <span class="voice-chip">zm_yunxi <span class="voice-desc">(Mandarin Male)</span></span>
+                        <span class="voice-chip">hf_alpha <span class="voice-desc">(Hindi Female)</span></span>
+                        <span class="voice-chip">hf_beta <span class="voice-desc">(Hindi Female)</span></span>
+                        <span class="voice-chip">hm_omega <span class="voice-desc">(Hindi Male)</span></span>
+                        <span class="voice-chip">hm_psi <span class="voice-desc">(Hindi Male)</span></span>
+                    </div>
+                </div>
+
+                <!-- DEMO SCREENPLAY SCRIPT BOX -->
+                <div class="script-demo-box">
+                    <div class="script-demo-header">
+                        <span class="script-demo-title">📜 Multi-Actor Screenplay Script Example (Arcane Chronicles)</span>
+                        <button type="button" class="btn-copy" id="copyScriptBtn" onclick="copyArcaneScript()">📋 Copy Script</button>
+                    </div>
+                    <pre class="script-code" id="arcaneScriptCode">[voice=am_adam]Welcome to Arcane Stories. The voice inflection series.[pause=1.5]
+[voice=af_sarah][slow]Today, we dive into the secrets of the ancient world.[pause=1.5]
+[voice=am_adam]Some artifacts defy explanation and hint at lost civilizations.[pause=1.0]
+[voice=af_sarah][fast]The crystal skulls, mudfloods, and strange tools appear across history.[pause=1.5]
+[voice=am_adam]THINGS ARE MOVING FAST.[loud][pause=1.0]
+[voice=af_sarah][soft]That was a bit loud Adam, I just learned to speak in a whisper.[pause=0.75]
+[voice=bf_alice]Yes, I am here Sarah. This is a new adventure for me.[pause=0.75]
+[voice=af_heart]Good to hear you Alice. Now we can tell our stories with pure CPU neural voices.[pause=0.5]</pre>
+                </div>
+            </div>
+
+            <!-- FUNCTIONS & ENDPOINTS TABLE -->
+            <table class="func-table">
+                <thead>
+                    <tr>
+                        <th style="width: 25%;">Endpoint / Route</th>
+                        <th style="width: 22%;">Function Handler</th>
+                        <th style="width: 43%;">Description & Capabilities</th>
+                        <th style="width: 10%;">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><a href="/text_to_mp3" class="route-badge">/text_to_mp3</a></td>
+                        <td><span class="func-name">text_to_mp3()</span></td>
+                        <td class="func-desc">Primary Kokoro Neural Voice Studio. Features interactive tag insertion buttons, multi-speaker screenplay synthesis, custom pauses, live audio auditioning, and automatic staging to <code>static/projects/use.mp3</code> for 1-click Avatar lipsync.</td>
+                        <td><a href="/text_to_mp3" class="btn-launch">Open Studio ↗</a></td>
+                    </tr>
+                    <tr>
+                        <td><span class="route-badge">synthesize_story_with_pauses</span></td>
+                        <td><span class="func-name">synthesize_story_with_pauses()</span></td>
+                        <td class="func-desc">Core in-memory synthesis pipeline. Parses tags (<code>[voice=...]</code>, <code>[pause=...]</code>, <code>[slow]</code>, <code>[fast]</code>, <code>[loud]</code>, <code>[soft]</code>), calls ONNX model, concatenates audio + NumPy silence buffers, and encodes 192k MP3 via FFmpeg.</td>
+                        <td><span style="color:var(--text-muted); font-size:0.75rem;">Internal Engine</span></td>
+                    </tr>
+                    <tr>
+                        <td><span class="route-badge">generate_mp3_with_kokoro_tts</span></td>
+                        <td><span class="func-name">generate_mp3_with_kokoro_tts()</span></td>
+                        <td class="func-desc">High-level voice generator function. Lazily loads local ONNX model singleton into memory, with automatic Docker HTTP fallback if ever run in containerized environments.</td>
+                        <td><span style="color:var(--text-muted); font-size:0.75rem;">Universal Wrapper</span></td>
+                    </tr>
+                    <tr>
+                        <td><span class="route-badge">get_kokoro_onnx</span></td>
+                        <td><span class="func-name">get_kokoro_onnx()</span></td>
+                        <td class="func-desc">Lazy singleton model manager loading <code>models/kokoro/kokoro-v1.0.onnx</code> and <code>voices-v1.0.bin</code> once into RAM, preserving high CPU inference speeds.</td>
+                        <td><span style="color:var(--text-muted); font-size:0.75rem;">Singleton Loader</span></td>
+                    </tr>
+                    <tr>
+                        <td><span class="route-badge">get_kokoro_voice_lang</span></td>
+                        <td><span class="func-name">get_kokoro_voice_lang()</span></td>
+                        <td class="func-desc">Language prefix resolver mapping voice character IDs (<code>a</code> &rarr; en-us, <code>b</code> &rarr; en-gb, <code>f</code> &rarr; fr-fr, <code>j</code> &rarr; ja, <code>z</code> &rarr; zh, etc.) to target ISO language phonemes.</td>
+                        <td><span style="color:var(--text-muted); font-size:0.75rem;">Language Router</span></td>
+                    </tr>
+                    <tr>
+                        <td><a href="/text_to_ai_mp3" class="route-badge">/text_to_ai_mp3</a></td>
+                        <td><span class="func-name">text_to_ai_mp3()</span></td>
+                        <td class="func-desc">Rapid AI speech generator saving rendered MP3 tracks directly to the shared AI image repository for instant video card assembly.</td>
+                        <td><a href="/text_to_ai_mp3" class="btn-launch">Open ↗</a></td>
+                    </tr>
+                    <tr>
+                        <td><span class="route-badge">/convert_large_text</span></td>
+                        <td><span class="func-name">convert_large_text()</span></td>
+                        <td class="func-desc">Batch narration generator splitting lengthy novels or story chapters into sequential paragraphs, synthesizing individual paragraph MP3 files via Kokoro TTS.</td>
+                        <td><span style="color:var(--text-muted); font-size:0.75rem;">POST Batch</span></td>
+                    </tr>
+                    <tr>
+                        <td><a href="/play_narration" class="route-badge">/play_narration</a></td>
+                        <td><span class="func-name">play_narration()</span></td>
+                        <td class="func-desc">In-browser audio audition player playing active voiceover tracks and generated speech clips.</td>
+                        <td><a href="/play_narration" class="btn-launch">Play ↗</a></td>
+                    </tr>
+                    <tr>
+                        <td><a href="/add_audio" class="route-badge">/add_audio</a></td>
+                        <td><span class="func-name">add_audio()</span></td>
+                        <td class="func-desc">Muxes audio tracks onto video clips with automated volume ducking, padding, and smooth fade-in/fade-out envelopes.</td>
+                        <td><a href="/add_audio" class="btn-launch">Open ↗</a></td>
+                    </tr>
+                    <tr>
+                        <td><a href="/add_sound_image" class="route-badge">/add_sound_image</a></td>
+                        <td><span class="func-name">render_add_sound_form()</span></td>
+                        <td class="func-desc">Pairs a single still graphic with an audio track to generate a video clip matching the exact duration of the audio.</td>
+                        <td><a href="/add_sound_image" class="btn-launch">Open ↗</a></td>
+                    </tr>
+                    <tr>
+                        <td><a href="/list_audio_files" class="route-badge">/list_audio_files</a></td>
+                        <td><span class="func-name">list_audio_files()</span></td>
+                        <td class="func-desc">Directory inventory browser listing all rendered narrative audio files in the output store with quick playback controls.</td>
+                        <td><a href="/list_audio_files" class="btn-launch">Browse ↗</a></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- MODULE 6: TALKING AVATAR & WAV2LIP NEURAL LIPSYNC -->
+    <div class="module-card">
+        <div class="module-header">
+            <div class="module-title-wrap">
+                <div class="module-icon">🎭</div>
+                <div>
+                    <h2 class="module-title">Talking Avatar & Wav2Lip Neural Lipsync Studio</h2>
+                    <p class="module-desc">Self-contained neural avatar synthesis pipeline powered by Python 3.9 Wav2Lip. Automatically pairs face images with speech tracks in static/projects/.</p>
+                </div>
+            </div>
+            <span class="module-count">6 Features</span>
+        </div>
+        <div class="module-body">
+            <table class="func-table">
+                <thead>
+                    <tr>
+                        <th style="width: 25%;">Endpoint / Route</th>
+                        <th style="width: 22%;">Function Handler</th>
+                        <th style="width: 43%;">Description & Capabilities</th>
+                        <th style="width: 10%;">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><a href="/upload_media" class="route-badge">/upload_media</a></td>
+                        <td><span class="func-name">upload_media()</span></td>
+                        <td class="func-desc">Central avatar configuration dashboard. Upload or select face photos (resized to 512×768) and voice audio, staging them to static/projects/use.jpg and use.mp3 with live previews.</td>
+                        <td><a href="/upload_media" class="btn-launch">Open ↗</a></td>
+                    </tr>
+                    <tr>
+                        <td><a href="/make_avatar" class="route-badge">/make_avatar</a></td>
+                        <td><span class="func-name">make_avatar()</span></td>
+                        <td class="func-desc">Runs self-contained local Wav2Lip inference on static/projects/use.jpg + use.mp3, outputting synchronized avatarX.mp4 directly in the browser.</td>
+                        <td><a href="/make_avatar" class="btn-launch">Run ↗</a></td>
+                    </tr>
+                    <tr>
+                        <td><a href="/create_avatar" class="route-badge">/create_avatar</a></td>
+                        <td><span class="func-name">create_avatar()</span></td>
+                        <td class="func-desc">Convenience shortcut and safe route alias directly launching the unified Avatar Studio setup dashboard.</td>
+                        <td><a href="/create_avatar" class="btn-launch">Open ↗</a></td>
+                    </tr>
+                    <tr>
+                        <td><a href="/render_avatar_sound" class="route-badge">/render_avatar_sound</a></td>
+                        <td><span class="func-name">render_avatar_sound_form()</span></td>
+                        <td class="func-desc">Interactive image-and-audio gallery form pairing archived face graphics with voice speech clips or background music tracks.</td>
+                        <td><a href="/render_avatar_sound" class="btn-launch">Open ↗</a></td>
+                    </tr>
+                    <tr>
+                        <td><a href="/mk_avatar" class="route-badge">/mk_avatar</a></td>
+                        <td><span class="func-name">mk_avatar_route()</span></td>
+                        <td class="func-desc">Processes the selected image and audio pair, creates a timed still video with MoviePy, and populates static/projects/ for Wav2Lip.</td>
+                        <td><span style="color:var(--text-muted); font-size:0.75rem;">POST Only</span></td>
+                    </tr>
+                    <tr>
+                        <td><a href="/makeit" class="route-badge">/makeit</a></td>
+                        <td><span class="func-name">makeit()</span></td>
+                        <td class="func-desc">One-click execution trigger running the local Wav2Lip lipsync engine and refreshing the avatar review form.</td>
+                        <td><a href="/makeit" class="btn-launch">Run ↗</a></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- MODULE 7: GRAPHIC NOVEL & STORYBUILDER -->
+    <div class="module-card">
+        <div class="module-header">
+            <div class="module-title-wrap">
+                <div class="module-icon">📖</div>
+                <div>
+                    <h2 class="module-title">Graphic Novel & Episodic Story Creator</h2>
+                    <p class="module-desc">Chapter-based story video production, dialogue captions, and visual novel sequencing.</p>
+                </div>
+            </div>
+            <span class="module-count">8 Tools</span>
+        </div>
+        <div class="module-body">
+            <table class="func-table">
+                <thead>
+                    <tr>
+                        <th style="width: 25%;">Endpoint / Route</th>
+                        <th style="width: 22%;">Function Handler</th>
+                        <th style="width: 43%;">Description & Capabilities</th>
+                        <th style="width: 10%;">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><a href="/mk_novel" class="route-badge">/mk_novel</a></td>
+                        <td><span class="func-name">mk_novel()</span></td>
+                        <td class="func-desc">Graphic novel workstation orchestrating episodic panels, character dialogue, and page layout sequences.</td>
+                        <td><a href="/mk_novel" class="btn-launch">Open ↗</a></td>
+                    </tr>
+                    <tr>
+                        <td><span class="route-badge">/create_novel_video</span></td>
+                        <td><span class="func-name">create_novel_video()</span></td>
+                        <td class="func-desc">Compiles novel illustration panels and synchronized narrative voiceovers into cinematic chapter videos.</td>
+                        <td><span style="color:var(--text-muted); font-size:0.75rem;">POST Only</span></td>
+                    </tr>
+                    <tr>
+                        <td><a href="/add_novel_caption" class="route-badge">/add_novel_caption</a></td>
+                        <td><span class="func-name">add_novel_caption()</span></td>
+                        <td class="func-desc">Stamps stylized comic-book style dialogue balloons, narrative captions, and chapter titles directly onto story frames.</td>
+                        <td><a href="/add_novel_caption" class="btn-launch">Open ↗</a></td>
+                    </tr>
+                    <tr>
+                        <td><a href="/mk_flipnovel" class="route-badge">/mk_flipnovel</a></td>
+                        <td><span class="func-name">mk_flipnovel()</span></td>
+                        <td class="func-desc">Compiles novel chapters into rapid animated flipbooks for quick narrative pacing reviews.</td>
+                        <td><a href="/mk_flipnovel" class="btn-launch">Open ↗</a></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- MODULE 8: GALLERIES & MEDIA BROWSERS -->
+    <div class="module-card">
+        <div class="module-header">
+            <div class="module-title-wrap">
+                <div class="module-icon">🖼️</div>
+                <div>
+                    <h2 class="module-title">Galleries, Resource Pickers & Media Browsers</h2>
+                    <p class="module-desc">High-density visual media galleries, compositing pickers, and video browser with automated thumbnail indexing.</p>
+                </div>
+            </div>
+            <span class="module-count">10 Viewers</span>
+        </div>
+        <div class="module-body">
+            <table class="func-table">
+                <thead>
+                    <tr>
+                        <th style="width: 25%;">Endpoint / Route</th>
+                        <th style="width: 22%;">Function Handler</th>
+                        <th style="width: 43%;">Description & Capabilities</th>
+                        <th style="width: 10%;">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><a href="/gallery" class="route-badge">/gallery</a></td>
+                        <td><span class="func-name">gallery()</span></td>
+                        <td class="func-desc">Responsive, high-density photo gallery displaying all images stored in <code>static/novel_images/</code>.</td>
+                        <td><a href="/gallery" class="btn-launch">Open ↗</a></td>
+                    </tr>
+                    <tr>
+                        <td><a href="/view_novel_files" class="route-badge">/view_novel_files</a></td>
+                        <td><span class="func-name">view_novel_files()</span></td>
+                        <td class="func-desc">Novel image manager with safe deletion — any deleted novel images are automatically moved to <code>static/resource_images/</code>.</td>
+                        <td><a href="/view_novel_files" class="btn-launch">Open ↗</a></td>
+                    </tr>
+                    <tr>
+                        <td><a href="/view_resource_images" class="route-badge">/view_resource_images</a></td>
+                        <td><span class="func-name">view_resource_images()</span></td>
+                        <td class="func-desc">Resource images archive gallery — view all safely relocated novel images and restore them back to <code>static/novel_images/</code>.</td>
+                        <td><a href="/view_resource_images" class="btn-launch">Open ↗</a></td>
+                    </tr>
+                    <tr>
+                        <td><a href="/display_resources" class="route-badge">/display_resources</a></td>
+                        <td><span class="func-name">display_resources()</span></td>
+                        <td class="func-desc">Media asset overview showing all active image and video frame resources ready for compositing and blending.</td>
+                        <td><a href="/display_resources" class="btn-launch">Open ↗</a></td>
+                    </tr>
+                    <tr>
+                        <td><a href="/select_images" class="route-badge">/select_images</a></td>
+                        <td><span class="func-name">select_images()</span></td>
+                        <td class="func-desc">Three-way visual picker allowing users to choose a top image, a mask, and a background image for instant blending.</td>
+                        <td><a href="/select_images" class="btn-launch">Open ↗</a></td>
+                    </tr>
+                    <tr>
+                        <td><a href="/video_browser" class="route-badge">/video_browser</a></td>
+                        <td><span class="func-name">video_browser()</span></td>
+                        <td class="func-desc">Interactive video library browser with automated thumbnail extraction, playback controls, and file management.</td>
+                        <td><a href="/video_browser" class="btn-launch">Open ↗</a></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- MODULE 9: REMEMBER KNOWLEDGE & MEDIA DATABASE -->
+    <div class="module-card">
+        <div class="module-header">
+            <div class="module-title-wrap">
+                <div class="module-icon">💾</div>
+                <div>
+                    <h2 class="module-title">Remember Knowledge & Media Database</h2>
+                    <p class="module-desc">Full-featured personal knowledge base, multimedia blogging engine, searchable note archive, and real-time template editor mounted at <code>/remember</code>.</p>
+                </div>
+            </div>
+            <span class="module-count">9 Endpoints</span>
+        </div>
+        <div class="module-body">
+            <table class="func-table">
+                <thead>
+                    <tr>
+                        <th style="width: 25%;">Endpoint / Route</th>
+                        <th style="width: 22%;">Function Handler</th>
+                        <th style="width: 43%;">Description & Capabilities</th>
+                        <th style="width: 10%;">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><a href="/remember/" target="remember_app" class="route-badge">/remember/</a></td>
+                        <td><span class="func-name">index()</span></td>
+                        <td class="func-desc">Central Knowledge & Media Dashboard. Displays recent multimedia notes, embedded video/audio players, and quick-filter search bar.</td>
+                        <td><a href="/remember/" target="remember_app" class="btn-launch">Open ↗</a></td>
+                    </tr>
+                    <tr>
+                        <td><a href="/remember/new" target="remember_app" class="route-badge">/remember/new</a></td>
+                        <td><span class="func-name">new_post()</span></td>
+                        <td class="func-desc">Rich multimedia post creation form supporting titles, categories, keyword tags, markdown notes, image uploads, and YouTube URL embeds.</td>
+                        <td><a href="/remember/new" target="remember_app" class="btn-launch">Create ↗</a></td>
+                    </tr>
+                    <tr>
+                        <td><a href="/remember/contents" target="remember_app" class="route-badge">/remember/contents</a></td>
+                        <td><span class="func-name">contents()</span></td>
+                        <td class="func-desc">Master Table of Contents and chronological index. Supports category filtering, keyword tag searches, and direct post editing shortcuts.</td>
+                        <td><a href="/remember/contents" target="remember_app" class="btn-launch">Browse ↗</a></td>
+                    </tr>
+                    <tr>
+                        <td><a href="/remember/tube" target="remember_app" class="route-badge">/remember/tube</a></td>
+                        <td><span class="func-name">tube()</span></td>
+                        <td class="func-desc">Curated Media & Music Library player with instant audio/video playlist playback, MP3 streaming, and YouTube integration.</td>
+                        <td><a href="/remember/tube" target="remember_app" class="btn-launch">Play ↗</a></td>
+                    </tr>
+                    <tr>
+                        <td><a href="/remember/create_text" target="remember_app" class="route-badge">/remember/create_text</a></td>
+                        <td><span class="func-name">create_text()</span></td>
+                        <td class="func-desc">Direct text and code snippet creator saving standalone text files with custom filenames directly into the <code>TEXT/</code> repository.</td>
+                        <td><a href="/remember/create_text" target="remember_app" class="btn-launch">Write ↗</a></td>
+                    </tr>
+                    <tr>
+                        <td><a href="/remember/edit_text" target="remember_app" class="route-badge">/remember/edit_text</a></td>
+                        <td><span class="func-name">edit_text()</span></td>
+                        <td class="func-desc">Text file repository directory. Provides browser-based file management, in-place code/text editing, downloads, and deletion.</td>
+                        <td><a href="/remember/edit_text" target="remember_app" class="btn-launch">Manage ↗</a></td>
+                    </tr>
+                    <tr>
+                        <td><a href="/remember/edit_ui_html" target="remember_app" class="route-badge">/remember/edit_ui_html</a></td>
+                        <td><span class="func-name">edit_ui_html()</span></td>
+                        <td class="func-desc">Split-view live UI and CSS editor. Dynamically modifies embedded templates, CSS variables, and navigation components in <code>ui_html.py</code> with instant hot-reload.</td>
+                        <td><a href="/remember/edit_ui_html" target="remember_app" class="btn-launch">Edit UI ↗</a></td>
+                    </tr>
+                    <tr>
+                        <td><span class="route-badge">/remember/upload_video/&lt;id&gt;</span></td>
+                        <td><span class="func-name">upload_video() / upload_audio()</span></td>
+                        <td class="func-desc">POST handlers for attaching MP4 video files or MP3 audio tracks directly to specific memory archive records.</td>
+                        <td><span style="color:var(--text-muted); font-size:0.75rem;">POST Only</span></td>
+                    </tr>
+                    <tr>
+                        <td><a href="/remember/view_log" target="remember_app" class="route-badge">/remember/view_log</a></td>
+                        <td><span class="func-name">view_log()</span></td>
+                        <td class="func-desc">Real-time Remember database system monitor, displaying SQLite transaction logs, search queries, and error traces.</td>
+                        <td><a href="/remember/view_log" target="remember_app" class="btn-launch">Logs ↗</a></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- MODULE 10: SYSTEM, TERMINAL & DIAGNOSTICS -->
+    <div class="module-card">
+        <div class="module-header">
+            <div class="module-title-wrap">
+                <div class="module-icon">🛠️</div>
+                <div>
+                    <h2 class="module-title">System Tools, Web Terminal & Diagnostics</h2>
+                    <p class="module-desc">In-browser bash terminal, real-time Python garbage collection monitor, file manager, and system log inspector.</p>
+                </div>
+            </div>
+            <span class="module-count">10 Utilities</span>
+        </div>
+        <div class="module-body">
+            <table class="func-table">
+                <thead>
+                    <tr>
+                        <th style="width: 25%;">Endpoint / Route</th>
+                        <th style="width: 22%;">Function Handler</th>
+                        <th style="width: 43%;">Description & Capabilities</th>
+                        <th style="width: 10%;">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><a href="/bash" class="route-badge">/bash</a> / <a href="/index_bash" class="route-badge">/index_bash</a></td>
+                        <td><span class="func-name">bash() / index_bash()</span></td>
+                        <td class="func-desc">Web-based terminal shell allowing secure execution of bash system commands and transition scripts directly from the browser.</td>
+                        <td><a href="/bash" class="btn-launch">Open ↗</a></td>
+                    </tr>
+                    <tr>
+                        <td><a href="/file_home" class="route-badge">/file_home</a></td>
+                        <td><span class="func-name">file_home()</span></td>
+                        <td class="func-desc">Built-in file manager for browsing directories, moving, renaming, copying, and deleting media files.</td>
+                        <td><a href="/file_home" class="btn-launch">Open ↗</a></td>
+                    </tr>
+                    <tr>
+                        <td><a href="/gc_logs" class="route-badge">/gc_logs</a> / <a href="/gc_plot" class="route-badge">/gc_plot</a></td>
+                        <td><span class="func-name">show_gc_logs() / gc_plot()</span></td>
+                        <td class="func-desc">Real-time Python garbage collection monitoring thread tracking object counts, memory usage, and memory leak plots.</td>
+                        <td><a href="/gc_logs" class="btn-launch">Open ↗</a></td>
+                    </tr>
+                    <tr>
+                        <td><a href="/view_log" class="route-badge">/view_log</a></td>
+                        <td><span class="func-name">view_log()</span></td>
+                        <td class="func-desc">Live system log inspector displaying recent server output, process traces, and background execution errors.</td>
+                        <td><a href="/view_log" class="btn-launch">Open ↗</a></td>
+                    </tr>
+                    <tr>
+                        <td><a href="/edit_description" class="route-badge">/edit_description</a></td>
+                        <td><span class="func-name">edit_description()</span></td>
+                        <td class="func-desc">Live in-browser editor allowing developers to update and save the HTML source of this documentation page.</td>
+                        <td><a href="/edit_description" class="btn-launch">Edit ↗</a></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    <!-- MODULE 11: ZOOM-PAN & COMIC STUDIO -->
+    <div class="module-card">
+        <div class="module-header">
+            <div class="module-title-wrap">
+                <div class="module-icon">🔍</div>
+                <div>
+                    <h2 class="module-title">ZoomPan & Comic Studio (Port 5200 Unified)</h2>
+                    <p class="module-desc">Ken Burns keyframed zoom/pan animation engine, 10-panel comic strip creator, typography & speech bubble compositor, Whisper subtitles, and multi-clip video assembler.</p>
+                </div>
+            </div>
+            <span class="module-count">10 Features</span>
+        </div>
+        <div class="module-body">
+            <table class="func-table">
+                <thead>
+                    <tr>
+                        <th style="width: 25%;">Endpoint / Route</th>
+                        <th style="width: 22%;">Function Handler</th>
+                        <th style="width: 43%;">Description & Capabilities</th>
+                        <th style="width: 10%;">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><a href="/zoompan/" target="zoompan_app" class="route-badge">/zoompan/</a></td>
+                        <td><span class="func-name">index()</span></td>
+                        <td class="func-desc">Interactive HTML5/WebGL canvas for defining precise Ken Burns camera paths, keyframe zoom levels, pan offsets, and duration curves across high-resolution images.</td>
+                        <td><a href="/zoompan/" target="zoompan_app" class="btn-launch">Launch ↗</a></td>
+                    </tr>
+                    <tr>
+                        <td><a href="/zoompan/comic" target="zoompan_app" class="route-badge">/zoompan/comic</a></td>
+                        <td><span class="func-name">comic() / comic_builder()</span></td>
+                        <td class="func-desc">Dynamic 10-panel comic strip builder allowing panel reordering, visual storytelling layout, border customization, and export to print/web formats.</td>
+                        <td><a href="/zoompan/comic" target="zoompan_app" class="btn-launch">Launch ↗</a></td>
+                    </tr>
+                    <tr>
+                        <td><a href="/zoompan/generation" target="zoompan_app" class="route-badge">/zoompan/generation</a></td>
+                        <td><span class="func-name">generation()</span></td>
+                        <td class="func-desc">Integrated Stable Diffusion LCM generation interface with live model checkpoint switching, LoRA scaling, and direct timeline placement.</td>
+                        <td><a href="/zoompan/generation" target="zoompan_app" class="btn-launch">Launch ↗</a></td>
+                    </tr>
+                    <tr>
+                        <td><a href="/zoompan/projects" target="zoompan_app" class="route-badge">/zoompan/projects</a></td>
+                        <td><span class="func-name">projects()</span></td>
+                        <td class="func-desc">Full project state manager: save, load, clone, and export keyframe timeline projects as portable ZIP archives.</td>
+                        <td><a href="/zoompan/projects" target="zoompan_app" class="btn-launch">Launch ↗</a></td>
+                    </tr>
+                    <tr>
+                        <td><a href="/zoompan/image_gallery" target="zoompan_app" class="route-badge">/zoompan/image_gallery</a></td>
+                        <td><span class="func-name">image_gallery()</span></td>
+                        <td class="func-desc">Visual image repository displaying all project assets, uploaded illustrations, and AI-synthesized frames with one-click canvas loading.</td>
+                        <td><a href="/zoompan/image_gallery" target="zoompan_app" class="btn-launch">Launch ↗</a></td>
+                    </tr>
+                    <tr>
+                        <td><a href="/zoompan/sequenced_video" target="zoompan_app" class="route-badge">/zoompan/sequenced_video</a></td>
+                        <td><span class="func-name">sequenced_video()</span></td>
+                        <td class="func-desc">High-framerate video rendering engine compiling pan/zoom keyframe trajectories into smooth MP4 videos using hardware-accelerated FFmpeg.</td>
+                        <td><a href="/zoompan/sequenced_video" target="zoompan_app" class="btn-launch">Launch ↗</a></td>
+                    </tr>
+                    <tr>
+                        <td><a href="/zoompan/frame_video" target="zoompan_app" class="route-badge">/zoompan/frame_video</a></td>
+                        <td><span class="func-name">frame_video()</span></td>
+                        <td class="func-desc">Multi-clip timeline video concatenator combining multiple rendered pan-zoom clips into an episodic narrative video.</td>
+                        <td><a href="/zoompan/frame_video" target="zoompan_app" class="btn-launch">Launch ↗</a></td>
+                    </tr>
+                    <tr>
+                        <td><a href="/zoompan/text_to_mp3" target="zoompan_app" class="route-badge">/zoompan/text_to_mp3</a></td>
+                        <td><span class="func-name">text_to_mp3()</span></td>
+                        <td class="func-desc">Audio studio featuring Kokoro Neural TTS voice generation, precise silence-gap insertion, and automatic Whisper SRT subtitle synchronization.</td>
+                        <td><a href="/zoompan/text_to_mp3" target="zoompan_app" class="btn-launch">Launch ↗</a></td>
+                    </tr>
+                    <tr>
+                        <td><a href="/zoompan/video_gallery" target="zoompan_app" class="route-badge">/zoompan/video_gallery</a></td>
+                        <td><span class="func-name">video_gallery()</span></td>
+                        <td class="func-desc">Central gallery of all rendered video files with inline HTML5 video player, metadata inspector, and direct download links.</td>
+                        <td><a href="/zoompan/video_gallery" target="zoompan_app" class="btn-launch">Launch ↗</a></td>
+                    </tr>
+                    <tr>
+                        <td><a href="/zoompan/trash" target="zoompan_app" class="route-badge">/zoompan/trash</a></td>
+                        <td><span class="func-name">trash()</span></td>
+                        <td class="func-desc">Non-destructive recycle bin allowing safe recovery or permanent deletion of project assets, audio tracks, and video clips.</td>
+                        <td><a href="/zoompan/trash" target="zoompan_app" class="btn-launch">Launch ↗</a></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <p>Media Studio &bull; High-Performance Media Processing & AI Composition Engine &bull; Updated September 2026</p>
+    </div>
+</div>
+
+<script>
+function copyArcaneScript() {
+    let scriptElem = document.getElementById("arcaneScriptCode");
+    if (!scriptElem) return;
+    let text = scriptElem.innerText;
+    navigator.clipboard.writeText(text).then(() => {
+        let btn = document.getElementById("copyScriptBtn");
+        if (btn) {
+            let orig = btn.innerHTML;
+            btn.innerHTML = "✅ Copied to Clipboard!";
+            setTimeout(() => { btn.innerHTML = orig; }, 2200);
+        }
+    }).catch(err => {
+        console.error("Clipboard copy failed:", err);
+    });
+}
+
+function filterFunctions() {
+    let input = document.getElementById("searchInput").value.toLowerCase();
+    let tables = document.querySelectorAll(".func-table");
+
+    tables.forEach(table => {
+        let trs = table.querySelectorAll("tbody tr");
+        let visibleCount = 0;
+
+        trs.forEach(tr => {
+            let text = tr.innerText.toLowerCase();
+            if (text.includes(input)) {
+                tr.style.display = "";
+                visibleCount++;
+            } else {
+                tr.style.display = "none";
+            }
+        });
+
+        // Keep card visible if any table row matches OR if card text itself matches search query
+        let card = table.closest(".module-card");
+        if (card) {
+            let cardText = card.innerText.toLowerCase();
+            card.style.display = (visibleCount > 0 || cardText.includes(input) || input === "") ? "" : "none";
+        }
+    });
+}
+</script>
+
+</body>
+</html>

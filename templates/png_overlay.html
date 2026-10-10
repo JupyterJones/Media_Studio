@@ -1,0 +1,41 @@
+<!-- png_overlay.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PNG Overlay on MP4</title>
+</head>
+<body>
+    <h1>Overlay PNG on MP4  / png_overlay.html</h1>
+    <!-- home -->
+    <a href="{{ url_for('index') }}">Home</a>
+    <form action="{{ url_for('png_on_mp4') }}" method="post" enctype="multipart/form-data">
+        <label for="mp4">Select MP4 file:</label>
+        <input type="file" name="mp4" id="mp4" accept="video/mp4" required><br><br>
+
+        <label for="png">Select PNG file:</label>
+        <input type="file" name="png" id="png" accept="image/png" required><br><br>
+
+        <label for="start_time">Start Time (in seconds):</label>
+        <input type="number" name="start_time" id="start_time" step="0.1" required><br><br>
+
+        <label for="stop_time">Stop Time (in seconds):</label>
+        <input type="number" name="stop_time" id="stop_time" step="0.1" required><br><br>
+
+        <label for="x_pos">X Position (in pixels):</label>
+        <input type="number" name="x_pos" id="x_pos" required><br><br>
+
+        <label for="y_pos">Y Position (in pixels):</label>
+        <input type="number" name="y_pos" id="y_pos" required><br><br>
+
+        <input type="submit" value="Overlay PNG">
+    </form>
+    <hr>
+    <video width="300" height="auto" controls>
+          <source src="static/temp_exp/png_overlayX.mp4" type="video/mp4" />
+        </video>
+
+
+</body>
+</html>

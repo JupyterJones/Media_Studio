@@ -1,0 +1,93 @@
+#!/usr/bin/env python3
+import os
+import subprocess
+import random
+from sys import argv
+import uuid
+import shutil
+def manage_directory(temp_directory):
+    # Check if the directory exists
+    if os.path.exists(temp_directory) and os.path.isdir(temp_directory):
+        # Remove the contents of the existing directory
+        for root, dirs, files in os.walk(temp_directory):
+            for file in files:
+                file_path = os.path.join(root, file)
+                os.remove(file_path)
+            for dir in dirs:
+                dir_path = os.path.join(root, dir)
+                shutil.rmtree(dir_path)
+
+        print(f"Contents of '{temp_directory}' removed.")
+    else:
+        # Create the directory if it doesn't exist
+        os.makedirs(temp_directory)
+        print(f"Directory '{temp_directory}' created.")
+        temp_directory="static/TEMP"
+        manage_directory(temp_directory)
+
+def diag_trans(DIR,output_file):
+    image_dir=DIR
+    temp_directory="static/TEMP"
+    manage_directory(temp_directory)
+    # Get a list of image file names in the directory jpg or png
+    image_files = [f for f in os.listdir(image_dir) if f.endswith('.jpg') or f.endswith('.png')]
+    print(image_files)
+    # Sort the image files to maintain order
+    image_files.sort()
+    VIDEOS=[]
+    random.shuffle(image_files)
+    # Build the full FFmpeg command
+    for i in range(len(image_files)-1):
+        input_file = os.path.join(image_dir, image_files[i])
+        input_file2 = os.path.join(image_dir, image_files[i+1])
+        output_video = f"static/TEMP/{i}.mp4"
+        
+        ffmpeg_cmd = [
+        "FFmpeg",
+        "-loop", "1",
+        "-t", "3",  # Increased the time to allow more space for the transition
+        "-i", input_file,
+        "-loop", "1",
+        "-t", "3.6",  # Adjust this to accommodate the transition
+        "-i", input_file2,
+        "-filter_complex", f"[0][1]xfade=transition=diagtr:duration=3:offset=1,format=yuv420p",  # Changed duration to 2
+        "-y", output_video
+        ]
+
+
+        subprocess.run(ffmpeg_cmd)
+        VIDEOS.append(output_video)
+
+    # Create a mylist.txt file
+    with open("mylist.txt", "w") as file:
+        for video in VIDEOS:
+            file.write(f"file '{video}'\n")
+
+    # Concatenate videos using mylist.txt
+    concat_cmd = [
+        "FFmpeg",
+        "-f", "concat",
+        "-safe", "0",
+        "-i", "mylist.txt",
+        "-c", "copy",
+        "-y",
+        output_file
+    ]
+
+    subprocess.run(concat_cmd)
+    uid = str(uuid.uuid4())  # Generate a unique ID using uuid
+    out_dir = "static/output_videos"
+    os.makedirs(out_dir, exist_ok=True)
+    mp4_file = os.path.join(out_dir, f"{uid}.mp4")
+    shutil.copyfile(output_file, mp4_file) 
+    print(f"Video created: {output_file}")
+    print(f"Video copied: {mp4_file}")
+    
+if __name__=="__main__":    
+    DIR='static/novel_images'
+
+    output_file = "static/temp_exp/output5.mp4"
+    diag_trans(DIR,output_file)
+
+    # ffmpeg -i "static/temp_exp/output5.mp4" "static/temp_exp/diagonal1.mp4"
+    subprocess.run(["ffmpeg", "-i", "static/temp_exp/output5.mp4", "-y","static/temp_exp/diagonal1.mp4"])

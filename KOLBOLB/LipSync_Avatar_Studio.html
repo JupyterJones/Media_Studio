@@ -1,0 +1,1617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KOLBOLB // Avatar Lip-Sync Studio</title>
+<style>
+  :root {
+    --bg: #070a13;
+    --panel: #0f172a;
+    --panel-border: #1e293b;
+    --accent: #00f0ff;
+    --accent-glow: rgba(0, 240, 255, 0.35);
+    --pink: #ff0055;
+    --pink-glow: rgba(255, 0, 85, 0.4);
+    --green: #10b981;
+    --text: #f1f5f9;
+    --muted: #94a3b8;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: radial-gradient(circle at 50% 20%, #131b2e 0%, var(--bg) 100%);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+  }
+
+  header {
+    background: rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--panel-border);
+    padding: 12px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .brand h1 {
+    font-size: 18px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent);
+    text-shadow: 0 0 12px var(--accent-glow);
+  }
+
+  .brand span {
+    font-size: 12px;
+    color: var(--muted);
+    border: 1px solid #334155;
+    padding: 2px 8px;
+    border-radius: 4px;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 12px;
+  }
+
+  .nav-btn {
+    background: transparent;
+    border: 1px solid #334155;
+    color: var(--muted);
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-size: 13px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .nav-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    box-shadow: 0 0 10px var(--accent-glow);
+  }
+
+  .main-layout {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 20px;
+    padding: 20px;
+    max-width: 1500px;
+    margin: 0 auto;
+    width: 100%;
+    flex: 1;
+  }
+
+  @media (max-width: 1024px) {
+    .main-layout {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* Avatar Viewport */
+  .stage-container {
+    background: #0b0f19;
+    border: 1px solid var(--panel-border);
+    border-radius: 12px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    box-shadow: inset 0 0 50px rgba(0,0,0,0.8), 0 10px 30px rgba(0,0,0,0.5);
+    overflow: hidden;
+  }
+
+  .canvas-wrapper {
+    position: relative;
+    width: 540px;
+    height: 540px;
+    max-width: 100%;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 0 30px rgba(0, 240, 255, 0.2), 0 0 60px rgba(0, 0, 0, 0.9);
+    border: 2px solid #1e293b;
+  }
+
+  #avatarCanvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+    background: #000;
+  }
+
+  /* CRT Scanline Overlay */
+  .crt-overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    pointer-events: none;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+    background-size: 100% 4px, 6px 100%;
+    z-index: 10;
+  }
+
+  /* HUD Elements */
+  .hud-tag {
+    position: absolute;
+    font-family: monospace;
+    font-size: 11px;
+    letter-spacing: 1px;
+    color: var(--accent);
+    z-index: 12;
+    pointer-events: none;
+    text-shadow: 0 0 6px var(--accent-glow);
+  }
+  .hud-tl { top: 12px; left: 14px; }
+  .hud-tr { top: 12px; right: 14px; text-align: right; }
+  .hud-bl { bottom: 12px; left: 14px; }
+  .hud-br { bottom: 12px; right: 14px; text-align: right; }
+
+  /* Audio Controls Bar */
+  .audio-bar {
+    width: 100%;
+    margin-top: 18px;
+    background: var(--panel);
+    border: 1px solid var(--panel-border);
+    border-radius: 10px;
+    padding: 14px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .playback-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .btn-play {
+    background: var(--accent);
+    color: #050811;
+    border: none;
+    padding: 10px 22px;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s;
+  }
+
+  .btn-play:hover {
+    box-shadow: 0 0 20px var(--accent-glow);
+    transform: scale(1.02);
+  }
+
+  .btn-secondary {
+    background: #1e293b;
+    border: 1px solid #334155;
+    color: var(--text);
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-secondary:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .progress-slider {
+    flex: 1;
+    height: 6px;
+    accent-color: var(--accent);
+    cursor: pointer;
+  }
+
+  .time-display {
+    font-family: monospace;
+    font-size: 12px;
+    color: var(--muted);
+    min-width: 85px;
+  }
+
+  /* Control Panel */
+  .sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--panel-border);
+    border-radius: 12px;
+    padding: 18px;
+  }
+
+  .card h3 {
+    font-size: 14px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .avatar-select-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(105px, 1fr));
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+
+  .avatar-thumb {
+    border: 2px solid #334155;
+    border-radius: 8px;
+    overflow: hidden;
+    cursor: pointer;
+    position: relative;
+    aspect-ratio: 1;
+    transition: all 0.2s;
+    background: #000;
+  }
+
+  .avatar-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .avatar-thumb.active {
+    border-color: var(--accent);
+    box-shadow: 0 0 15px var(--accent-glow);
+  }
+
+  .avatar-thumb span {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    background: rgba(0,0,0,0.7);
+    font-size: 10px;
+    text-align: center;
+    padding: 3px 0;
+  }
+
+  /* Sliders */
+  .control-group {
+    margin-bottom: 12px;
+  }
+
+  .control-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+
+  .control-group input[type="range"] {
+    width: 100%;
+    height: 6px;
+    accent-color: var(--accent);
+    cursor: pointer;
+  }
+
+  /* Viseme Status Monitor */
+  .viseme-monitor {
+    background: #060912;
+    border: 1px solid #1e293b;
+    border-radius: 8px;
+    padding: 10px 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: monospace;
+    font-size: 12px;
+    margin-top: 10px;
+  }
+
+  .viseme-badge {
+    background: var(--pink);
+    color: #fff;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    box-shadow: 0 0 10px var(--pink-glow);
+  }
+
+  /* TTS Generator Box */
+  .tts-box textarea {
+    width: 100%;
+    background: #060912;
+    border: 1px solid #334155;
+    border-radius: 8px;
+    color: var(--text);
+    padding: 10px;
+    font-size: 13px;
+    resize: vertical;
+    min-height: 60px;
+    margin-bottom: 8px;
+  }
+
+  .tts-box textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+
+  .quick-songs {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .song-btn {
+    background: #131b2e;
+    border: 1px solid #334155;
+    color: var(--text);
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    text-align: left;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s;
+  }
+
+  .song-btn:hover {
+    border-color: var(--pink);
+    color: var(--pink);
+  }
+
+  .song-btn.active {
+    border-color: var(--accent);
+    background: rgba(0, 240, 255, 0.1);
+    color: var(--accent);
+  }
+
+  /* Calibration Crosshair Toggle */
+  .toggle-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--text);
+    cursor: pointer;
+  /* Spinner Animation */
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <h1>KOLBOLB // Lip-Sync Studio</h1>
+    <span>Interactive Avatar Stage v1.0</span>
+  </div>
+  <div class="nav-links">
+    <a href="http://localhost:5200" target="_blank" class="nav-btn" style="border-color: #38bdf8; color: #38bdf8;">🎬 Media Studio</a>
+    <a href="Music_Studio.html" class="nav-btn">🎵 Music Studio</a>
+    <a href="The_Orpheus_Protocol.html" class="nav-btn">🕹️ Orpheus Protocol</a>
+    <a href="Image_Vision_Inspector.html" class="nav-btn">👁️ Vision Inspector</a>
+    <a href="index.html" class="nav-btn">🎵 INDEX</a>    
+  </div>
+</header>
+
+<div class="main-layout">
+
+  <!-- Left: Stage & Audio Player -->
+  <div class="stage-container">
+    
+    <!-- Stage Mode Selector -->
+    <div style="display:flex; gap:10px; margin-bottom:12px; width:540px; max-width:100%;">
+      <button class="btn-secondary active" id="btnModeNeural" onclick="switchStageMode('neural')">🎬 Neural Wav2Lip Video (CRT Hologram)</button>
+      <button class="btn-secondary" id="btnMode2D" onclick="switchStageMode('2d')">🎨 2D Interactive Stage</button>
+    </div>
+
+    <div class="canvas-wrapper" id="canvasWrapper">
+      <canvas id="avatarCanvas" width="800" height="800" style="display:none;"></canvas>
+      <video id="avatarVideo" width="800" height="800" style="display:block; width:100%; height:100%; object-fit:cover;" src="cyber_rock_lipsync_10s.mp4" loop playsinline></video>
+      <div class="crt-overlay" id="crtOverlay"></div>
+
+      <!-- HUD Telemetry -->
+      <div class="hud-tag hud-tl">SYS: ACTIVE // NEURAL_WAV2LIP_V1</div>
+      <div class="hud-tag hud-tr" id="hudVocalStatus">STATUS: READY</div>
+      <div class="hud-tag hud-bl" id="hudFps">1024x1024 // SCANLINES: ACTIVE</div>
+      <div class="hud-tag hud-br" id="hudMouthPos">HOLOGRAPHIC CRT ACTIVE</div>
+    </div>
+
+    <!-- Audio Player Bar -->
+    <div class="audio-bar">
+      <div class="playback-row">
+        <button class="btn-play" id="playBtn" onclick="togglePlay()">▶ Play Track</button>
+        <button class="btn-secondary" onclick="restartTrack()">⏮ Reset</button>
+        <input type="range" class="progress-slider" id="timeSlider" min="0" max="100" value="0" oninput="seekTrack(this.value)">
+        <span class="time-display" id="timeDisplay">0:00 / 0:00</span>
+      </div>
+
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span style="font-size:12px; color:var(--muted);">Volume:</span>
+          <input type="range" min="0" max="1" step="0.05" value="0.9" id="volSlider" style="width:80px; accent-color:var(--accent);" oninput="setVolume(this.value)">
+        </div>
+
+        <div style="display:flex; gap:10px;">
+          <label class="btn-secondary" style="margin:0; padding:6px 12px; cursor:pointer;">
+            📁 Load Custom Audio / MP4 (.mp3/.wav/.mp4)
+            <input type="file" id="audioUpload" accept="audio/*,video/mp4,video/*" style="display:none;" onchange="loadAudioFile(event)">
+          </label>
+          <button class="btn-secondary" style="padding:6px 12px;" onclick="toggleMicrophone()">🎙️ Live Mic</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Right: Controls & Presets -->
+  <div class="sidebar">
+
+    <!-- 1-Click Neural Wav2Lip Video Generator Card -->
+    <div class="card neural-card" style="border: 1px solid var(--accent); background: linear-gradient(180deg, rgba(0,240,255,0.08) 0%, rgba(10,16,30,0.85) 100%);">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+        <h3 style="margin:0; color:var(--accent); font-size:14px; letter-spacing:1px; display:flex; align-items:center; gap:8px;">
+          <span>🎬</span> Neural Wav2Lip Studio
+        </h3>
+        <span id="neuralEngineBadge" style="font-family:monospace; font-size:10px; background:rgba(0,240,255,0.15); color:var(--accent); padding:2px 6px; border-radius:4px; border:1px solid rgba(0,240,255,0.3);">
+          ⚡ ENGINE READY
+        </span>
+      </div>
+
+      <!-- Live Sync Targets (use.jpg and use.mp3 / use.wav) -->
+      <div style="background:#060913; border:1px solid #1e293b; border-radius:8px; padding:10px; margin-bottom:12px; font-family:monospace; font-size:11px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+          <span style="color:var(--muted);">🖼️ Face Target:</span>
+          <span id="faceTargetStatus" style="color:var(--accent); font-weight:bold;">use.jpg (Ready)</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span style="color:var(--muted);">🎵 Audio Target:</span>
+          <span id="audioTargetStatus" style="color:#00ff9d; font-weight:bold;">use.mp3 (Ready)</span>
+        </div>
+      </div>
+
+      <!-- Render Length Selection -->
+      <div class="control-group" style="margin-bottom:12px;">
+        <div class="control-header">
+          <span>Render Duration:</span>
+          <span id="lbl_renderLength" style="color:var(--accent);">10 Seconds</span>
+        </div>
+        <select id="renderSecondsSelect" style="width:100%; background:#0a101e; color:var(--text); border:1px solid #334155; border-radius:6px; padding:8px; font-size:12px; cursor:pointer;" onchange="updateRenderLengthLabel(this.value)">
+          <option value="10" selected>⚡ 10 Seconds (Fast Preview - ~1 min)</option>
+          <option value="15">🎬 15 Seconds (~1.5 min)</option>
+          <option value="30">🔥 30 Seconds (~3 min)</option>
+          <option value="0">🌟 Full Track (Complete Audio)</option>
+        </select>
+      </div>
+
+      <!-- Action Button -->
+      <button class="btn-play" id="btnRenderNeural" onclick="startNeuralRender()" style="width:100%; justify-content:center; padding:12px; font-size:13px; letter-spacing:1px; background:linear-gradient(135deg, #00f0ff 0%, #0088ff 100%); color:#050811; box-shadow:0 0 15px rgba(0,240,255,0.4); margin-bottom:10px;">
+        ⚡ RENDER NEURAL VIDEO (WAV2LIP)
+      </button>
+
+      <!-- Progress / Status Indicator -->
+      <div id="renderProgressBox" style="display:none; background:rgba(0,0,0,0.6); border:1px dashed var(--accent); border-radius:8px; padding:12px; text-align:center; margin-bottom:10px;">
+        <div class="spinner" style="display:inline-block; width:18px; height:18px; border:2px solid rgba(0,240,255,0.2); border-top-color:var(--accent); border-radius:50%; animation:spin 0.8s linear infinite; vertical-align:middle; margin-right:8px;"></div>
+        <span id="renderProgressText" style="font-family:monospace; font-size:12px; color:var(--accent);">Synthesizing frames on AMD Ryzen CPU...</span>
+        <div id="renderTimerText" style="font-size:11px; color:var(--muted); margin-top:4px;">Elapsed: 0s</div>
+      </div>
+
+      <!-- Render Results / Download -->
+      <div id="renderResultBox" style="display:none; flex-direction:column; gap:8px;">
+        <div style="font-size:12px; color:#00ff9d; font-family:monospace; display:flex; align-items:center; gap:6px;">
+          <span>✓</span> Neural Video: <strong>result.mp4</strong>
+        </div>
+        <div style="display:flex; gap:8px;">
+          <button class="btn-secondary" style="flex:1; padding:8px;" onclick="playResultVideo()">▶ Play in Hologram</button>
+          <a id="downloadResultBtn" href="http://127.0.0.1:5005/result.mp4" download="result.mp4" class="btn-secondary" style="flex:1; text-align:center; padding:8px; text-decoration:none;">⬇️ Download</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Character Avatar Selection -->
+    <div class="card">
+      <h3><span>👤</span> Select Character Avatar</h3>
+      <div class="avatar-select-grid" id="avatarGrid">
+        <div class="avatar-thumb active" id="thumb_rocker" onclick="selectAvatar('rocker')">
+          <img src="avatar_cyber_singer.jpg" alt="Cyber Rocker">
+          <span>🎸 Cyber Rocker</span>
+        </div>
+        <div class="avatar-thumb" id="thumb_female" onclick="selectAvatar('female')">
+          <img src="avatar_cyber_female.jpg" alt="Cyber Female">
+          <span>🎧 Synth Diva</span>
+        </div>
+      </div>
+      
+      <label class="btn-secondary" style="display:block; text-align:center; padding:8px; cursor:pointer;">
+        🖼️ Upload Custom Portrait
+        <input type="file" id="imageUpload" accept="image/*" style="display:none;" onchange="loadCustomAvatar(event)">
+      </label>
+    </div>
+
+    <!-- Quick Audio Selector -->
+    <div class="card">
+      <h3><span>🎶</span> Ready-to-Play Songs</h3>
+      <div class="quick-songs">
+        <button class="song-btn active" id="btn_song_rock" onclick="loadPresetSong('rock')">
+          <span>🎸</span>
+          <div style="flex:1;">
+            <div style="font-weight:bold;">Driving Cyberpunk Rock</div>
+            <div style="font-size:10px; color:var(--muted);">Jack's Generated Track (Male Vocals)</div>
+          </div>
+        </button>
+      </div>
+    </div>
+
+    <!-- Live Speech Synthesis via KoboldCpp Kokoro -->
+    <div class="card tts-box">
+      <h3><span>🗣️</span> Make Avatar Speak (TTS)</h3>
+      <textarea id="ttsText" placeholder="Type words for the avatar to speak live...">Mission report received. Commencing warp jump to sector 9.</textarea>
+      <button class="btn-secondary" style="width:100%;" onclick="speakText()">🎙️ Synthesize &amp; Lip-Sync</button>
+    </div>
+
+    <!-- Mouth Calibration & Fine-Tuning -->
+    <div class="card">
+      <h3><span>⚙️</span> Mouth Calibration &amp; Motion</h3>
+      
+      <div class="control-group">
+        <div class="control-header">
+          <span>Mouth Vertical (Y):</span>
+          <span id="lbl_mouthY">470</span>
+        </div>
+        <input type="range" id="mouthY" min="200" max="650" value="470" oninput="updateMouthY(this.value)">
+      </div>
+
+      <div class="control-group">
+        <div class="control-header">
+          <span>Mouth Horizontal (X):</span>
+          <span id="lbl_mouthX">430</span>
+        </div>
+        <input type="range" id="mouthX" min="250" max="550" value="430" oninput="updateMouthX(this.value)">
+      </div>
+
+      <div class="control-group">
+        <div class="control-header">
+          <span>Mouth Width Scale:</span>
+          <span id="lbl_mouthW">120</span>
+        </div>
+        <input type="range" id="mouthW" min="60" max="220" value="120" oninput="updateMouthW(this.value)">
+      </div>
+
+      <div class="control-group">
+        <div class="control-header">
+          <span>Jaw Drop Opening Amount:</span>
+          <span id="lbl_jawSens">1.8x</span>
+        </div>
+        <input type="range" id="jawSens" min="0.5" max="3.0" step="0.1" value="1.8" oninput="updateJawSens(this.value)">
+      </div>
+
+      <div class="control-group">
+        <div class="control-header">
+          <span>Head Bob to Rhythm:</span>
+          <span id="lbl_bob">1.0x</span>
+        </div>
+        <input type="range" id="bobSens" min="0" max="2.5" step="0.1" value="1.0" oninput="updateBobSens(this.value)">
+      </div>
+
+      <p style="font-size:11px; color:var(--accent); margin: 8px 0 4px 0;">💡 Tip: Click anywhere on the face to instantly move the mouth center!</p>
+
+      <label class="toggle-label">
+        <input type="checkbox" id="showCrosshair" onchange="renderAvatar()">
+        <span>Show Calibration Crosshair on Mouth</span>
+      </label>
+
+      <label class="toggle-label">
+        <input type="checkbox" id="blinkToggle" onchange="renderAvatar()">
+        <span>Natural Eye Blinking</span>
+      </label>
+
+      <label class="toggle-label">
+        <input type="checkbox" id="crtToggle" checked onchange="toggleCrt(this.checked)">
+        <span>CRT Holographic Scanline Overlay</span>
+      </label>
+
+      <!-- Realtime Viseme HUD -->
+      <div class="viseme-monitor">
+        <span>CURRENT PHONEME:</span>
+        <span class="viseme-badge" id="visemeBadge">REST</span>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+// ==============================================================================
+// State & Configuration
+// ==============================================================================
+const canvas = document.getElementById("avatarCanvas");
+const ctx = canvas.getContext("2d");
+
+let audioCtx = null;
+let analyser = null;
+let audioSource = null;
+let audioElement = new Audio();
+let micStream = null;
+
+let isPlaying = false;
+let isMicActive = false;
+
+// Calibration parameters
+let mouthConfig = {
+  x: 430,
+  y: 470,
+  w: 120,
+  h: 70,
+  jawSens: 1.8,
+  bobSens: 1.0
+};
+
+// Preset settings per avatar
+const avatarPresets = {
+  rocker: {
+    src: "avatar_cyber_singer.jpg",
+    x: 445,
+    y: 380,
+    w: 95,
+    h: 55,
+    jawSens: 1.6
+  },
+  female: {
+    src: "avatar_cyber_female.jpg",
+    x: 395,
+    y: 440,
+    w: 90,
+    h: 50,
+    jawSens: 1.7
+  }
+};
+
+let currentAvatarKey = "rocker";
+let avatarImg = new Image();
+
+// Animation State
+let jawOpen = 0;       // 0 (closed) to 1 (wide open)
+let vowelSpread = 0;   // horizontal mouth stretch (-1 to 1)
+let headBobX = 0;
+let headBobY = 0;
+let headBobRot = 0;
+let blinkState = 0;    // 0 = open, 1 = closed
+let lastBlinkTime = 0;
+let isBlinking = false;
+
+// Default Song: Jack's generated track
+const DEFAULT_SONG_PATH = "Generated_Track_driving_cyberpunk_rock_energe_7623.wav";
+
+// ==============================================================================
+// Initialization
+// ==============================================================================
+window.addEventListener("DOMContentLoaded", () => {
+  loadAvatarImage(avatarPresets.rocker.src);
+  applyPresetConfig("rocker");
+  
+  // Set default audio track with fallback
+  audioElement.src = DEFAULT_SONG_PATH;
+  audioElement.onerror = () => {
+    console.warn("Local audio path failed, trying HTTP server fallback...");
+    audioElement.src = "http://127.0.0.1:5005/" + DEFAULT_SONG_PATH;
+  };
+  
+  audioElement.addEventListener("timeupdate", updatePlaybackProgress);
+  audioElement.addEventListener("ended", () => {
+    isPlaying = false;
+    document.getElementById("playBtn").innerText = "▶ Play Track";
+    document.getElementById("hudVocalStatus").innerText = "VOCALS: FINISHED";
+  });
+
+  const vid = document.getElementById("avatarVideo");
+  if (vid) {
+    vid.addEventListener("timeupdate", () => {
+      if (stageMode === 'neural' && vid.duration) {
+        const cur = vid.currentTime;
+        const dur = vid.duration;
+        document.getElementById("timeSlider").value = (cur / dur) * 100;
+        const m1 = Math.floor(cur / 60);
+        const s1 = Math.floor(cur % 60).toString().padStart(2, "0");
+        const m2 = Math.floor(dur / 60);
+        const s2 = Math.floor(dur % 60).toString().padStart(2, "0");
+        document.getElementById("timeDisplay").innerText = `${m1}:${s1} / ${m2}:${s2}`;
+      }
+    });
+    vid.addEventListener("ended", () => {
+      document.getElementById("playBtn").innerText = "▶ Play Video";
+      document.getElementById("hudVocalStatus").innerText = "STATUS: FINISHED";
+    });
+  }
+
+  // Check server status for use.jpg, use.mp3, result.mp4
+  syncUseFileStatus();
+
+  // Start animation render loop
+  requestAnimationFrame(animationLoop);
+});
+
+function loadAvatarImage(src) {
+  avatarImg = new Image();
+  avatarImg.onload = () => {
+    console.log("Avatar loaded successfully:", avatarImg.naturalWidth, "x", avatarImg.naturalHeight);
+    renderAvatar();
+  };
+  avatarImg.onerror = (err) => {
+    console.warn("Direct avatar image load failed, trying HTTP 5005 fallback...", err);
+    if (!src.startsWith("http") && !src.startsWith("data:")) {
+      const filename = src.split("/").pop();
+      avatarImg.src = "http://127.0.0.1:5005/" + filename;
+    }
+  };
+  avatarImg.src = src;
+}
+
+function applyPresetConfig(key) {
+  const p = avatarPresets[key];
+  if (!p) return;
+  mouthConfig.x = p.x;
+  mouthConfig.y = p.y;
+  mouthConfig.w = p.w;
+  mouthConfig.h = p.h;
+  mouthConfig.jawSens = p.jawSens;
+
+  document.getElementById("mouthX").value = p.x;
+  document.getElementById("lbl_mouthX").innerText = p.x;
+  document.getElementById("mouthY").value = p.y;
+  document.getElementById("lbl_mouthY").innerText = p.y;
+  document.getElementById("mouthW").value = p.w;
+  document.getElementById("lbl_mouthW").innerText = p.w;
+  document.getElementById("jawSens").value = p.jawSens;
+  document.getElementById("lbl_jawSens").innerText = p.jawSens + "x";
+}
+
+const customAvatars = {};
+
+function addCustomAvatarToGrid(id, name, src, autoActivate = true) {
+  customAvatars[id] = src;
+  const grid = document.getElementById("avatarGrid");
+  if (!grid) return;
+  
+  let thumb = document.getElementById(id);
+  if (!thumb) {
+    thumb = document.createElement("div");
+    thumb.className = "avatar-thumb";
+    thumb.id = id;
+    thumb.onclick = () => selectCustomAvatarById(id);
+    grid.appendChild(thumb);
+  }
+  const shortName = name.length > 13 ? name.substring(0, 11) + '..' : name;
+  thumb.innerHTML = `<img src="${src}" alt="${name}"><span>🖼️ ${shortName}</span>`;
+
+  if (autoActivate) {
+    document.querySelectorAll(".avatar-thumb").forEach(el => el.classList.remove("active"));
+    thumb.classList.add("active");
+  }
+}
+
+function selectCustomAvatarById(id) {
+  const src = customAvatars[id];
+  if (!src) return;
+  document.querySelectorAll(".avatar-thumb").forEach(el => el.classList.remove("active"));
+  const thumb = document.getElementById(id);
+  if (thumb) thumb.classList.add("active");
+  
+  loadAvatarImage(src);
+  switchStageMode('2d');
+  // Sync to use.jpg on server
+  uploadCustomUseFile("image", id, src);
+}
+
+function selectAvatar(key) {
+  currentAvatarKey = key;
+  document.querySelectorAll(".avatar-thumb").forEach(el => el.classList.remove("active"));
+  const activeEl = document.getElementById("thumb_" + key);
+  if (activeEl) activeEl.classList.add("active");
+  
+  if (avatarPresets[key]) {
+    loadAvatarImage(avatarPresets[key].src);
+    applyPresetConfig(key);
+    switchStageMode('2d');
+    syncPresetToUseJpg(avatarPresets[key].src, key);
+  }
+}
+
+function loadCustomAvatar(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    const dataUrl = ev.target.result;
+    const avatarId = "thumb_custom_" + Date.now();
+    
+    // 1. Immediately create and display the thumbnail in the Select Character Avatar window!
+    addCustomAvatarToGrid(avatarId, file.name, dataUrl, true);
+    
+    // 2. Load into canvas and switch to 2D stage so Jack sees the avatar immediately
+    loadAvatarImage(dataUrl);
+    switchStageMode('2d');
+    
+    // 3. Upload to server to persist as use.jpg
+    uploadCustomUseFile("image", file.name, dataUrl);
+  };
+  reader.readAsDataURL(file);
+}
+
+// ==============================================================================
+// Web Audio Engine & Lip-Sync Analysis
+// ==============================================================================
+function initAudio() {
+  if (audioCtx) return;
+  const AudioContext = window.AudioContext || window.webkitAudioContext;
+  audioCtx = new AudioContext();
+  
+  analyser = audioCtx.createAnalyser();
+  analyser.fftSize = 1024;
+  analyser.smoothingTimeConstant = 0.65;
+
+  audioSource = audioCtx.createMediaElementSource(audioElement);
+  audioSource.connect(analyser);
+  analyser.connect(audioCtx.destination);
+}
+
+let stageMode = 'neural'; // 'neural' or '2d'
+
+function switchStageMode(mode) {
+  stageMode = mode;
+  const canvasEl = document.getElementById("avatarCanvas");
+  const videoEl = document.getElementById("avatarVideo");
+  const btnNeural = document.getElementById("btnModeNeural");
+  const btn2D = document.getElementById("btnMode2D");
+
+  if (mode === 'neural') {
+    canvasEl.style.display = "none";
+    videoEl.style.display = "block";
+    btnNeural.classList.add("active");
+    btn2D.classList.remove("active");
+    audioElement.pause();
+    isPlaying = false;
+    document.getElementById("playBtn").innerText = "▶ Play Video";
+    document.getElementById("hudVocalStatus").innerText = "MODE: NEURAL VIDEO";
+  } else {
+    videoEl.pause();
+    videoEl.style.display = "none";
+    canvasEl.style.display = "block";
+    btnNeural.classList.remove("active");
+    btn2D.classList.add("active");
+    document.getElementById("playBtn").innerText = "▶ Play Track";
+    document.getElementById("hudVocalStatus").innerText = "MODE: 2D STAGE";
+    renderAvatar();
+  }
+}
+
+function togglePlay() {
+  if (stageMode === 'neural') {
+    const videoEl = document.getElementById("avatarVideo");
+    if (videoEl.paused) {
+      videoEl.play();
+      document.getElementById("playBtn").innerText = "⏸ Pause Video";
+      document.getElementById("hudVocalStatus").innerText = "VOCALS: SINGING (WAV2LIP)";
+    } else {
+      videoEl.pause();
+      document.getElementById("playBtn").innerText = "▶ Play Video";
+      document.getElementById("hudVocalStatus").innerText = "VOCALS: PAUSED";
+    }
+    return;
+  }
+
+  initAudio();
+  if (audioCtx.state === "suspended") {
+    audioCtx.resume();
+  }
+
+  if (isPlaying) {
+    audioElement.pause();
+    isPlaying = false;
+    document.getElementById("playBtn").innerText = "▶ Play Track";
+    document.getElementById("hudVocalStatus").innerText = "VOCALS: PAUSED";
+  } else {
+    audioElement.play().then(() => {
+      isPlaying = true;
+      document.getElementById("playBtn").innerText = "⏸ Pause Track";
+      document.getElementById("hudVocalStatus").innerText = "VOCALS: SINGING";
+    }).catch(err => {
+      console.error(err);
+      alert("Please check audio track: " + err.message);
+    });
+  }
+}
+
+function restartTrack() {
+  if (stageMode === 'neural') {
+    const videoEl = document.getElementById("avatarVideo");
+    videoEl.currentTime = 0;
+    videoEl.play();
+    document.getElementById("playBtn").innerText = "⏸ Pause Video";
+    return;
+  }
+  audioElement.currentTime = 0;
+  if (!isPlaying) {
+    togglePlay();
+  }
+}
+
+function setVolume(v) {
+  audioElement.volume = parseFloat(v);
+  const vid = document.getElementById("avatarVideo");
+  if (vid) vid.volume = parseFloat(v);
+}
+
+function seekTrack(pct) {
+  if (stageMode === 'neural') {
+    const vid = document.getElementById("avatarVideo");
+    if (vid && vid.duration) vid.currentTime = (pct / 100) * vid.duration;
+    return;
+  }
+  if (audioElement.duration) {
+    audioElement.currentTime = (pct / 100) * audioElement.duration;
+  }
+}
+
+function updatePlaybackProgress() {
+  if (!audioElement.duration) return;
+  const cur = audioElement.currentTime;
+  const dur = audioElement.duration;
+  document.getElementById("timeSlider").value = (cur / dur) * 100;
+  
+  const m1 = Math.floor(cur / 60);
+  const s1 = Math.floor(cur % 60).toString().padStart(2, "0");
+  const m2 = Math.floor(dur / 60);
+  const s2 = Math.floor(dur % 60).toString().padStart(2, "0");
+  document.getElementById("timeDisplay").innerText = `${m1}:${s1} / ${m2}:${s2}`;
+}
+
+function loadPresetSong(type) {
+  audioElement.pause();
+  audioElement.src = encodeURI(DEFAULT_SONG_PATH);
+  document.getElementById("playBtn").innerText = "▶ Play Track";
+  isPlaying = false;
+  togglePlay();
+  syncPresetToUseAudio(DEFAULT_SONG_PATH);
+}
+
+function loadAudioFile(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  initAudio();
+  const url = URL.createObjectURL(file);
+  audioElement.src = url;
+  document.getElementById("btn_song_rock").classList.remove("active");
+  togglePlay();
+
+  // Automatically sync to use.mp3 / use.wav on server
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    uploadCustomUseFile("audio", file.name, ev.target.result);
+  };
+  reader.readAsDataURL(file);
+}
+
+async function toggleMicrophone() {
+  initAudio();
+  if (isMicActive) {
+    if (micStream) {
+      micStream.getTracks().forEach(t => t.stop());
+      micStream = null;
+    }
+    isMicActive = false;
+    document.getElementById("hudVocalStatus").innerText = "MIC: OFF";
+    return;
+  }
+
+  try {
+    micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    const micSource = audioCtx.createMediaStreamSource(micStream);
+    micSource.connect(analyser);
+    isMicActive = true;
+    document.getElementById("hudVocalStatus").innerText = "MIC: LIVE RECORDING";
+  } catch (err) {
+    alert("Microphone access denied: " + err.message);
+  }
+}
+
+// KoboldCpp TTS Live Synthesis
+async function speakText() {
+  const text = document.getElementById("ttsText").value.trim();
+  if (!text) return;
+  
+  document.getElementById("hudVocalStatus").innerText = "TTS: SYNTHESIZING...";
+  try {
+    const res = await fetch("http://localhost:5001/v1/audio/speech", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        input: text,
+        voice: "kobo"
+      })
+    });
+    
+    if (!res.ok) throw new Error("TTS request failed");
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    
+    initAudio();
+    audioElement.src = url;
+    togglePlay();
+    document.getElementById("hudVocalStatus").innerText = "TTS: SPEAKING";
+
+    // Auto-sync synthesized speech to use.wav for instant Wav2Lip video render
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      uploadCustomUseFile("audio", "tts_speech.wav", ev.target.result);
+    };
+    reader.readAsDataURL(blob);
+  } catch (e) {
+    console.error(e);
+    alert("Could not connect to KoboldCpp TTS on http://localhost:5001");
+    document.getElementById("hudVocalStatus").innerText = "TTS: ERROR";
+  }
+}
+
+// ==============================================================================
+// Neural Wav2Lip Video Generation & Sync Engine (Automated use.jpg & use.mp3)
+// ==============================================================================
+let renderTimerInterval = null;
+let renderSecondsElapsed = 0;
+
+function updateRenderLengthLabel(val) {
+  const lbl = document.getElementById("lbl_renderLength");
+  if (!lbl) return;
+  if (!val || val === "0") lbl.innerText = "Full Track";
+  else lbl.innerText = `${val} Seconds`;
+}
+
+async function syncUseFileStatus() {
+  try {
+    const res = await fetch("http://127.0.0.1:5005/use_status");
+    if (!res.ok) return;
+    const data = await res.json();
+    
+    if (data.use_jpg && data.use_jpg.exists) {
+      const kb = Math.round(data.use_jpg.size / 1024);
+      const faceEl = document.getElementById("faceTargetStatus");
+      if (faceEl) faceEl.innerText = `use.jpg (${kb} KB)`;
+
+      // If use.jpg exists on server, add it to the avatar selection grid as well!
+      if (!document.getElementById("thumb_use_jpg") && data.use_jpg.url) {
+        addCustomAvatarToGrid("thumb_use_jpg", `use.jpg (${kb}KB)`, data.use_jpg.url + "?t=" + data.use_jpg.mtime, false);
+      }
+    }
+    
+    const isMp3Newer = (data.use_mp3.mtime >= data.use_wav.mtime);
+    const activeAudio = (data.use_mp3.exists && (isMp3Newer || !data.use_wav.exists)) ? data.use_mp3 : data.use_wav;
+    const activeName = (data.use_mp3.exists && (isMp3Newer || !data.use_wav.exists)) ? "use.mp3" : "use.wav";
+    
+    if (activeAudio && activeAudio.exists) {
+      const kb = Math.round(activeAudio.size / 1024);
+      const audEl = document.getElementById("audioTargetStatus");
+      if (audEl) audEl.innerText = `${activeName} (${kb} KB)`;
+    }
+
+    if (data.result_mp4 && data.result_mp4.exists) {
+      const resBox = document.getElementById("renderResultBox");
+      if (resBox) resBox.style.display = "flex";
+      const dlBtn = document.getElementById("downloadResultBtn");
+      if (dlBtn) dlBtn.href = data.result_mp4.url;
+      const vid = document.getElementById("avatarVideo");
+      if (vid && !vid.src.includes("result.mp4")) {
+        vid.src = data.result_mp4.url;
+      }
+    }
+  } catch (err) {
+    console.warn("Could not query /use_status:", err);
+  }
+}
+
+async function syncPresetToUseJpg(presetFilename, key) {
+  const statusEl = document.getElementById("faceTargetStatus");
+  if (statusEl) statusEl.innerText = "use.jpg (Syncing...)";
+  try {
+    const res = await fetch("http://127.0.0.1:5005/set_use_file", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ type: "image", preset: presetFilename })
+    });
+    const d = await res.json();
+    if (statusEl) statusEl.innerText = `use.jpg (${key})`;
+  } catch (err) {
+    console.error("Failed to sync preset image:", err);
+    if (statusEl) statusEl.innerText = "use.jpg (Sync Error)";
+  }
+}
+
+async function syncPresetToUseAudio(presetFilename) {
+  const statusEl = document.getElementById("audioTargetStatus");
+  if (statusEl) statusEl.innerText = "use.wav (Syncing...)";
+  try {
+    const res = await fetch("http://127.0.0.1:5005/set_use_file", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ type: "audio", preset: presetFilename, filename: "use.wav" })
+    });
+    const d = await res.json();
+    if (statusEl) statusEl.innerText = "use.wav (Preset Track)";
+  } catch (err) {
+    console.error("Failed to sync preset audio:", err);
+    if (statusEl) statusEl.innerText = "use.wav (Sync Error)";
+  }
+}
+
+async function uploadCustomUseFile(type, filename, dataUrl) {
+  const isImg = (type === "image");
+  const statusEl = isImg ? document.getElementById("faceTargetStatus") : document.getElementById("audioTargetStatus");
+  if (statusEl) statusEl.innerText = `use.${isImg ? 'jpg' : 'mp3'} (Uploading...)`;
+
+  try {
+    const res = await fetch("http://127.0.0.1:5005/set_use_file", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ type, filename, data: dataUrl })
+    });
+    const d = await res.json();
+    if (statusEl) statusEl.innerText = `${d.file} (${filename.length > 14 ? filename.substring(0, 12) + '..' : filename})`;
+  } catch (err) {
+    console.error("Upload error:", err);
+    if (statusEl) statusEl.innerText = `use.${isImg ? 'jpg' : 'mp3'} (Upload Error)`;
+  }
+}
+
+async function startNeuralRender() {
+  const btn = document.getElementById("btnRenderNeural");
+  const progBox = document.getElementById("renderProgressBox");
+  const progText = document.getElementById("renderProgressText");
+  const timerText = document.getElementById("renderTimerText");
+  const resBox = document.getElementById("renderResultBox");
+  const secSelect = document.getElementById("renderSecondsSelect");
+  
+  const seconds = parseFloat(secSelect.value);
+
+  btn.disabled = true;
+  btn.style.opacity = "0.5";
+  btn.innerText = "⏳ RENDERING IN PROGRESS...";
+  progBox.style.display = "block";
+  resBox.style.display = "none";
+  progText.innerText = "Synthesizing neural video on AMD Ryzen CPU...";
+
+  renderSecondsElapsed = 0;
+  timerText.innerText = `Elapsed: 0s (Estimated ~60-90s)`;
+  if (renderTimerInterval) clearInterval(renderTimerInterval);
+  renderTimerInterval = setInterval(() => {
+    renderSecondsElapsed++;
+    timerText.innerText = `Elapsed: ${renderSecondsElapsed}s (Estimated ~60-90s)`;
+  }, 1000);
+
+  document.getElementById("hudVocalStatus").innerText = "SYS: WAV2LIP NEURAL COMPUTATION...";
+
+  try {
+    const resp = await fetch("http://127.0.0.1:5005/render_wav2lip", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ seconds: seconds > 0 ? seconds : null })
+    });
+
+    const data = await resp.json();
+    clearInterval(renderTimerInterval);
+
+    if (data.status === "success") {
+      progText.innerText = `✓ Render complete in ${renderSecondsElapsed}s!`;
+      resBox.style.display = "flex";
+      document.getElementById("downloadResultBtn").href = data.video_url;
+
+      // Switch stage to neural mode and play the fresh video
+      switchStageMode('neural');
+      const vid = document.getElementById("avatarVideo");
+      vid.src = data.video_url;
+      vid.load();
+      vid.play().catch(e => console.log("Auto-play blocked, click to play:", e));
+
+      document.getElementById("playBtn").innerText = "⏸ Pause Video";
+      document.getElementById("hudVocalStatus").innerText = "SYS: NEURAL VIDEO ACTIVE";
+      syncUseFileStatus();
+    } else {
+      alert("Wav2Lip Render Error: " + (data.message || "Unknown error"));
+      progText.innerText = "Render failed. See console.";
+      document.getElementById("hudVocalStatus").innerText = "SYS: RENDER ERROR";
+    }
+  } catch (err) {
+    clearInterval(renderTimerInterval);
+    console.error("Render request failed:", err);
+    alert("Connection error to Blackbox Media Server (port 5005). Is blackbox_recorder running?");
+    document.getElementById("hudVocalStatus").innerText = "SYS: SERVER UNREACHABLE";
+  } finally {
+    btn.disabled = false;
+    btn.style.opacity = "1";
+    btn.innerText = "⚡ RENDER NEURAL VIDEO (WAV2LIP)";
+    setTimeout(() => {
+      progBox.style.display = "none";
+    }, 4000);
+  }
+}
+
+function playResultVideo() {
+  switchStageMode('neural');
+  const vid = document.getElementById("avatarVideo");
+  vid.currentTime = 0;
+  vid.play();
+  document.getElementById("playBtn").innerText = "⏸ Pause Video";
+  document.getElementById("hudVocalStatus").innerText = "SYS: NEURAL VIDEO PLAYING";
+}
+
+// ==============================================================================
+// Calibration Slider Event Handlers
+// ==============================================================================
+function updateMouthY(v) {
+  mouthConfig.y = parseInt(v);
+  document.getElementById("lbl_mouthY").innerText = v;
+}
+function updateMouthX(v) {
+  mouthConfig.x = parseInt(v);
+  document.getElementById("lbl_mouthX").innerText = v;
+}
+function updateMouthW(v) {
+  mouthConfig.w = parseInt(v);
+  mouthConfig.h = Math.round(v * 0.6);
+  document.getElementById("lbl_mouthW").innerText = v;
+}
+function updateJawSens(v) {
+  mouthConfig.jawSens = parseFloat(v);
+  document.getElementById("lbl_jawSens").innerText = v + "x";
+}
+function updateBobSens(v) {
+  mouthConfig.bobSens = parseFloat(v);
+  document.getElementById("lbl_bob").innerText = v + "x";
+}
+function toggleCrt(checked) {
+  document.getElementById("crtOverlay").style.display = checked ? "block" : "none";
+}
+
+// ==============================================================================
+// Core Animation Loop (60 FPS)
+// ==============================================================================
+function animationLoop(timestamp) {
+  analyzeAudioFrame(timestamp);
+  renderAvatar();
+  requestAnimationFrame(animationLoop);
+}
+
+function analyzeAudioFrame(time) {
+  if (!analyser || (!isPlaying && !isMicActive)) {
+    // Return smoothly to resting pose
+    jawOpen += (0 - jawOpen) * 0.2;
+    vowelSpread += (0 - vowelSpread) * 0.2;
+    headBobX += (0 - headBobX) * 0.1;
+    headBobY += (0 - headBobY) * 0.1;
+    headBobRot += (0 - headBobRot) * 0.1;
+    document.getElementById("visemeBadge").innerText = "REST";
+    return;
+  }
+
+  const freqData = new Uint8Array(analyser.frequencyBinCount);
+  analyser.getByteFrequencyData(freqData);
+
+  // 1. Vocal Energy (Vocal speech range ~250Hz - 2500Hz)
+  let vocalSum = 0;
+  let vocalCount = 0;
+  for (let i = 6; i < 60; i++) {
+    vocalSum += freqData[i];
+    vocalCount++;
+  }
+  const vocalEnergy = vocalSum / vocalCount; // 0 to 255
+
+  // 2. Bass / Beat Energy (Sub-bass ~40Hz - 120Hz)
+  let bassSum = 0;
+  for (let i = 1; i < 5; i++) {
+    bassSum += freqData[i];
+  }
+  const bassEnergy = (bassSum / 4) / 255; // 0 to 1
+
+  // 3. Formants: Low vs High frequencies for vowel shaping
+  let lowFormant = 0;   // 300 - 800 Hz ('O', 'U')
+  for (let i = 7; i < 18; i++) lowFormant += freqData[i];
+  lowFormant /= 11;
+
+  let highFormant = 0;  // 1500 - 3200 Hz ('E', 'I', 'Ah')
+  for (let i = 35; i < 75; i++) highFormant += freqData[i];
+  highFormant /= 40;
+
+  // Compute Target Jaw Opening
+  const noiseGate = 22;
+  let targetJaw = 0;
+  if (vocalEnergy > noiseGate) {
+    targetJaw = ((vocalEnergy - noiseGate) / (255 - noiseGate)) * mouthConfig.jawSens;
+    targetJaw = Math.min(1.4, Math.max(0, targetJaw));
+  }
+  jawOpen += (targetJaw - jawOpen) * 0.45; // Responsive smoothing
+
+  // Compute Vowel Viseme
+  let targetSpread = (highFormant - lowFormant) / 100;
+  vowelSpread += (targetSpread - vowelSpread) * 0.3;
+
+  // Update Viseme Badge
+  const badge = document.getElementById("visemeBadge");
+  if (jawOpen < 0.12) {
+    badge.innerText = "REST";
+    badge.style.background = "#334155";
+  } else if (jawOpen > 0.8) {
+    badge.innerText = "BELT / SCREAM";
+    badge.style.background = "#ff0055";
+  } else if (vowelSpread > 0.25) {
+    badge.innerText = "EE / AY";
+    badge.style.background = "#00f0ff";
+  } else if (lowFormant > highFormant + 15) {
+    badge.innerText = "OH / OO";
+    badge.style.background = "#f59e0b";
+  } else {
+    badge.innerText = "AH / UH";
+    badge.style.background = "#10b981";
+  }
+
+  // Head Bobbing & Torso Sway
+  const t = time * 0.003;
+  const bobScale = mouthConfig.bobSens;
+  const targetBobX = Math.sin(t * 2) * bassEnergy * 4 * bobScale;
+  const targetBobY = Math.abs(Math.cos(t * 3)) * bassEnergy * 6 * bobScale;
+  const targetBobRot = Math.sin(t * 1.5) * bassEnergy * 0.018 * bobScale;
+
+  headBobX += (targetBobX - headBobX) * 0.3;
+  headBobY += (targetBobY - headBobY) * 0.3;
+  headBobRot += (targetBobRot - headBobRot) * 0.3;
+
+  // Procedural Eye Blinking (every 3.5 - 5 seconds)
+  if (!isBlinking && time - lastBlinkTime > 3500 + Math.random() * 2000) {
+    isBlinking = true;
+    lastBlinkTime = time;
+  }
+  if (isBlinking) {
+    const blinkProgress = (time - lastBlinkTime) / 160; // 160ms blink
+    if (blinkProgress >= 1) {
+      isBlinking = false;
+      blinkState = 0;
+    } else {
+      blinkState = Math.sin(blinkProgress * Math.PI); // 0 -> 1 -> 0
+    }
+  }
+}
+
+// ==============================================================================
+// Portrait & Mouth Renderer
+// ==============================================================================
+function renderAvatar() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  if (!avatarImg.complete || avatarImg.naturalWidth === 0) {
+    ctx.fillStyle = "#0f172a";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "#00f0ff";
+    ctx.font = "16px monospace";
+    ctx.textAlign = "center";
+    ctx.fillText("LOADING AVATAR HOLOGRAM...", canvas.width / 2, canvas.height / 2);
+    return;
+  }
+
+  ctx.save();
+
+  // Apply Rhythm Head Bob & Sway to whole canvas
+  ctx.translate(canvas.width / 2 + headBobX, canvas.height / 2 + headBobY);
+  ctx.rotate(headBobRot);
+  ctx.translate(-canvas.width / 2, -canvas.height / 2);
+
+  // 1. Draw Base Portrait
+  ctx.drawImage(avatarImg, 0, 0, canvas.width, canvas.height);
+
+  // 2. Lip-Sync Mouth Morphing
+  // 2. Lip-Sync Mouth Morphing (Clean Vector Cavity & Lips - No Cropped Image Pop)
+  const mx = mouthConfig.x;
+  const my = mouthConfig.y;
+  const mw = mouthConfig.w;
+  const mh = mouthConfig.h;
+
+  if (jawOpen > 0.06) {
+    const openH = mh * jawOpen * 0.95;
+    const openW = mw * (1 + vowelSpread * 0.22);
+
+    ctx.save();
+    
+    // Soft outer shadow for natural blending into the face
+    ctx.shadowColor = "rgba(0, 0, 0, 0.45)";
+    ctx.shadowBlur = 4;
+
+    // Mouth Cavity Path
+    ctx.beginPath();
+    ctx.ellipse(mx, my, openW * 0.5, openH * 0.55, 0, 0, Math.PI * 2);
+
+    // Deep inner mouth gradient
+    const mouthGrad = ctx.createRadialGradient(mx, my, 2, mx, my, openW * 0.55);
+    mouthGrad.addColorStop(0, "#2c0910");
+    mouthGrad.addColorStop(0.65, "#140407");
+    mouthGrad.addColorStop(1, "#080103");
+    ctx.fillStyle = mouthGrad;
+    ctx.fill();
+
+    // Clip inside mouth to draw teeth & tongue neatly
+    ctx.clip();
+    ctx.shadowBlur = 0;
+
+    // Upper Teeth Arc
+    ctx.fillStyle = "#f3f4f6";
+    ctx.beginPath();
+    ctx.ellipse(mx, my - openH * 0.3, openW * 0.42, openH * 0.28, 0, 0, Math.PI);
+    ctx.fill();
+
+    // Teeth separation outline
+    ctx.strokeStyle = "rgba(80, 80, 80, 0.25)";
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    // Tongue
+    const tongueY = my + openH * 0.15;
+    const tongueGrad = ctx.createRadialGradient(mx, tongueY, 1, mx, tongueY, openW * 0.35);
+    tongueGrad.addColorStop(0, "#c95370");
+    tongueGrad.addColorStop(1, "#7e2136");
+    ctx.fillStyle = tongueGrad;
+    ctx.beginPath();
+    ctx.ellipse(mx, tongueY + openH * 0.1, openW * 0.35, openH * 0.4, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Lower Teeth (belting high intensity notes)
+    if (jawOpen > 0.6) {
+      ctx.fillStyle = "#e5e7eb";
+      ctx.beginPath();
+      ctx.ellipse(mx, my + openH * 0.42, openW * 0.32, openH * 0.18, 0, Math.PI, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.restore();
+
+    // Soft Lip Contour Border
+    ctx.save();
+    ctx.beginPath();
+    ctx.ellipse(mx, my, openW * 0.51, openH * 0.56, 0, 0, Math.PI * 2);
+    ctx.strokeStyle = "rgba(35, 12, 18, 0.4)";
+    ctx.lineWidth = 2.5;
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  // 3. Optional Eye Blinking (Only if enabled)
+  if (document.getElementById("blinkToggle") && document.getElementById("blinkToggle").checked && blinkState > 0.05) {
+    const eyeY = my - 135;
+    const eyeW = 75;
+    const eyeH = 20 * blinkState;
+    
+    ctx.save();
+    ctx.fillStyle = "rgba(15, 15, 20, 0.85)";
+    ctx.beginPath();
+    ctx.ellipse(mx - 85, eyeY, eyeW * 0.5, eyeH, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.ellipse(mx + 85, eyeY, eyeW * 0.5, eyeH, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+
+  // 4. Holographic Circular Audio Visualizer around Avatar
+  if (isPlaying || isMicActive) {
+    drawHologramHUD(mx, my);
+  }
+
+  // 5. Calibration Crosshair (if enabled)
+  if (document.getElementById("showCrosshair").checked) {
+    drawCrosshair(mx, my, mw, mh);
+  }
+
+  ctx.restore();
+}
+
+// Sci-Fi Hologram Audio Rings
+function drawHologramHUD(cx, cy) {
+  ctx.save();
+  ctx.strokeStyle = "rgba(0, 240, 255, 0.25)";
+  ctx.lineWidth = 1.5;
+  ctx.setLineDash([6, 8]);
+
+  // Outer orbital circle
+  ctx.beginPath();
+  ctx.arc(cx, cy, 260 + jawOpen * 15, 0, Math.PI * 2);
+  ctx.stroke();
+
+  // Voice targeting brackets
+  ctx.setLineDash([]);
+  ctx.strokeStyle = "rgba(255, 0, 85, 0.6)";
+  const bSize = 25;
+  const offset = 90 + jawOpen * 20;
+
+  // Top Left bracket
+  ctx.strokeRect(cx - offset, cy - offset, bSize, 2);
+  ctx.strokeRect(cx - offset, cy - offset, 2, bSize);
+
+  // Top Right bracket
+  ctx.strokeRect(cx + offset - bSize, cy - offset, bSize, 2);
+  ctx.strokeRect(cx + offset, cy - offset, 2, bSize);
+
+  // Bottom Left bracket
+  ctx.strokeRect(cx - offset, cy + offset, bSize, 2);
+  ctx.strokeRect(cx - offset, cy + offset - bSize, 2, bSize);
+
+  // Bottom Right bracket
+  ctx.strokeRect(cx + offset - bSize, cy + offset, bSize, 2);
+  ctx.strokeRect(cx + offset, cy + offset - bSize, 2, bSize);
+
+  ctx.restore();
+}
+
+// Crosshair for fine tuning mouth position
+function drawCrosshair(x, y, w, h) {
+  ctx.save();
+  ctx.strokeStyle = "#ff0055";
+  ctx.lineWidth = 2;
+
+  // Ellipse bounding box
+  ctx.beginPath();
+  ctx.ellipse(x, y, w * 0.5, h * 0.5, 0, 0, Math.PI * 2);
+  ctx.stroke();
+
+  // Center cross lines
+  ctx.beginPath();
+  ctx.moveTo(x - 20, y);
+  ctx.lineTo(x + 20, y);
+  ctx.moveTo(x, y - 20);
+  ctx.lineTo(x, y + 20);
+  ctx.stroke();
+
+  ctx.fillStyle = "#ff0055";
+  ctx.font = "11px monospace";
+  ctx.fillText(`MOUTH CENTER (${x}, ${y})`, x - 55, y - h * 0.6);
+  ctx.restore();
+}
+
+// Click anywhere on canvas to set mouth position instantly
+canvas.addEventListener("click", (e) => {
+  const rect = canvas.getBoundingClientRect();
+  const scaleX = canvas.width / rect.width;
+  const scaleY = canvas.height / rect.height;
+  const clickX = Math.round((e.clientX - rect.left) * scaleX);
+  const clickY = Math.round((e.clientY - rect.top) * scaleY);
+  
+  mouthConfig.x = clickX;
+  mouthConfig.y = clickY;
+  document.getElementById("mouthX").value = clickX;
+  document.getElementById("lbl_mouthX").innerText = clickX;
+  document.getElementById("mouthY").value = clickY;
+  document.getElementById("lbl_mouthY").innerText = clickY;
+  renderAvatar();
+});
+</script>
+
+</body>
+</html>

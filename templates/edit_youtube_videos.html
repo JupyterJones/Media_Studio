@@ -1,0 +1,104 @@
+<!-- edit_youtube_videos.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit YouTube Videos</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            text-align: center;
+        }
+        textarea {
+            width: 80%;
+            height: 300px;
+            margin: 20px auto;
+            display: block;
+            font-family: monospace;
+            font-size: 14px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 10px;
+        }
+        .message {
+            margin-top: 10px;
+            font-size: 16px;
+            color: green;
+        }
+        .error {
+            color: red;
+        }
+        a {
+            text-decoration: none;
+            color: yellow;
+            font-weight: bold;
+            font-size: 26px;
+            
+        }
+    </style>
+</head>
+<body>
+    <h1>Edit YouTube Video JSON</h1>
+    <a href="/">Home</a>&nbsp;&nbsp; | &nbsp;&nbsp;<a href="/edit_youtube_video">Add YouTube Video</a>
+    <p>Edit the JSON data below and click "Save" to update the file.</p>
+    <textarea id="jsonEditor" placeholder="Loading JSON..."></textarea>
+    <button onclick="saveYouTubeVideos()">Save</button>
+    <p id="message" class="message"></p>
+    <script>
+        // Load JSON data from the server
+        function loadYouTubeVideos() {
+            fetch('/load_youtube_videos')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("jsonEditor").value = JSON.stringify(data, null, 4);
+                })
+                .catch(error => {
+                    const message = document.getElementById("message");
+                    message.textContent = "Failed to load JSON.";
+                    message.className = "message error";
+                    console.error("Error loading JSON:", error);
+                });
+        }
+
+        // Save JSON data to the server
+        function saveYouTubeVideos() {
+            const jsonData = document.getElementById("jsonEditor").value;
+            fetch('/save_youtube_videos', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ videos: jsonData })
+            })
+            .then(response => response.json())
+            .then(data => {
+                const message = document.getElementById("message");
+                if (data.error) {
+                    message.textContent = data.error;
+                    message.className = "message error";
+                } else {
+                    message.textContent = data.message;
+                    message.className = "message";
+                }
+            })
+            .catch(error => {
+                const message = document.getElementById("message");
+                message.textContent = "An error occurred while saving.";
+                message.className = "message error";
+                console.error("Error saving JSON:", error);
+            });
+        }
+
+        // Automatically load videos on page load
+        window.onload = loadYouTubeVideos;
+    </script>
+</body>
+</html>

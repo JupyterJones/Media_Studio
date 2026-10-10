@@ -1,0 +1,18 @@
+<!-- search_trends.html  -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Trending Searches</title>
+</head>
+<body>
+    <h1>Trending Searches in the USA</h1>
+    <ul>
+        {% for term, timestamp in trends %}
+            <li>{{ term }} ({{ timestamp }})</li>
+        {% endfor %}
+    </ul>
+    <a href="{{ url_for('update_trends') }}">Update Trends</a>
+</body>
+</html>

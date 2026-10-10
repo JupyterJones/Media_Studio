@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>🎬 Create 10-Part Video</title>
+    <style>
+        body {
+            background-color: #000;
+            color: limegreen;
+            font-family: 'Courier New', monospace;
+            text-align: center;
+            padding: 30px;
+        }
+        h1 {
+            color: limegreen;
+            font-size: 2.5vw;
+            margin-bottom: 20px;
+        }
+        form {
+            display: inline-block;
+            text-align: left;
+            background-color: #111;
+            border: 2px solid limegreen;
+            border-radius: 15px;
+            padding: 20px;
+            width: 70%;
+            margin-top: 20px;
+        }
+        label {
+            color: limegreen;
+            font-size: 1.3vw;
+        }
+        select {
+            width: 100%;
+            padding: 6px;
+            margin-bottom: 10px;
+            border-radius: 6px;
+            background-color: #000;
+            color: limegreen;
+            border: 1px solid limegreen;
+            font-size: 1vw;
+        }
+        input[type="submit"] {
+            background-color: limegreen;
+            color: black;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 1.2vw;
+            cursor: pointer;
+            display: block;
+            margin: 20px auto;
+        }
+        input[type="submit"]:hover {
+            background-color: #7CFC00;
+        }
+        .pair-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px 20px;
+            align-items: center;
+            border-bottom: 1px solid #0f0;
+            padding: 8px 0;
+        }
+        .pair-container:last-child {
+            border-bottom: none;
+        }
+        .number {
+            font-weight: bold;
+            color: #00ff7f;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🎬 Build 10-Part Video Sequence</h1>
+    <form action="/make10" method="POST">
+        {% for i in range(10) %}
+        <div class="pair-container">
+            <div>
+                <span class="number">#{{ i+1 }}</span>
+                <label for="jpg{{ i }}">Select Image:</label>
+                <select name="jpg{{ i }}" id="jpg{{ i }}">
+                    {% for jpg in jpgs %}
+                    <option value="{{ jpg }}">{{ jpg }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div>
+                <label for="mp3{{ i }}">Select MP3:</label>
+                <select name="mp3{{ i }}" id="mp3{{ i }}">
+                    {% for mp3 in mp3s %}
+                    <option value="{{ mp3 }}">{{ mp3 }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        {% endfor %}
+        <input type="submit" value="Generate Video 🎞️">
+    </form>
+</body>
+</html>

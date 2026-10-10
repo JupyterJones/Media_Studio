@@ -1,0 +1,1128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>✨ SLERP Live Generation Monitor & Flipbook</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0b0f19;
+            --card-bg: #111827;
+            --panel-bg: #162032;
+            --border: #1f293d;
+            --accent: #6366f1;
+            --accent-hover: #4f46e5;
+            --primary: #38bdf8;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --text-main: #f3f4f6;
+            --text-sub: #9ca3af;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            background: rgba(17, 24, 39, 0.95);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            padding: 0.75rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand h1 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, #a5b4fc, #38bdf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 9999px;
+            font-size: 0.72rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .status-running {
+            background: rgba(16, 185, 129, 0.15);
+            color: #34d399;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .pulse-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background-color: #34d399;
+            box-shadow: 0 0 8px #34d399;
+            animation: pulse 1.8s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.3; transform: scale(0.85); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        .nav-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s;
+            border: 1px solid var(--border);
+            background: var(--panel-bg);
+            color: var(--text-main);
+        }
+
+        .btn:hover {
+            background: var(--card-bg);
+            border-color: var(--primary);
+            color: #fff;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-hover);
+        }
+
+        main {
+            flex: 1;
+            padding: 1.25rem 1.5rem;
+            display: grid;
+            grid-template-columns: 480px 1fr;
+            gap: 1.5rem;
+            max-width: 1700px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        @media (max-width: 1100px) {
+            main {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .preview-pane {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 1.2rem;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+        }
+
+        .preview-viewport {
+            background: #000;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            aspect-ratio: 512 / 768;
+            max-height: 640px;
+        }
+
+        .preview-viewport img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            display: block;
+        }
+
+        .viewport-overlay {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(6px);
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-family: 'JetBrains Mono', monospace;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .scrubber-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .scrubber-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .scrubber-slider {
+            flex: 1;
+            accent-color: var(--primary);
+            cursor: pointer;
+        }
+
+        .gallery-pane {
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        .progress-bar-container {
+            background: var(--panel-bg);
+            border-radius: 9999px;
+            height: 10px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            margin: 6px 0;
+        }
+
+        .progress-bar-fill {
+            background: linear-gradient(90deg, #6366f1, #38bdf8);
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 10px;
+            margin-top: 8px;
+        }
+
+        .stat-item {
+            background: var(--panel-bg);
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+        }
+
+        .stat-label {
+            font-size: 0.7rem;
+            color: var(--text-sub);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .stat-value {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-top: 2px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .prompt-preview-box {
+            background: rgba(0, 0, 0, 0.35);
+            border-left: 3px solid var(--primary);
+            padding: 10px 14px;
+            border-radius: 0 6px 6px 0;
+            font-size: 0.8rem;
+            line-height: 1.4;
+            color: #cbd5e1;
+        }
+
+        .frames-gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 10px;
+            max-height: 600px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+
+        .frame-thumb {
+            background: var(--panel-bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            overflow: hidden;
+            cursor: pointer;
+            position: relative;
+            transition: transform 0.15s ease, border-color 0.15s ease;
+        }
+
+        .frame-thumb:hover {
+            transform: translateY(-2px);
+            border-color: var(--primary);
+        }
+
+        .frame-thumb.active {
+            border: 2px solid #38bdf8;
+            box-shadow: 0 0 10px rgba(56, 189, 248, 0.4);
+        }
+
+        .frame-thumb img {
+            width: 100%;
+            aspect-ratio: 512 / 768;
+            object-fit: cover;
+            display: block;
+        }
+
+        .frame-thumb-label {
+            font-size: 0.65rem;
+            padding: 4px;
+            text-align: center;
+            font-family: 'JetBrains Mono', monospace;
+            background: rgba(0, 0, 0, 0.7);
+            color: #cbd5e1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .terminal-log {
+            background: #04060c;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 10px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.72rem;
+            color: #a5b4fc;
+            max-height: 130px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="brand">
+            <span style="font-size: 1.5rem;" id="headerIcon">🎬</span>
+            <div>
+                <h1 id="headerTitle">Media Studio Flipbook & Sequential Monitor</h1>
+                <div style="font-size: 0.72rem; color: var(--text-sub);" id="headerSub">Universal real-time image sequence player (CFG, SLERP, Seed, Models & Novel Images)</div>
+            </div>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+            <!-- Source Selector -->
+            <div style="display: flex; align-items: center; gap: 6px;">
+                <label style="font-size: 0.72rem; color: var(--text-sub); font-weight: 700;">SOURCE:</label>
+                <select id="sourceSelect" class="btn" style="padding: 5px 10px; color: #38bdf8; font-weight: 700; font-family: inherit;" onchange="onSourceChange(this.value)">
+                    <option value="auto">⚡ Auto-Detect</option>
+                    <option value="cfg">🎯 CFG Sweep (cfg.json)</option>
+                    <option value="slerp">🌀 SLERP Morph (slerp.json)</option>
+                    <option value="seed">🎲 Seed Explorer (seed.json)</option>
+                    <option value="models">🏛️ All Models Benchmark (models.json)</option>
+                    <option value="all">📁 All Novel Images</option>
+                </select>
+            </div>
+
+            <!-- Optional Filter -->
+            <input type="text" id="filterInput" placeholder="Filter seed / name..." class="btn" style="width: 145px; padding: 5px 8px; font-family: 'JetBrains Mono', monospace; font-size: 0.72rem;" oninput="onFilterInput(this.value)">
+
+            <div class="status-pill status-running" id="statusPill">
+                <span class="pulse-dot" id="pulseDot"></span>
+                <span id="statusText">MONITORING</span>
+            </div>
+
+            <div class="nav-actions">
+                <a href="/stable_diffusion" class="btn">⚡ Stable Diffusion</a>
+                <a href="/" class="btn">🏠 Home</a>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- LEFT: Preview & Flipbook Animation Scrubber -->
+        <section class="preview-pane">
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <span style="font-size: 0.85rem; font-weight: 700; color: #38bdf8;" id="viewportTitle">🎬 HIGH-RES FRAME VIEW</span>
+                    <span id="frameMeta" style="font-size: 0.75rem; color: var(--text-sub); font-family: 'JetBrains Mono', monospace;">Frame 0 / 0</span>
+                </div>
+
+                <div class="preview-viewport">
+                    <div class="viewport-overlay" id="overlayIndex">Loading...</div>
+                    <img id="mainPreviewImg" src="" alt="Frame Preview">
+                </div>
+
+                <div class="scrubber-panel" style="margin-top: 12px;">
+                    <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-sub);">
+                        <span>Scrub Sequence / Flipbook:</span>
+                        <span id="scrubVal" style="font-family: 'JetBrains Mono', monospace;">0 / 0</span>
+                    </div>
+                    <div class="scrubber-controls">
+                        <button type="button" class="btn btn-primary" id="playBtn" onclick="togglePlay()">▶ Play Loop</button>
+                        <button type="button" class="btn" onclick="stepFrame(-1)" title="Previous Frame">⏮</button>
+                        <input type="range" id="frameScrubber" min="0" max="0" value="0" class="scrubber-slider" oninput="onScrub(this.value)">
+                        <button type="button" class="btn" onclick="stepFrame(1)" title="Next Frame">⏭</button>
+                        <button type="button" class="btn" onclick="jumpToLatest()">⏩ Latest</button>
+                    </div>
+
+                    <!-- Speed & Loop Mode Controls -->
+                    <div style="display: flex; align-items: center; justify-content: space-between; background: var(--panel-bg); padding: 6px 12px; border-radius: 6px; border: 1px solid var(--border); font-size: 0.75rem; margin-top: 4px;">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <span style="color: var(--text-sub);">Speed:</span>
+                            <input type="range" id="fpsSlider" min="1" max="30" value="10" style="width: 90px; accent-color: var(--primary);" oninput="setFps(this.value)">
+                            <span id="fpsVal" style="font-family: 'JetBrains Mono', monospace; color: #38bdf8; font-weight: 700;">10 FPS</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 6px;">
+                            <button type="button" class="btn" id="loopModeBtn" onclick="toggleLoopMode()" style="padding: 3px 8px; font-size: 0.72rem;">🔁 Normal Loop</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 8px; margin-top: 12px;">
+                    <a id="downloadBtn" href="#" download class="btn" style="flex: 1; justify-content: center;">⬇️ Download Current Image</a>
+                    <a id="fullResLink" href="#" target="_blank" class="btn" style="flex: 1; justify-content: center;">🔍 View Full Res</a>
+                </div>
+            </div>
+
+            <!-- Terminal Log -->
+            <div class="card" style="padding: 1rem;">
+                <div style="font-size: 0.75rem; font-weight: 700; color: var(--text-sub); margin-bottom: 6px;">LIVE SYNTHESIS STDOUT CONSOLE</div>
+                <div id="logConsole" class="terminal-log">Scanning for active synthesis streams...</div>
+            </div>
+        </section>
+
+        <!-- RIGHT: Live Progression & Natural Sorted Gallery -->
+        <section class="gallery-pane">
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                    <span style="font-size: 0.95rem; font-weight: 700; color: #fff;" id="progressTitle">Active Sequence Progress</span>
+                    <span id="progressPct" style="font-size: 1.1rem; font-weight: 800; color: #38bdf8; font-family: 'JetBrains Mono', monospace;">0%</span>
+                </div>
+
+                <div class="progress-bar-container">
+                    <div id="progressFill" class="progress-bar-fill"></div>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-label">Mode</div>
+                        <div class="stat-value" id="statMode" style="font-size: 0.85rem; color: #a5b4fc;">CFG Sweep</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Seed</div>
+                        <div class="stat-value" id="statSeed">---</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Frames</div>
+                        <div class="stat-value" id="statCompleted">0</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label" id="statParamLabel">Current CFG</div>
+                        <div class="stat-value" id="statParamVal">---</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Model</div>
+                        <div class="stat-value" id="statModel" style="font-size: 0.8rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">---</div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 14px; display: flex; flex-direction: column; gap: 8px;">
+                    <div>
+                        <span style="font-size: 0.72rem; font-weight: 700; color: #818cf8; text-transform: uppercase;" id="prompt1Label">Prompt:</span>
+                        <div class="prompt-preview-box" id="prompt1Box">Loading prompt...</div>
+                    </div>
+                    <div id="prompt2Group" style="display: none;">
+                        <span style="font-size: 0.72rem; font-weight: 700; color: #38bdf8; text-transform: uppercase;">Morph Target (Prompt B):</span>
+                        <div class="prompt-preview-box" id="prompt2Box" style="border-left-color: #38bdf8;">Loading prompt...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sequential Frames Gallery -->
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
+                    <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                        <div>
+                            <span style="font-size: 0.88rem; font-weight: 700; color: #fff;">✨ SEQUENTIAL FRAMES</span>
+                            <div style="font-size: 0.72rem; color: var(--text-sub);">Click any thumbnail to view or scrub.</div>
+                        </div>
+                        <div style="display: inline-flex; gap: 4px; background: rgba(0, 0, 0, 0.3); padding: 2px 4px; border-radius: 6px; border: 1px solid var(--border);">
+                            <button type="button" id="gridSortNewestBtn" class="btn" onclick="setGridSortOrder('newest')" style="padding: 2px 7px; font-size: 0.7rem; background: var(--accent); color: #fff;">🔽 Newest First</button>
+                            <button type="button" id="gridSortAscBtn" class="btn" onclick="setGridSortOrder('asc')" style="padding: 2px 7px; font-size: 0.7rem;">🔼 Sequence 0..N</button>
+                        </div>
+                    </div>
+                    <span id="galleryCount" style="font-size: 0.78rem; font-family: 'JetBrains Mono', monospace; color: #38bdf8;">0 frames</span>
+                </div>
+
+                <div id="framesGrid" class="frames-gallery-grid">
+                    <div style="grid-column: 1 / -1; text-align: center; padding: 2rem; color: var(--text-sub);">Scanning disk for generated frames...</div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        let rawFrames = [];
+        let allFrames = [];
+        let currentIndex = 0;
+        let isPlaying = false;
+        let playTimer = null;
+        let pollInterval = null;
+        let currentSource = 'auto'; // 'auto', 'cfg', 'slerp', 'seed', 'models', 'all'
+        let detectedMode = 'cfg';
+        let filterKeyword = '';
+        let fps = 10;
+        let isPingPong = false;
+        let pingPongDirection = 1;
+        let lastKnownCount = -1;
+
+        async function fetchActiveBatchLog() {
+            try {
+                let resp = await fetch("/api/active_batch");
+                if (resp.ok) {
+                    let d = await resp.json();
+                    if ((d.active || d.running) && d.task_id) {
+                        let bResp = await fetch(`/batch_status/${d.task_id}`);
+                        if (bResp.ok) {
+                            let bData = await bResp.json();
+                            if (bData.recent_log) {
+                                let logEl = document.getElementById("logConsole");
+                                logEl.innerText = bData.recent_log;
+                                logEl.scrollTop = logEl.scrollHeight;
+                            }
+                            let pill = document.getElementById("statusPill");
+                            if (bData.running) {
+                                pill.className = "status-pill status-running";
+                                document.getElementById("pulseDot").style.display = "inline-block";
+                                document.getElementById("statusText").innerText = "ACTIVE SYNTHESIS";
+                            } else {
+                                pill.className = "status-pill status-idle";
+                                document.getElementById("pulseDot").style.display = "none";
+                                document.getElementById("statusText").innerText = bData.status === "finished" ? "COMPLETED" : "STOPPED";
+                            }
+                            return;
+                        }
+                    }
+                }
+            } catch (e) {}
+
+            let pill = document.getElementById("statusPill");
+            pill.className = "status-pill status-idle";
+            document.getElementById("pulseDot").style.display = "none";
+            document.getElementById("statusText").innerText = "READY";
+        }
+
+        async function fetchStatus() {
+            fetchActiveBatchLog();
+
+            if (currentSource === 'auto') {
+                await autoDetectSource();
+            } else if (currentSource === 'cfg') {
+                await loadCfgSweep();
+            } else if (currentSource === 'slerp') {
+                await loadSlerpMorph();
+            } else if (currentSource === 'seed') {
+                await loadSeedExplorer();
+            } else if (currentSource === 'models') {
+                await loadAllModelsBenchmark();
+            } else if (currentSource === 'all') {
+                await loadAllNovelImages();
+            }
+        }
+
+        async function autoDetectSource() {
+            let activeTool = null;
+            try {
+                let resp = await fetch("/api/active_batch");
+                if (resp.ok) {
+                    let d = await resp.json();
+                    if ((d.active || d.running) && d.tool) {
+                        activeTool = d.tool.toLowerCase();
+                    }
+                }
+            } catch (e) {}
+
+            if (activeTool) {
+                if (activeTool.includes("seed")) {
+                    await loadSeedExplorer();
+                    return;
+                }
+                if (activeTool.includes("allmodels") || activeTool.includes("model")) {
+                    await loadAllModelsBenchmark();
+                    return;
+                }
+                if (activeTool.includes("cfg")) {
+                    await loadCfgSweep();
+                    return;
+                }
+                if (activeTool.includes("slerp")) {
+                    await loadSlerpMorph();
+                    return;
+                }
+            }
+
+            let cfgData = null;
+            let slerpData = null;
+            let seedData = null;
+            let modelsData = null;
+
+            try {
+                let r = await fetch("/static/novel_images/cfg.json?t=" + Date.now());
+                if (r.ok) cfgData = await r.json();
+            } catch (e) {}
+
+            try {
+                let r2 = await fetch("/static/novel_images/slerp.json?t=" + Date.now());
+                if (r2.ok) slerpData = await r2.json();
+            } catch (e) {}
+
+            try {
+                let r3 = await fetch("/static/novel_images/seed.json?t=" + Date.now());
+                if (r3.ok) seedData = await r3.json();
+            } catch (e) {}
+
+            try {
+                let r4 = await fetch("/static/novel_images/models.json?t=" + Date.now());
+                if (r4.ok) modelsData = await r4.json();
+            } catch (e) {}
+
+            if (cfgData && cfgData.runs && cfgData.runs.length > 0) {
+                detectedMode = 'cfg';
+                applyCfgData(cfgData);
+            } else if (slerpData && slerpData.frames && slerpData.frames.length > 0) {
+                detectedMode = 'slerp';
+                applySlerpData(slerpData);
+            } else if (modelsData && modelsData.runs && modelsData.runs.length > 0) {
+                detectedMode = 'models';
+                applyModelsData(modelsData);
+            } else if (seedData && seedData.runs && seedData.runs.length > 0) {
+                detectedMode = 'seed';
+                applySeedData(seedData);
+            } else {
+                await loadAllNovelImages();
+            }
+        }
+
+        async function loadCfgSweep() {
+            detectedMode = 'cfg';
+            try {
+                let r = await fetch("/static/novel_images/cfg.json?t=" + Date.now());
+                if (r.ok) {
+                    let data = await r.json();
+                    applyCfgData(data);
+                    return;
+                }
+            } catch (e) {}
+            await loadAllNovelImages();
+        }
+
+        function applyCfgData(data) {
+            document.getElementById("headerIcon").innerText = "🎯";
+            document.getElementById("headerTitle").innerText = "CFG Sweep Flipbook & Live Monitor";
+            document.getElementById("statMode").innerText = "CFG Sweep";
+            document.getElementById("statParamLabel").innerText = "Current CFG";
+            document.getElementById("prompt2Group").style.display = "none";
+            document.getElementById("prompt1Label").innerText = "Prompt:";
+
+            document.getElementById("statSeed").innerText = data.seed || "---";
+            document.getElementById("statModel").innerText = (data.model || "").split('.')[0] || "---";
+            document.getElementById("prompt1Box").innerText = data.prompt || "No prompt metadata found";
+
+            let runs = data.runs || [];
+            let frames = runs.map((r, idx) => {
+                let cfgVal = r.guidance_scale != null ? Number(r.guidance_scale).toFixed(3) : "---";
+                return {
+                    index: idx,
+                    label: `CFG: ${cfgVal}`,
+                    meta: `CFG ${cfgVal}`,
+                    filename: r.file,
+                    path: `/static/novel_images/${r.file}`
+                };
+            });
+
+            let lastCfg = data.last_completed_cfg != null ? Number(data.last_completed_cfg).toFixed(3) : "---";
+            document.getElementById("statParamVal").innerText = lastCfg;
+            document.getElementById("statCompleted").innerText = `${frames.length} frames`;
+            document.getElementById("progressPct").innerText = `${frames.length} frames`;
+            document.getElementById("progressFill").style.width = "100%";
+
+            updateFrames(frames);
+        }
+
+        async function loadSlerpMorph() {
+            detectedMode = 'slerp';
+            try {
+                let r = await fetch("/static/novel_images/slerp.json?t=" + Date.now());
+                if (r.ok) {
+                    let data = await r.json();
+                    applySlerpData(data);
+                    return;
+                }
+            } catch (e) {}
+            await loadAllNovelImages();
+        }
+
+        function applySlerpData(data) {
+            document.getElementById("headerIcon").innerText = "🌀";
+            document.getElementById("headerTitle").innerText = "SLERP Morph Flipbook & Live Monitor";
+            document.getElementById("statMode").innerText = "SLERP Morph";
+            document.getElementById("statParamLabel").innerText = "Current t";
+            document.getElementById("prompt1Label").innerText = "Morph Origin (Prompt A):";
+            document.getElementById("prompt2Group").style.display = "block";
+
+            document.getElementById("statSeed").innerText = data.seed || "---";
+            document.getElementById("statModel").innerText = (data.model || "").split('.')[0] || "---";
+            document.getElementById("prompt1Box").innerText = data.prompt1 || "---";
+            document.getElementById("prompt2Box").innerText = data.prompt2 || "---";
+
+            let framesData = (data.frames || []).sort((a, b) => (a.index || 0) - (b.index || 0));
+            let frames = framesData.map((f, idx) => {
+                let tVal = f.t != null ? Number(f.t).toFixed(3) : "0.000";
+                return {
+                    index: f.index != null ? f.index : idx,
+                    label: `t = ${tVal}`,
+                    meta: `t = ${tVal}`,
+                    filename: f.file,
+                    path: `/static/novel_images/${f.file}`
+                };
+            });
+
+            let total = data.total_frames || Math.max(1, frames.length);
+            let pct = Math.round((frames.length / total) * 100);
+            document.getElementById("statCompleted").innerText = `${frames.length} / ${total}`;
+            document.getElementById("progressPct").innerText = `${pct}%`;
+            document.getElementById("progressFill").style.width = `${pct}%`;
+            document.getElementById("statParamVal").innerText = data.last_completed_t != null ? Number(data.last_completed_t).toFixed(3) : "---";
+
+            updateFrames(frames);
+        }
+
+        async function loadSeedExplorer() {
+            detectedMode = 'seed';
+            try {
+                let r = await fetch("/static/novel_images/seed.json?t=" + Date.now());
+                if (r.ok) {
+                    let data = await r.json();
+                    if (data && data.runs && data.runs.length > 0) {
+                        applySeedData(data);
+                        return;
+                    }
+                }
+            } catch (e) {}
+
+            document.getElementById("headerIcon").innerText = "🎲";
+            document.getElementById("headerTitle").innerText = "Seed Explorer Flipbook & Live Monitor";
+            document.getElementById("statMode").innerText = "Seed Explorer";
+            document.getElementById("statParamLabel").innerText = "Current Seed";
+            document.getElementById("statParamVal").innerText = "---";
+            document.getElementById("statSeed").innerText = "---";
+            document.getElementById("statModel").innerText = "---";
+            document.getElementById("statCompleted").innerText = "0 frames";
+            document.getElementById("progressPct").innerText = "0%";
+            document.getElementById("progressFill").style.width = "0%";
+            document.getElementById("prompt2Group").style.display = "none";
+            document.getElementById("prompt1Label").innerText = "Seed Prompt:";
+            document.getElementById("prompt1Box").innerText = "No runs recorded in static/novel_images/seed.json yet. Launch Seed Explorer to generate variations.";
+            updateFrames([]);
+        }
+
+        function applySeedData(data) {
+            document.getElementById("headerIcon").innerText = "🎲";
+            document.getElementById("headerTitle").innerText = "Seed Explorer Flipbook & Live Monitor";
+            document.getElementById("statMode").innerText = "Seed Explorer";
+            document.getElementById("statParamLabel").innerText = "Current Seed";
+            document.getElementById("prompt2Group").style.display = "none";
+            document.getElementById("prompt1Label").innerText = "Seed Prompt:";
+
+            let baseSeed = data.base_seed != null ? data.base_seed : (data.runs && data.runs[0] ? data.runs[0].seed : "---");
+            let modelName = (data.model || (data.runs && data.runs[0] ? data.runs[0].model : "") || "").replace(".safetensors", "");
+            document.getElementById("statSeed").innerText = baseSeed;
+            document.getElementById("statModel").innerText = modelName || "---";
+            document.getElementById("prompt1Box").innerText = data.prompt || (data.runs && data.runs[0] ? data.runs[0].prompt : "No prompt metadata found");
+
+            let runs = (data.runs || []).slice().sort((a, b) => (a.seed || 0) - (b.seed || 0));
+            let frames = runs.map((r, idx) => {
+                let seedVal = r.seed != null ? r.seed : idx;
+                return {
+                    index: idx,
+                    label: `Seed ${seedVal}`,
+                    meta: `Seed ${seedVal}`,
+                    seed: seedVal,
+                    model: r.model || data.model || "",
+                    filename: r.file,
+                    path: `/static/novel_images/${r.file}`
+                };
+            });
+
+            let total = data.num_seeds || Math.max(1, frames.length);
+            let pct = Math.round((frames.length / total) * 100);
+            let lastSeed = runs.length > 0 ? (runs[runs.length - 1].seed != null ? runs[runs.length - 1].seed : "---") : "---";
+
+            document.getElementById("statParamVal").innerText = lastSeed;
+            document.getElementById("statCompleted").innerText = `${frames.length} / ${total}`;
+            document.getElementById("progressPct").innerText = `${pct}%`;
+            document.getElementById("progressFill").style.width = `${pct}%`;
+
+            updateFrames(frames);
+        }
+
+        async function loadAllModelsBenchmark() {
+            detectedMode = 'models';
+            try {
+                let r = await fetch("/static/novel_images/models.json?t=" + Date.now());
+                if (r.ok) {
+                    let data = await r.json();
+                    if (data && data.runs && data.runs.length > 0) {
+                        applyModelsData(data);
+                        return;
+                    }
+                }
+            } catch (e) {}
+
+            document.getElementById("headerIcon").innerText = "🏛️";
+            document.getElementById("headerTitle").innerText = "All Models Benchmark Flipbook & Live Monitor";
+            document.getElementById("statMode").innerText = "All Models Benchmark";
+            document.getElementById("statParamLabel").innerText = "Active Model";
+            document.getElementById("statParamVal").innerText = "---";
+            document.getElementById("statSeed").innerText = "---";
+            document.getElementById("statModel").innerText = "---";
+            document.getElementById("statCompleted").innerText = "0 models";
+            document.getElementById("progressPct").innerText = "0 models";
+            document.getElementById("progressFill").style.width = "0%";
+            document.getElementById("prompt2Group").style.display = "none";
+            document.getElementById("prompt1Label").innerText = "Benchmark Prompt:";
+            document.getElementById("prompt1Box").innerText = "No runs recorded in static/novel_images/models.json yet. Launch All Models Benchmark to generate images.";
+            updateFrames([]);
+        }
+
+        function applyModelsData(data) {
+            document.getElementById("headerIcon").innerText = "🏛️";
+            document.getElementById("headerTitle").innerText = "All Models Benchmark Flipbook & Live Monitor";
+            document.getElementById("statMode").innerText = "All Models Benchmark";
+            document.getElementById("statParamLabel").innerText = "Active Model";
+            document.getElementById("prompt2Group").style.display = "none";
+            document.getElementById("prompt1Label").innerText = "Benchmark Prompt:";
+
+            let seedVal = data.seed != null ? data.seed : (data.runs && data.runs[0] ? data.runs[0].seed : "---");
+            document.getElementById("statSeed").innerText = seedVal;
+            document.getElementById("prompt1Box").innerText = data.prompt || (data.runs && data.runs[0] ? data.runs[0].prompt : "No prompt metadata found");
+
+            let runs = (data.runs || []).slice().sort((a, b) => (a.image_id || 0) - (b.image_id || 0));
+            let frames = runs.map((r, idx) => {
+                let modelStem = (r.model || "").replace(".safetensors", "");
+                return {
+                    index: idx,
+                    label: modelStem || `Model #${idx + 1}`,
+                    meta: modelStem || `Model #${idx + 1}`,
+                    model: r.model || "",
+                    seed: r.seed != null ? r.seed : seedVal,
+                    filename: r.file,
+                    path: `/static/novel_images/${r.file}`
+                };
+            });
+
+            let lastModel = runs.length > 0 ? (runs[runs.length - 1].model || "").replace(".safetensors", "") : "---";
+            document.getElementById("statParamVal").innerText = lastModel;
+            document.getElementById("statModel").innerText = `${frames.length} Models`;
+            document.getElementById("statCompleted").innerText = `${frames.length} models`;
+            document.getElementById("progressPct").innerText = `${frames.length} models`;
+            document.getElementById("progressFill").style.width = "100%";
+
+            updateFrames(frames);
+        }
+
+        async function loadAllNovelImages() {
+            detectedMode = 'all';
+            document.getElementById("headerIcon").innerText = "📁";
+            document.getElementById("headerTitle").innerText = "Novel Images Flipbook Player";
+            document.getElementById("statMode").innerText = "All Novel Images";
+            document.getElementById("statParamLabel").innerText = "File Filter";
+            document.getElementById("statParamVal").innerText = filterKeyword || "All";
+            document.getElementById("prompt2Group").style.display = "none";
+            document.getElementById("prompt1Label").innerText = "Directory:";
+            document.getElementById("prompt1Box").innerText = "static/novel_images/ (Sequential natural sort)";
+
+            try {
+                let r = await fetch("/api/novel_images?prefix=" + encodeURIComponent(filterKeyword) + "&t=" + Date.now());
+                if (r.ok) {
+                    let d = await r.json();
+                    let frames = (d.images || []).map((img, idx) => ({
+                        index: idx,
+                        label: img.filename,
+                        meta: img.filename,
+                        filename: img.filename,
+                        path: img.path
+                    }));
+                    document.getElementById("statCompleted").innerText = `${frames.length} images`;
+                    document.getElementById("progressPct").innerText = `${frames.length} files`;
+                    document.getElementById("progressFill").style.width = "100%";
+                    updateFrames(frames);
+                    return;
+                }
+            } catch (e) {}
+
+            try {
+                let cr = await fetch("/static/novel_images/cfg.json?t=" + Date.now());
+                if (cr.ok) {
+                    let cd = await cr.json();
+                    applyCfgData(cd);
+                }
+            } catch (e) {}
+        }
+
+        function updateFrames(frames) {
+            rawFrames = frames;
+            applyFilter();
+        }
+
+        function applyFilter() {
+            if (!filterKeyword) {
+                allFrames = rawFrames;
+            } else {
+                let kw = filterKeyword.toLowerCase();
+                allFrames = rawFrames.filter(f => f.filename.toLowerCase().includes(kw) || f.label.toLowerCase().includes(kw));
+            }
+
+            if (allFrames.length === 0) {
+                document.getElementById("framesGrid").innerHTML = `<div style="grid-column: 1 / -1; text-align: center; padding: 2rem; color: var(--text-sub);">No matching frames found.</div>`;
+                document.getElementById("galleryCount").innerText = "0 frames";
+                return;
+            }
+
+            let countChanged = (allFrames.length !== lastKnownCount);
+            let scrubber = document.getElementById("frameScrubber");
+            scrubber.max = allFrames.length - 1;
+            document.getElementById("galleryCount").innerText = `${allFrames.length} frames`;
+
+            if (countChanged || lastKnownCount === -1) {
+                renderGallery();
+                if (!isPlaying && (currentIndex >= allFrames.length || lastKnownCount === -1)) {
+                    showFrame(allFrames.length - 1);
+                }
+                lastKnownCount = allFrames.length;
+            }
+        }
+
+        let gridSortOrder = 'newest';
+
+        function setGridSortOrder(order) {
+            gridSortOrder = order;
+            let bNew = document.getElementById("gridSortNewestBtn");
+            let bAsc = document.getElementById("gridSortAscBtn");
+            if (bNew && bAsc) {
+                if (order === 'newest') {
+                    bNew.style.background = "var(--accent)";
+                    bNew.style.color = "#fff";
+                    bAsc.style.background = "";
+                    bAsc.style.color = "";
+                } else {
+                    bAsc.style.background = "var(--accent)";
+                    bAsc.style.color = "#fff";
+                    bNew.style.background = "";
+                    bNew.style.color = "";
+                }
+            }
+            renderGallery();
+        }
+
+        function renderGallery() {
+            let grid = document.getElementById("framesGrid");
+            let html = "";
+            let displayList = allFrames.map((f, i) => ({ frame: f, originalIndex: i }));
+            if (gridSortOrder === 'newest') {
+                displayList.reverse();
+            }
+            displayList.forEach(item => {
+                let frame = item.frame;
+                let idx = item.originalIndex;
+                let isActive = (idx === currentIndex) ? " active" : "";
+                html += `
+                <div class="frame-thumb${isActive}" id="thumb_${idx}" onclick="selectFrame(${idx})" title="${frame.filename} (${frame.label})">
+                    <img src="${frame.path}" loading="lazy" alt="${frame.filename}">
+                    <div class="frame-thumb-label">#${idx + 1} • ${frame.label}</div>
+                </div>
+                `;
+            });
+            grid.innerHTML = html;
+        }
+
+        function selectFrame(idx) {
+            if (idx < 0 || idx >= allFrames.length) return;
+            if (isPlaying) togglePlay();
+            showFrame(idx);
+        }
+
+        function showFrame(idx) {
+            if (idx < 0 || idx >= allFrames.length) return;
+            currentIndex = idx;
+            let frame = allFrames[idx];
+
+            let img = document.getElementById("mainPreviewImg");
+            img.src = frame.path;
+
+            document.getElementById("frameMeta").innerText = `Frame ${idx + 1} / ${allFrames.length} (${frame.filename})`;
+            document.getElementById("overlayIndex").innerText = `#${idx + 1} • ${frame.label}`;
+            document.getElementById("scrubVal").innerText = `${idx + 1} / ${allFrames.length}`;
+            document.getElementById("frameScrubber").value = idx;
+
+            document.getElementById("downloadBtn").href = frame.path;
+            document.getElementById("downloadBtn").setAttribute("download", frame.filename);
+            document.getElementById("fullResLink").href = frame.path;
+
+            // Dynamically update parameter stats when scrubbing
+            if (detectedMode === 'seed' && frame.seed != null) {
+                document.getElementById("statParamVal").innerText = frame.seed;
+            } else if (detectedMode === 'models' && frame.model) {
+                let mStem = frame.model.replace(".safetensors", "");
+                document.getElementById("statParamVal").innerText = mStem;
+                document.getElementById("statModel").innerText = mStem;
+            } else if (detectedMode === 'cfg' && frame.meta) {
+                document.getElementById("statParamVal").innerText = frame.meta.replace("CFG ", "");
+            } else if (detectedMode === 'slerp' && frame.meta) {
+                document.getElementById("statParamVal").innerText = frame.meta.replace("t = ", "");
+            }
+
+            document.querySelectorAll(".frame-thumb").forEach(el => el.classList.remove("active"));
+            let active = document.getElementById(`thumb_${idx}`);
+            if (active) active.classList.add("active");
+        }
+
+        function stepFrame(delta) {
+            if (allFrames.length === 0) return;
+            if (isPlaying) togglePlay();
+            let next = (currentIndex + delta + allFrames.length) % allFrames.length;
+            showFrame(next);
+        }
+
+        function onScrub(val) {
+            let idx = parseInt(val);
+            if (isPlaying) togglePlay();
+            showFrame(idx);
+        }
+
+        function jumpToLatest() {
+            if (allFrames.length > 0) {
+                if (isPlaying) togglePlay();
+                showFrame(allFrames.length - 1);
+            }
+        }
+
+        function setFps(newFps) {
+            fps = Math.max(1, Math.min(60, parseInt(newFps) || 10));
+            document.getElementById("fpsVal").innerText = `${fps} FPS`;
+            if (isPlaying) {
+                restartPlayTimer();
+            }
+        }
+
+        function toggleLoopMode() {
+            isPingPong = !isPingPong;
+            let btn = document.getElementById("loopModeBtn");
+            if (isPingPong) {
+                btn.innerText = "🏓 Ping-Pong";
+                btn.style.color = "#38bdf8";
+                btn.style.borderColor = "#0284c7";
+            } else {
+                btn.innerText = "🔁 Normal Loop";
+                btn.style.color = "";
+                btn.style.borderColor = "";
+            }
+        }
+
+        function togglePlay() {
+            let btn = document.getElementById("playBtn");
+            if (isPlaying) {
+                isPlaying = false;
+                clearInterval(playTimer);
+                btn.innerText = "▶ Play Loop";
+                btn.classList.add("btn-primary");
+            } else {
+                if (allFrames.length < 2) return;
+                isPlaying = true;
+                btn.innerText = "⏸ Pause Loop";
+                btn.classList.remove("btn-primary");
+                restartPlayTimer();
+            }
+        }
+
+        function restartPlayTimer() {
+            clearInterval(playTimer);
+            let interval = 1000 / fps;
+            playTimer = setInterval(() => {
+                let next;
+                if (!isPingPong) {
+                    next = (currentIndex + 1) % allFrames.length;
+                } else {
+                    next = currentIndex + pingPongDirection;
+                    if (next >= allFrames.length) {
+                        pingPongDirection = -1;
+                        next = Math.max(0, allFrames.length - 2);
+                    } else if (next < 0) {
+                        pingPongDirection = 1;
+                        next = Math.min(allFrames.length - 1, 1);
+                    }
+                }
+                showFrame(next);
+            }, interval);
+        }
+
+        function onSourceChange(src) {
+            currentSource = src;
+            lastKnownCount = -1;
+            fetchStatus();
+        }
+
+        function onFilterInput(val) {
+            filterKeyword = val.trim();
+            applyFilter();
+        }
+
+        window.onload = function() {
+            fetchStatus();
+            pollInterval = setInterval(fetchStatus, 3000);
+        };
+    </script>
+</body>
+</html>

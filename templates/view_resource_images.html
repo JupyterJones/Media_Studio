@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resource Images Archive | Latent Horizon</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/themed.css') }}">
+    <style>
+        :root {
+            --bg-base: #060813;
+            --bg-card: rgba(22, 28, 54, 0.7);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --border-glow: rgba(99, 102, 241, 0.3);
+            --primary: #6366f1;
+            --accent: #14b8a6;
+            --success: #10b981;
+            --danger: #ef4444;
+            --radius-sm: 8px;
+            --radius-md: 14px;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-base);
+            color: #f8fafc;
+            min-height: 100vh;
+            margin: 0;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .header-box {
+            width: 100%;
+            max-width: 1400px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 1rem 1.5rem;
+            margin-bottom: 1.5rem;
+            backdrop-filter: blur(16px);
+        }
+
+        .header-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: white;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+            font-weight: 700;
+            font-size: 0.85rem;
+            text-decoration: none;
+            cursor: pointer;
+            border: 1px solid var(--border-color);
+            transition: all 0.2s ease;
+        }
+
+        .btn-home {
+            background: rgba(255, 255, 255, 0.05);
+            color: #94a3b8;
+        }
+
+        .btn-home:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .btn-restore {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            border: none;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-restore:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(16, 185, 129, 0.5);
+        }
+
+        .btn-novel {
+            background: rgba(99, 102, 241, 0.15);
+            border-color: rgba(99, 102, 241, 0.4);
+            color: #a5b4fc;
+        }
+
+        .btn-novel:hover {
+            background: rgba(99, 102, 241, 0.3);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            color: #cbd5e1;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .content-area {
+            width: 100%;
+            max-width: 1400px;
+        }
+
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(12, 16, 33, 0.7);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            padding: 0.75rem 1rem;
+            margin-bottom: 1.25rem;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 16px;
+        }
+
+        .image-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .image-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+        }
+
+        .image-card img {
+            width: 100%;
+            aspect-ratio: 512 / 768;
+            object-fit: cover;
+            background: #020307;
+            display: block;
+            border-bottom: 1px solid var(--border-color);
+            cursor: pointer;
+        }
+
+        .image-info {
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .image-name {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #e2e8f0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .select-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #a5b4fc;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .select-label input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+            accent-color: var(--success);
+        }
+
+        .info-pill {
+            font-size: 0.75rem;
+            color: #a5b4fc;
+            background: rgba(99, 102, 241, 0.12);
+            border: 1px solid rgba(99, 102, 241, 0.25);
+            padding: 4px 10px;
+            border-radius: 99px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .empty-box {
+            text-align: center;
+            padding: 3rem 1.5rem;
+            background: var(--bg-card);
+            border: 1px dashed var(--border-color);
+            border-radius: var(--radius-md);
+            color: #94a3b8;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header-box">
+        <div class="header-title">
+            <span>📦 Resource Images Archive</span>
+            <span class="info-pill">static/resource_images/</span>
+        </div>
+        <div class="nav-links">
+            <a href="/" class="btn btn-home">🏠 Home</a>
+            <a href="/view_novel_files" class="btn btn-novel">🖼️ Novel Images</a>
+            <a href="/stable_diffusion" class="btn btn-novel">⚡ Batch Studio</a>
+        </div>
+    </div>
+
+    <div class="content-area">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div style="margin-bottom: 1rem;">
+                    {% for category, message in messages %}
+                        <div style="padding: 10px 14px; border-radius: 8px; font-weight: 600; font-size: 0.85rem; background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); color: #34d399;">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <form action="/restore_resource_images" method="POST" id="restoreForm">
+            <div class="toolbar">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <button type="button" class="btn btn-secondary" onclick="toggleSelectAll(true)">Select All</button>
+                    <button type="button" class="btn btn-secondary" onclick="toggleSelectAll(false)">Deselect All</button>
+                    <span style="font-size: 0.8rem; color: #94a3b8;">Total: <strong style="color: white;">{{ image_paths|length }}</strong> archived</span>
+                    <span style="font-size: 0.8rem; color: #38bdf8; margin-left: 8px;" id="selectedCount">Selected: 0</span>
+                </div>
+                <div>
+                    <button type="submit" class="btn btn-restore">
+                        🔄 Restore Selected to novel_images
+                    </button>
+                </div>
+            </div>
+
+            {% if image_paths and image_paths|length > 0 %}
+            <div class="gallery-grid">
+                {% for image_path in image_paths %}
+                {% set filename = image_path.split('/')[-1] %}
+                <div class="image-card">
+                    <a href="/{{ image_path }}" target="_blank" title="Click to view full image">
+                        <img src="/{{ image_path }}" loading="lazy" alt="{{ filename }}">
+                    </a>
+                    <div class="image-info">
+                        <div class="image-name" title="{{ filename }}">{{ filename }}</div>
+                        <label class="select-label">
+                            <input type="checkbox" name="image_paths[]" value="{{ image_path }}" onchange="updateSelectedCount()">
+                            <span>Select to restore</span>
+                        </label>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-box">
+                <h3 style="font-size: 1.1rem; color: white; margin-bottom: 0.5rem;">No Archived Images</h3>
+                <p>Images removed from <code>static/novel_images/</code> will automatically appear here as safe archives instead of being deleted.</p>
+            </div>
+            {% endif %}
+        </form>
+    </div>
+
+    <script>
+        function toggleSelectAll(checked) {
+            let checkboxes = document.querySelectorAll('input[name="image_paths[]"]');
+            checkboxes.forEach(cb => cb.checked = checked);
+            updateSelectedCount();
+        }
+
+        function updateSelectedCount() {
+            let count = document.querySelectorAll('input[name="image_paths[]"]:checked').length;
+            document.getElementById('selectedCount').innerText = `Selected: ${count}`;
+        }
+    </script>
+</body>
+</html>

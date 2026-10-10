@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Image Review and Keep</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='dark.css') }}">
+    <style>
+        /* CSS styling for video gallery */
+        body {
+            padding: 20px;
+            font-size: 1.4vw;
+            line-height: 1.5;
+            color: orange;
+        }
+        .video-gallery {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+        .video-item {
+            flex: 1 1 calc(20% - 20px); /* Adjust for 5 videos per row */
+            margin: 10px;
+            max-width: 250px;
+        }
+        .video-item video {
+            width: 250px;
+            height: auto;
+        }
+        /* CSS styling for pagination */
+        .pagination {
+            display: inline-block;
+        }
+        .pagination a {
+            color: black;
+            font-size: 30px;
+            float: left;
+            padding: 8px 16px;
+            text-decoration: none;
+            transition: background-color .3s;
+            border: 1px solid #ddd;
+        }
+        .pagination a.active {
+            background-color: orange;
+            color: white;
+            border: 1px solid #4CAF50;
+        }
+        .pagination a:hover:not(.active) {
+            background-color: #ddd;
+        }
+        .pagination span {
+            font-size: 30px;
+        }
+        a {
+            text-decoration: none;
+            background-color: orange;
+            color: black;
+            font-size: 30px; 
+            font-weight: bold;
+            margin: 15px;
+        }
+        .sized {
+            font-size: 40px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Select a Video to Process</h1>
+        <p style="color:yellow;font-size: 24px;font-weight: bold;">These are Image Archive Videos and store the images to be easily retieved for projects. There are about 250,000 images archived and to save in video is a remendous storage reduction. Each video has up to 500 images.</p>
+    <a href="/">Go Home</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href="/get_frames">Choose Another Video</a>
+    <hr>
+
+    <!-- Pagination controls -->
+    <div class="pagination">
+        {% if page > 1 %}
+            <a href="{{ url_for('get_frames', page=page-1) }}">Previous</a>
+        {% endif %}
+        
+        <span>Page {{ page }} of {{ total_pages }}</span>
+        
+        {% if page < total_pages %}
+            <a href="{{ url_for('get_frames', page=page+1) }}">Next</a>
+        {% endif %}
+    </div>
+
+    <div class="video-gallery">
+        {% for video in video_files %}
+            <div class="video-item">
+                <video controls>
+                    <source src="{{ url_for('static', filename='videos/' + video.split('/')[-1]) }}" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+                <p>{{ video.split('/')[-1] }}</p>  <!-- Display video filename -->
+            </div>
+        {% endfor %}
+    </div>
+
+    <form action="/process_frames" method="post">
+        <label for="video">Choose a video:</label>
+        <select name="video" id="video" class="sized">
+            {% for video_file in video_files %}
+                <option value="{{ video_file }}">{{ video_file.split('/')[-1] }}</option>
+            {% endfor %}
+        </select>
+        <hr>
+        <input type="submit" value="Process Video">
+    </form>
+
+    <!-- Review and Keep Images Section -->
+    <h1>Review and Keep Images</h1>
+
+    <form action="/add_frames" method="post">
+        {% if frames %}
+            {% for frame in frames %}
+                <div style="display: inline-block; text-align: center; margin: 10px;">
+                    <img src="{{ url_for('static', filename='frames/' + frame) }}" width="200">
+                    <br>
+                    <input type="checkbox" name="image" value="{{ frame }}"> Keep
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>No frames available for review.</p>
+        {% endif %}
+        <br><br>
+        <input type="submit" value="Keep Selected Images">
+    </form>
+
+    <!-- Display Images Kept -->
+    <br><br><h1>Images Kept</h1>
+    <p>These are kept in three directories:<br/>
+        'static/keepers_resourses'<br/>
+        'static/archived-images'<br/>
+        'static/archived-store'</p>
+
+    {% if video_images %}
+        {% for image in video_images %}
+            <div style="display: inline-block; text-align: center; margin: 10px;">
+                <img class="image-box" src="{{ url_for('static', filename='keepers_resourses/' + image) }}" width="200">
+                <br>{{ image[-15:-4] }}  <!-- Display trimmed image name -->
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>No images kept available.</p>
+    {% endif %}
+
+
+
+    {% if frames %}
+    <h3>Extracted Frames:</h3>
+    <div>
+        {% for frame in frames %}
+            <img src="{{ url_for('static', filename='frames/' + frame) }}" alt="Frame" style="width: 100px;">
+        {% endfor %}
+    </div>
+{% else %}
+    <p>No frames extracted yet.</p>
+{% endif %}
+</body>
+</html>

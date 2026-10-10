@@ -1,0 +1,12 @@
+# Sci-Fi Vision Studio Dependencies
+flask>=3.0.0
+requests>=2.31.0
+pillow>=10.0.0
+opencv-python>=4.8.0
+numpy>=1.24.0
+
+# Optional Local Stable Diffusion LCM (if using local GPU generation)
+torch
+diffusers>=0.25.0
+transformers>=4.36.0
+accelerate>=0.25.0

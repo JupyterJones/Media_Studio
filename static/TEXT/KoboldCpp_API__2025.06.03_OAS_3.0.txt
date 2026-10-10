@@ -1,0 +1,279 @@
+KoboldCpp API
+ 2025.06.03 
+OAS 3.0
+For swagger.json, click here or use online version.
+Servers /
+api/v1
+KoboldAI United compatible API core endpoints
+
+GET
+/api/v1/config/max_context_length
+Retrieve the current max context length setting value that public backends see
+
+GET
+/api/v1/config/max_length
+Retrieve the current max length (amount to generate) setting value
+
+POST
+/api/v1/generate
+Generate text with a specified prompt
+
+GET
+/api/v1/info/version
+Current KoboldAI United API version
+
+GET
+/api/v1/model
+Retrieve the current model string.
+
+api/extra
+Extended API unique to KoboldCpp
+
+GET
+/api/extra/true_max_context_length
+Retrieve the actual max context length setting value set from the launcher
+
+GET
+/api/extra/version
+Retrieve the KoboldCpp backend version
+
+GET
+/api/extra/preloadstory
+Retrieves the KoboldCpp preloaded story
+
+GET
+/api/extra/perf
+Retrieve the KoboldCpp recent performance information
+
+POST
+/api/extra/multiplayer/status
+Fetches the current multiplayer turn information.
+
+POST
+/api/extra/multiplayer/getstory
+Fetches the current multiplayer story data, LZMA compressed encoded base64
+
+POST
+/api/extra/multiplayer/setstory
+Sets the current multiplayer story and increments the turn.
+
+POST
+/api/extra/generate/stream
+Generate text with a specified prompt. SSE streamed results.
+
+GET
+/api/extra/generate/check
+Poll the incomplete results of the currently ongoing text generation.
+
+POST
+/api/extra/generate/check
+Poll the incomplete results of the currently ongoing text generation. Supports multiuser mode.
+
+POST
+/api/extra/last_logprobs
+Obtains the token logprobs of the most recent request.
+
+POST
+/api/extra/tokencount
+Counts the number of tokens in a string.
+
+POST
+/api/extra/detokenize
+Converts an array of token IDs into a string.
+
+POST
+/api/extra/abort
+Aborts the currently ongoing text generation.
+
+POST
+/api/extra/transcribe
+Uses Whisper to perform a Speech-To-Text transcription.
+
+POST
+/api/extra/websearch
+Searches the web using DuckDuckGo and returns the top 3 results.
+
+POST
+/api/extra/tts
+Creates text-to-speech audio from input text.
+
+GET
+/api/extra/speakers_list
+Get a list of available TTS speakers.
+
+POST
+/api/extra/embeddings
+Creates an embedding vector representing the input text. Please refer to OpenAI documentation
+
+POST
+/api/extra/music/prepare
+Creates song generation parameters such as caption, lyrics, BPM and duration
+
+POST
+/api/extra/music/generate
+Generates music based on provided captions, lyrics and configurations
+
+POST
+/api/extra/json_to_grammar
+Converts a provided JSON schema into GBNF grammar.
+
+POST
+/api/extra/shutdown
+Shuts down the current KoboldCpp server.
+
+serviceinfo
+Common identity API for LLM services
+
+GET
+/props
+Returns the Jinja template stored in the GGUF model, if found.
+
+GET
+/.well-known/serviceinfo
+Retrieve the common API identity provider
+
+sdapi/v1
+Image Generation API (A1111 compatible)
+
+GET
+/sdapi/v1/sd-models
+Gets a list of image generation models
+
+GET
+/sdapi/v1/options
+Gets configuration info for image generation
+
+GET
+/sdapi/v1/samplers
+Gets a list of supported samplers
+
+POST
+/sdapi/v1/txt2img
+Generates an image from a text prompt
+
+POST
+/sdapi/v1/img2img
+Transforms an existing image into a new image
+
+
+POST
+/sdapi/v1/interrogate
+Generates a short text caption describing an image
+
+
+POST
+/sdapi/v1/upscale
+Upscales an image with ESRGAN, increasing its resolution.
+
+v1
+OpenAI Compatible APIs
+
+
+
+POST
+/v1/completions
+Generates text continuations given a prompt. Please refer to OpenAI documentation
+
+
+POST
+/v1/chat/completions
+Generates a response from a list of messages. Please refer to OpenAI documentation
+
+
+POST
+/v1/responses
+Emulates OpenAI Responses API. Very experimental, not recommended (use chat completions instead). Please refer to OpenAI documentation
+
+
+POST
+/v1/images/generations
+Generates images from a text prompt. Please refer to OpenAI documentation
+
+
+GET
+/v1/models
+List and describe the various models available in the API. Please refer to OpenAI documentation
+
+
+POST
+/v1/audio/transcriptions
+Transcribes a wav file with speech to text using loaded Whisper model. Please refer to OpenAI documentation
+
+
+POST
+/v1/audio/speech
+Generates Text-To-Speech audio from input text. Please refer to OpenAI documentation
+
+
+POST
+/v1/embeddings
+Creates an embedding vector representing the input text. Please refer to OpenAI documentation
+
+
+POST
+/v1/messages
+Creates a message using the Anthropic Messages API format
+
+api/extra/data
+
+
+POST
+/api/extra/data/save
+Saves data to a slot in a database file in the KoboldCpp server.
+
+
+POST
+/api/extra/data/load
+Loads data from a save slot in the database file in the KoboldCpp server.
+
+
+POST
+/api/extra/data/list
+List available saved slots from the KoboldCpp server.
+
+api/admin
+
+
+GET
+/api/admin/list_options
+List available .kcpps files to load.
+
+
+POST
+/api/admin/reload_config
+Switches the currently loaded .kcpps config, and reloads any changed files or models.
+
+
+POST
+/api/admin/check_state
+Gets the number of bytes taken for existing save state, and predicts the bytes required for a new save state.
+
+
+POST
+/api/admin/save_state
+Creates a new KV cache save state in memory. Overwrites any existing saved state.
+
+
+POST
+/api/admin/load_state
+Reloads a previous KV cache save state into context.
+
+
+POST
+/api/admin/clear_state
+Frees all previous KV cache save state.
+
+
+Schemas
+BasicError
+BasicResult
+BasicResultInner
+GenerationInput
+GenerationOutput
+GenerationResult
+MaxContextLengthSetting
+MaxLengthSetting
+ServerBusyError
+ValueResult
+KcppVersion
+KcppPerf

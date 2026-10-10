@@ -1,0 +1,119 @@
+<!-- select_images.html  -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>select_images.html Select Images for Blending</title>
+    <style>
+        body {
+            background-color: cadetblue;
+
+
+        }
+
+        h1 {
+            color: orange;
+            margin: 0px auto;
+            text-align: center;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            padding: 20px;
+        }
+
+        .image-item {
+            margin: 10px;
+            text-align: center;
+        }
+
+        .image-item img {
+            width: 256pxs;
+            height: 384px;
+           
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .image-item label {
+            display: block;
+            margin-top: 5px;
+        }
+
+        button {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+        .sticky {
+            position: -webkit-sticky;
+            position: sticky;
+            color: #ffa600;
+            width: 85%;
+            top: 0;
+            margin-left: auto;
+            margin-right: auto;
+            
+            text-align: center;
+            background-color: #af0909;
+            padding: 10px 0;
+            z-index: 1000;
+        }
+        a {
+            color: #ffa600;
+            font-size: 20px;
+        
+        }
+   
+    </style>
+</head>
+
+<body>
+    <h1 id="top">Select Images for Blending select_images.html</h1>
+    <p class="sticky"><a href="#jump">Submit/Page Bottom</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href="{{ url_for('index') }}">Home</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href="{{ url_for('archive_to_novel') }}">copy to novel</a>
+    <hr>
+</p>
+    <hr>
+<form action="{{ url_for('blend_images') }}" method="post">
+        <div class="container">
+            {% for image_path in image_paths %}
+            <div class="image-item">
+                <img src="{{ image_path }}" alt="Image">
+                <div>
+                    <label>
+                        <input type="radio" name="top_image" value="{{ image_path }}" required> Top
+                    </label>
+                    <label>
+                        <input type="radio" name="mask_image" value="{{ image_path }}" required> Mask
+                    </label>
+                    <label>
+                        <input type="radio" name="bottom_image" value="{{ image_path }}" required> Bottom
+                    </label>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <label for="opacity">Opacity (between 0 and 1):</label>
+        <input type="text" id="opacity" name="opacity" value="0.5">
+        <button id="jump" type="submit">Submit</button>
+    </form>&nbsp;&nbsp;
+    <a style="color:navy;margin-left: auto;margin-right: auto;" href="#top">Page Top</a>
+</body>
+</html>

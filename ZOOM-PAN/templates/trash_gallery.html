@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>App Trash Can - ZoomPan & Comic Studio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Bangers&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0f172a;
+            --panel: #1e293b;
+            --panel-border: rgba(255, 255, 255, 0.1);
+            --accent-red: #ef4444;
+            --accent-green: #10b981;
+            --accent-purple: #8b5cf6;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 24px;
+            background: var(--panel);
+            border: 1px solid var(--panel-border);
+            border-radius: 16px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: white;
+        }
+
+        .logo-icon {
+            font-size: 2rem;
+        }
+
+        .logo-text h1 {
+            font-family: 'Bangers', cursive;
+            font-size: 2.2rem;
+            color: var(--accent-red);
+            letter-spacing: 1px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            max-width: 100%;
+            white-space: nowrap;
+            padding-bottom: 8px;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .nav-links::-webkit-scrollbar {
+            height: 8px;
+        }
+        .nav-links::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 4px;
+        }
+        .nav-links::-webkit-scrollbar-thumb {
+            background: linear-gradient(90deg, #ef4444, #f97316);
+            border-radius: 4px;
+        }
+
+        .nav-btn {
+            padding: 8px 14px;
+            border-radius: 8px;
+            border: 1px solid var(--panel-border);
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-1px);
+        }
+
+        .btn-action {
+            padding: 10px 18px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+        }
+
+        .btn-danger:hover { opacity: 0.9; transform: translateY(-1px); }
+
+        .btn-success {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+        }
+
+        .btn-success:hover { opacity: 0.9; transform: translateY(-1px); }
+
+        .toolbar-area {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding: 16px 20px;
+            background: var(--panel);
+            border-radius: 12px;
+            border: 1px solid var(--panel-border);
+        }
+
+        .trash-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 20px;
+        }
+
+        .trash-card {
+            background: var(--panel);
+            border: 1px solid var(--panel-border);
+            border-radius: 12px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .trash-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border-color: rgba(239, 68, 68, 0.4);
+        }
+
+        .trash-preview {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            background: #090d16;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 3rem;
+            color: var(--text-muted);
+        }
+
+        .trash-preview img, .trash-preview video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .trash-info {
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            flex-grow: 1;
+        }
+
+        .trash-filename {
+            font-weight: 600;
+            font-size: 0.9rem;
+            word-break: break-all;
+        }
+
+        .trash-meta {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .card-actions button {
+            flex: 1;
+            padding: 8px;
+            font-size: 0.8rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            background: var(--panel);
+            border-radius: 16px;
+            border: 1px dashed var(--panel-border);
+        }
+
+        .empty-state div { font-size: 4rem; margin-bottom: 12px; }
+        .empty-state h3 { font-size: 1.4rem; color: var(--text); margin-bottom: 6px; }
+        .empty-state p { color: var(--text-muted); }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="/" class="logo-area">
+            <div class="logo-icon">🗑️</div>
+            <div class="logo-text">
+                <h1>App Trash Can</h1>
+                <span style="font-size: 0.75rem; color: var(--text-muted);">VIEWABLE SOFT-DELETE SAFETY NET</span>
+            </div>
+        </a>
+
+        <nav class="nav-links">
+            <a href="/" class="nav-btn">🏠 Home</a>
+            <a href="/comic" class="nav-btn" style="background: linear-gradient(135deg, #ff6b6b, #c0392b); color: white;">💥 Comic Builder</a>
+            <a href="/projects" class="nav-btn">📁 Projects</a>
+            <a href="/image_gallery" class="nav-btn">🖼️ Image Gallery</a>
+            <a href="/video_gallery" class="nav-btn">🎬 Video Gallery</a>
+            <a href="/generation" class="nav-btn">🎨 AI Gen</a>
+            <a href="/trash" class="nav-btn" style="border-color: var(--accent-red); color: var(--accent-red);">🗑️ Trash Can</a>
+        </nav>
+    </header>
+
+    <div class="toolbar-area">
+        <div>
+            <h2>Files in Trash: <span id="trash-count">0</span></h2>
+            <p style="font-size: 0.85rem; color: var(--text-muted);">Items here can be safely restored or deleted forever.</p>
+        </div>
+        <button id="btn-empty-trash" class="btn-action btn-danger">🧹 Empty Trash Can (Permanent)</button>
+    </div>
+
+    <div id="trash-container">
+        <!-- Rendered via JS -->
+    </div>
+
+    <script>
+        async function loadTrash() {
+            try {
+                const response = await fetch('/api/trash_list');
+                const data = await response.json();
+                const container = document.getElementById('trash-container');
+                const trashCount = document.getElementById('trash-count');
+
+                const items = data.items || [];
+                trashCount.textContent = items.length;
+
+                if (items.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <div>🎉</div>
+                            <h3>Trash Can is Empty</h3>
+                            <p>No soft-deleted files in the trash bin right now.</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                let html = '<div class="trash-grid">';
+                items.forEach(item => {
+                    const isImg = /\.(png|jpg|jpeg|webp|bmp|gif)$/i.test(item.filename);
+                    const isVid = /\.(mp4|webm|mov)$/i.test(item.filename);
+                    const isAud = /\.(mp3|wav|ogg)$/i.test(item.filename);
+
+                    let previewHtml = '';
+                    if (isImg) {
+                        previewHtml = `<img src="${item.trash_url}" alt="${item.filename}">`;
+                    } else if (isVid) {
+                        previewHtml = `<video src="${item.trash_url}" muted loop></video>`;
+                    } else if (isAud) {
+                        previewHtml = '🎵';
+                    } else {
+                        previewHtml = '📄';
+                    }
+
+                    html += `
+                        <div class="trash-card">
+                            <div class="trash-preview">${previewHtml}</div>
+                            <div class="trash-info">
+                                <div class="trash-filename" title="${item.filename}">${item.filename}</div>
+                                <div class="trash-meta">Original: ${item.original_path}</div>
+                                <div class="trash-meta">Trashed: ${item.trashed_at}</div>
+                                <div class="card-actions">
+                                    <button onclick="restoreItem('${item.trash_id}')" class="btn-action btn-success">🔄 Restore</button>
+                                    <button onclick="deleteItem('${item.trash_id}')" class="btn-action btn-danger">❌ Delete Forever</button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                html += '</div>';
+                container.innerHTML = html;
+            } catch (err) {
+                console.error("Error loading trash:", err);
+            }
+        }
+
+        async function restoreItem(trashId) {
+            try {
+                const response = await fetch('/api/restore_file', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ trash_id: trashId })
+                });
+                const res = await response.json();
+                if (response.ok) {
+                    loadTrash();
+                } else {
+                    alert(res.error || 'Failed to restore file');
+                }
+            } catch (err) {
+                alert('Error restoring file');
+            }
+        }
+
+        async function deleteItem(trashId) {
+            if (!confirm("Are you sure? This file will be GONE FOREVER!")) return;
+            try {
+                const response = await fetch('/api/permanent_delete', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ trash_id: trashId })
+                });
+                const res = await response.json();
+                if (response.ok) {
+                    loadTrash();
+                } else {
+                    alert(res.error || 'Failed to delete file');
+                }
+            } catch (err) {
+                alert('Error deleting file');
+            }
+        }
+
+        document.getElementById('btn-empty-trash').addEventListener('click', async () => {
+            if (!confirm("Are you sure you want to EMPTY THE TRASH CAN? All trashed items will be GONE FOREVER!")) return;
+            try {
+                const response = await fetch('/api/empty_trash', { method: 'POST' });
+                const res = await response.json();
+                if (response.ok) {
+                    loadTrash();
+                } else {
+                    alert(res.error || 'Failed to empty trash');
+                }
+            } catch (err) {
+                alert('Error emptying trash');
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', loadTrash);
+    </script>
+</body>
+</html>

@@ -1,0 +1,112 @@
+<!-- trends.html --> 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trending Searches and Keyword Suggestions</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        h1, h2 {
+            text-align: center;
+        }
+        form {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        form label {
+            margin-right: 10px;
+        }
+        .container {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+        }
+        .column {
+            flex: 1;
+            background-color: bisque;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .column h2 {
+            text-align: left;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            padding: 5px 0;
+            border-bottom: 1px solid #ddd;
+        }
+        li:last-child {
+            border-bottom: none;
+        }
+        .refresh-button{
+            font-size:4vw;
+        }
+        
+        .refresh-button2{
+            font-size:4vw;}
+    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dark.css') }}">
+</head>
+<body>
+    <h1>Trending Searches and Keyword Suggestions</h1>
+
+<a href="{{ url_for('index') }}" class="refresh-button">HOME</a>
+    <!-- Form to change region and keyword -->
+    <form method="POST" action="{{ url_for('get_trends') }}">
+        <label for="region">Select a Region:</label>
+        <select name="region" id="region">
+            <option value="united_states" {% if region == "united_states" %}selected{% endif %}>United States</option>
+            <option value="india" {% if region == "india" %}selected{% endif %}>India</option>
+            <option value="canada" {% if region == "canada" %}selected{% endif %}>Canada</option>
+            <option value="australia" {% if region == "australia" %}selected{% endif %}>Australia</option>
+        </select>
+
+        <label for="keyword">Enter a Keyword:</label>
+        <input style="width:25%; " type="text" name="keyword" id="keyword" value="{{ keyword }}">
+
+        <button type="submit">Get Trends and Suggestions</button>
+    </form>
+
+    <!-- Two columns: Trending Searches and Keyword Suggestions -->
+    <div class="container">
+        <!-- Trending Searches Column -->
+        <div class="column">
+            <h2>Trending Searches</h2>
+            {% if trends %}
+                <ul>
+                    {% for trend in trends %}
+                        <li>{{ trend }}</li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No trending searches available.</p>
+            {% endif %}
+        </div>
+
+        <!-- Keyword Suggestions Column -->
+        <div class="column">
+            <h2>Keyword Suggestions</h2>
+            {% if suggestions %}
+                <ul>
+                    {% for suggestion in suggestions %}
+                        <li>{{ suggestion['title'] }} (Type: {{ suggestion['type'] }})</li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No suggestions available for the keyword.</p>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,76 @@
+<!-- delete_app_images.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Delete Images</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .image-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+        .image-container {
+            text-align: center;
+        }
+        .image-container img {
+            max-width: 100%;
+            height: auto;
+        }
+        .directory-buttons {
+            margin: 20px;
+        }
+        .directory-button {
+            padding: 10px;
+            margin: 5px;
+            cursor: pointer;
+        }
+        .delete-button {
+            background-color: #ff4444;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Image Directory Manager delete_app_images.html</h1>
+<a href="{{ url_for('index') }}">Home</a>
+    <!-- Directory Selection Form -->
+    <div class="directory-buttons">
+        <form method="POST">
+            {% for dir_name in image_dirs %}
+            <button type="submit" name="directory" value="{{ dir_name }}" class="directory-button">
+                {{ dir_name }}
+            </button>
+            {% endfor %}
+        </form>
+    </div>
+
+    <!-- Image Display and Delete Form -->
+    {% if selected_dir and images %}
+    <h2>Images in {{ selected_dir }}</h2>
+    <form method="POST">
+        <input type="hidden" name="current_dir" value="{{ selected_dir }}">
+        <div class="image-grid">
+            {% for image in images %}
+            <div class="image-container">
+
+                <img src="{{ url_for('static', filename=selected_static_path + '/' + image) }}">
+                <br>
+                <input type="checkbox" name="selected_images" value="{{ image }}">
+                <label>{{ image }}</label>
+            </div>
+            {% endfor %}
+        </div>
+        <button type="submit" name="delete_images" class="delete-button">Delete Selected Images</button>
+    </form>
+    {% elif selected_dir %}
+    <p>No images found in {{ selected_dir }}</p>
+    {% endif %}
+</body>
+</html>                         

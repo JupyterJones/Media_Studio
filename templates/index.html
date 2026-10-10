@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Media Studio | AI Media & Transition Suite</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/themed.css') }}">
+    <link rel="icon" href="/favicon.ico?v=1">
+    <script src="{{ url_for('static', filename='js/theme.js') }}"></script>
+    <style>
+        .studio-header {
+            text-align: center;
+            padding: 24px 20px 16px;
+            margin-bottom: 20px;
+        }
+        .studio-nav {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 24px;
+        }
+        .studio-nav a {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            padding: 10px 18px;
+            border-radius: var(--radius-sm);
+            color: var(--text-bright);
+            font-family: 'Outfit', sans-serif;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all var(--transition-speed);
+        }
+        .studio-nav a:hover {
+            background: var(--accent-glow);
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 15px var(--accent-glow);
+            transform: translateY(-2px);
+            color: var(--text-bright);
+        }
+        .studio-nav a.primary {
+            background: var(--accent-gradient);
+            color: #080812;
+            border: none;
+            box-shadow: var(--shadow-glow);
+        }
+        .studio-nav a.primary:hover {
+            filter: brightness(1.15);
+            color: #000;
+        }
+        .studio-section {
+            background: var(--bg-card);
+            backdrop-filter: blur(14px);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 24px;
+            margin-bottom: 28px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="studio-header">
+        <h1>Media Studio</h1>
+        <p style="color: var(--text-muted); font-size: 1.05rem; margin-top: 6px;">
+            Video Composition, Custom Transitions & Audio Synthesis Suite
+        </p>
+    </div>
+
+    <div class="studio-nav">
+        <a href="{{ url_for('mk_videos') }}" class="primary">🎬 Video Processing</a>
+        <a href="/upload_media">🎭 Avatar Studio</a>
+        <a href="{{ url_for('mk_novel') }}">📖 Novel Studio</a>
+        <a href="{{ url_for('clean_storage_route') }}">🖼️ Image Processing</a>
+        <a href="{{ url_for('utilities') }}">⚙️ Utilities</a>
+        <a href="{{ url_for('ask_gemini') }}">✨ Ask Gemini</a>
+        <a href="{{ url_for('stable_diffusion') }}">🎨 Generate Images</a>
+        <a href="/static_images">🖼️ Static Images</a>
+        <a href="/static_videos">🎬 Static Videos</a>
+        <a href="/static_sounds">🎵 Sound Library</a>
+        <a href="{{ url_for('about') }}">ℹ️ About</a>
+        <a href="/remember" target="remember_app">💾 Remember DB</a>
+        <a href="/effects" target="effects_studio">🪄 Effects Studio</a>
+        <a href="/zoompan" target="zoompan_app">🔍 ZoomPan Studio</a>
+        <a href="/scifi" target="scifi_app">🚀 SciFi Vision Studio</a>
+        <a href="/chat" target="chat_studio">💬 AI Q&A Studio</a>
+        <a href="/kobold" target="kobold_studio" style="border-color: rgba(245, 158, 11, 0.5); color: #fbbf24;">🐉 Kobold AI Studio</a>
+    </div>
+
+    <div style="display: flex; justify-content: flex-end; margin-bottom: 20px;">
+        {% include 'system_monitor_widget.html' %}
+    </div>
+
+    <div class="studio-section">
+        <h2>Video Gallery & Controls &nbsp;&nbsp;&nbsp;&nbsp;Image Source:&nbsp; static/novel_images</h2>
+        {% include 'video_menu.html' %}
+    </div>
+</div>
+
+<button class="theme-switch-btn" onclick="toggleTheme()">
+    🎨 <span id="themeName">Theme</span>
+</button>
+
+</body>
+</html>

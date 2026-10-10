@@ -1,0 +1,32 @@
+<! -- mk_novel_2.html -->
+<!-- post.html -->
+{% extends 'mk_novel.html' %}
+{% block title %} - My Blog{% endblock %}
+{% block content %}
+
+<span>mk_novel_2.html r</span>
+
+<main class='video-gallery'>
+
+ {% for image in images %}
+
+<div style="border-radius: 5px;box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);padding: 10px;text-align: center;background-color: rgba(170,160,150,0.5 );margin-bottom: 20px;">
+        <img src='{{ image }}'><br/><br/>
+        <span style="margin-bottom: 20px;">{{ image }}</span><br/><br/>
+</div>
+{% endfor %}
+< br/>< br/>< br/>< br/>< br/>
+<video width="420" height="auto" controls>
+	<source src="static/temp_exp/novel_creationX.mp4" type="video/mp4" />
+	Your browser does not support the video tag.
+	</video>
+
+
+<video width="420" height="auto" controls>
+	<source src='static/temp_exp/novel_flipbookX.mp4' type="video/mp4" />
+	Your browser does not support the video tag.
+	</video>
+
+
+{% endblock %}
+</main>

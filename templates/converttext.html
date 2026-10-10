@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Image Generator</title>
+</head>
+<body>
+    <h1>Generate Your Custom Text Image</h1>
+
+<p><a href="/"  class="refresh-button">HOME</a></p>
+<p><a href="/convert_text"  class="refresh-button">REFRESH</a></p>    
+    <form action="/convert_text" method="POST">
+        <label for="text">Text:</label><br>
+        <textarea id="text" name="text" rows="5" cols="50" required>
+Flask Art Maker has an addition
+feature. Now it can create
+text with multiple lines.
+Feel free to customize the text.
+FlaskArchitect !
+        </textarea><br><br>
+
+        <label for="font">Font:</label>
+        <input type="text" id="font" name="font" value="Arial" required><br><br>
+
+        <label for="color">Text Color:</label>
+        <input type="color" id="color" name="color" value="#000000" required><br><br>
+
+        <label for="pointsize">Font Size:</label>
+        <input type="number" id="pointsize" name="pointsize" value="30" required><br><br>
+
+        <label for="gravity">Text Alignment (Gravity):</label>
+        <select name="gravity" id="gravity" required>
+            <option value="center">Center</option>
+            <option value="north">North</option>
+            <option value="south">South</option>
+            <option value="east">East</option>
+            <option value="west">West</option>
+            <option value="northwest" selected>Northwest</option> 
+            <option value="northeast">Northeast</option>
+            <option value="southwest">Southwest</option>
+            <option value="southeast">Southeast</option>
+        </select><br><br>
+
+        <label for="bg_color">Background Color:</label>
+        <select name="bg_color" id="bg_color" required>
+            <option value="white">White</option>
+            <option value="red">Red</option>
+            <option value="blue">Blue</option>
+            <option value="orange">Orange</option>
+            <option value="darkred" selected>DarkRed</option> 
+            <option value="olive">Olive</option>
+            <option value="green">Green</option>
+            <option value="gray">Gray</option>
+            <option value="black">Black</option>
+        </select><br><br>
+        <label for="x">X Position:</label>
+        <input type="number" id="x" name="x" value="0" required><br><br>
+
+        <label for="y">Y Position:</label>
+        <input type="number" id="y" name="y" value="0" required><br><br>
+
+        <label for="line_spacing">Line Spacing:</label>
+        <input type="number" id="line_spacing" name="line_spacing" value="40" required><br><br>
+
+        <button type="submit">Generate Image</button>
+    </form>
+
+</body>
+</html>

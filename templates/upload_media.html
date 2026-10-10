@@ -1,0 +1,212 @@
+<!-- upload_media.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Avatar Studio | Media & Audio Setup</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/themed.css') }}">
+    <link rel="icon" href="/favicon.ico?v=1">
+    <style>
+        body {
+            background-color: #080812;
+            color: #e2e8f0;
+            font-family: 'Inter', sans-serif;
+            padding: 24px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        h1, h2, h3 {
+            font-family: 'Outfit', sans-serif;
+            color: #fff;
+        }
+        .header-links a {
+            color: #00f0ff;
+            text-decoration: none;
+            font-weight: 600;
+            margin-right: 16px;
+            font-size: 1rem;
+        }
+        .header-links a:hover {
+            text-decoration: underline;
+        }
+        .card {
+            background: rgba(18, 18, 35, 0.75);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 24px;
+            backdrop-filter: blur(12px);
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+        .badge-ready { background: #00e676; color: #000; }
+        .badge-missing { background: #ff5252; color: #fff; }
+        label {
+            display: block;
+            margin-top: 14px;
+            margin-bottom: 6px;
+            font-weight: 600;
+            color: #00f0ff;
+        }
+        select, input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            background: #121223;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 0.95rem;
+        }
+        .btn-submit {
+            background: linear-gradient(135deg, #00f0ff, #b800ff);
+            color: #080812;
+            font-weight: bold;
+            font-size: 1.05rem;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 18px;
+            transition: 0.2s;
+        }
+        .btn-submit:hover {
+            filter: brightness(1.15);
+            transform: translateY(-2px);
+        }
+        .btn-execute {
+            display: inline-block;
+            background: #00e676;
+            color: #080812;
+            font-weight: bold;
+            font-size: 1.15rem;
+            padding: 14px 28px;
+            border-radius: 8px;
+            text-decoration: none;
+            margin-top: 12px;
+            box-shadow: 0 0 15px rgba(0, 230, 118, 0.4);
+        }
+        .btn-execute:hover {
+            filter: brightness(1.2);
+        }
+        .flash-msg {
+            background: rgba(0, 240, 255, 0.15);
+            border-left: 4px solid #00f0ff;
+            padding: 10px 14px;
+            margin-bottom: 16px;
+            border-radius: 4px;
+        }
+        .preview-grid {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-top: 12px;
+        }
+        .preview-grid img {
+            max-width: 140px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header-links" style="margin-bottom: 20px;">
+        <a href="/">🏠 Media Studio Home</a>
+        <a href="/text_to_mp3">🗣️ Kokoro Text to Voice</a>
+        <a href="/mk_videos">🎬 Video Processing</a>
+        <a href="/remember" target="remember_app">💾 Remember DB</a>
+        <a href="/effects" target="effects_studio">🪄 Effects Studio</a>
+    </div>
+
+    <h1>🎭 Avatar Studio Setup</h1>
+    <p style="color: #8a8fba;">Prepare face images and audio tracks in <code>static/projects/</code> for Wav2Lip lipsync synthesis.</p>
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        {% for message in messages %}
+          <div class="flash-msg">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <!-- Active Projects Workspace Status -->
+    <div class="card">
+        <h3>📂 Active Project Files (<code>static/projects/</code>)</h3>
+        <div class="preview-grid">
+            <div>
+                <span class="status-badge badge-ready">Face Image (use.jpg)</span>
+                <br>
+                <img src="/static/projects/use.jpg?t={{ range(1, 99999) | random }}" alt="Current Avatar Face" onerror="this.src='/static/avatars/default.png'; this.alt='No use.jpg yet';">
+            </div>
+            <div style="flex: 1; min-width: 250px;">
+                <span class="status-badge badge-ready">Speech Audio (use.mp3)</span>
+                <br><br>
+                <audio controls style="width: 100%;">
+                    <source src="/static/projects/use.mp3?t={{ range(1, 99999) | random }}" type="audio/mpeg">
+                </audio>
+            </div>
+        </div>
+        <div style="margin-top: 20px;">
+            <a href="{{ url_for('make_avatar') }}" class="btn-execute">🚀 EXECUTE Make Avatar (Wav2Lip)</a>
+        </div>
+    </div>
+
+    <!-- Upload / Select Form -->
+    <div class="card">
+        <h2>🛠️ Configure Project Media</h2>
+        <form method="POST" action="/upload_media" enctype="multipart/form-data">
+            
+            <label for="audio_filename">Select Existing Audio Track:</label>
+            <select name="audio_filename" id="audio_filename">
+                <option value="">-- Choose from Voice Speech or Background Music --</option>
+                
+                {% if voice_files %}
+                <optgroup label="🗣️ Voice Speech (TTS / Kokoro / Narration)">
+                    {% for vf in voice_files %}
+                        <option value="{{ vf }}">🗣️ {{ vf }}</option>
+                    {% endfor %}
+                </optgroup>
+                {% endif %}
+
+                {% if music_files %}
+                <optgroup label="🎵 Background Music (static/mp3s/)">
+                    {% for mf in music_files %}
+                        <option value="music/{{ mf }}">🎵 {{ mf }}</option>
+                    {% endfor %}
+                </optgroup>
+                {% endif %}
+            </select>
+
+            <label for="audio_file">... OR Upload New Audio File (.mp3 / .wav):</label>
+            <input type="file" name="audio_file" id="audio_file" accept=".mp3,.wav">
+
+            <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 20px 0;">
+
+            <label for="image">Upload Avatar Face Image (JPG / PNG):</label>
+            <input type="file" name="image" id="image" accept=".jpg,.jpeg,.png">
+            <small style="color: #8a8fba;">Image will be automatically scaled to 512×768 for high-quality Wav2Lip synthesis.</small>
+
+            <br>
+            <button type="submit" class="btn-submit">💾 Save Media to static/projects/</button>
+        </form>
+    </div>
+
+    <!-- Output Video -->
+    <div class="card">
+        <h3>🎬 Latest Rendered Avatar (avatarX.mp4)</h3>
+        <video controls width="420" style="border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); margin-top: 10px;">
+            <source src="/static/temp_exp/avatarX.mp4?t={{ range(1, 99999) | random }}" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    </div>
+
+</body>
+</html>

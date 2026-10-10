@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Media Studio | Static Sounds & MP3 Library</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/themed.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" href="/favicon.ico?v=1">
+    <script src="{{ url_for('static', filename='js/theme.js') }}"></script>
+    <style>
+        .sounds-container {
+            max-width: 1500px;
+            margin: 0 auto;
+            padding: 10px 16px 60px;
+        }
+
+        .studio-header {
+            text-align: center;
+            padding: 24px 20px 16px;
+            margin-bottom: 20px;
+        }
+
+        .studio-header h1 {
+            font-size: 2.4rem;
+            margin-bottom: 8px;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .studio-header p {
+            color: var(--text-muted);
+            font-size: 1.05rem;
+        }
+
+        .studio-nav {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 26px;
+        }
+
+        .studio-nav a {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            padding: 9px 18px;
+            border-radius: var(--radius-sm);
+            color: var(--text-bright);
+            font-family: 'Outfit', sans-serif;
+            font-weight: 600;
+            font-size: 0.92rem;
+            transition: all var(--transition-speed);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .studio-nav a:hover {
+            background: var(--accent-glow);
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 15px var(--accent-glow);
+            transform: translateY(-2px);
+            color: var(--text-bright);
+        }
+
+        .studio-nav a.primary {
+            background: var(--accent-gradient);
+            color: #080812;
+            border: none;
+            box-shadow: var(--shadow-glow);
+        }
+
+        .studio-nav a.primary:hover {
+            filter: brightness(1.15);
+            color: #000;
+        }
+
+        /* Controls Panel */
+        .controls-panel {
+            background: var(--bg-card);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 16px 22px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+            box-shadow: var(--shadow);
+        }
+
+        .search-wrapper {
+            position: relative;
+            flex: 1;
+            min-width: 260px;
+            max-width: 480px;
+        }
+
+        .search-wrapper i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            pointer-events: none;
+        }
+
+        .search-input {
+            width: 100%;
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            padding: 10px 16px 10px 38px;
+            color: var(--text-bright);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            transition: all var(--transition-speed);
+        }
+
+        .search-input:focus {
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 14px var(--accent-glow);
+            outline: none;
+            background: var(--bg-code);
+        }
+
+        /* Filter Pills */
+        .filter-pills {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .filter-pill {
+            background: var(--bg-surface) !important;
+            border: 1px solid var(--border-color) !important;
+            color: var(--text-muted) !important;
+            border-radius: 20px !important;
+            padding: 6px 14px !important;
+            font-size: 0.82rem !important;
+            font-weight: 600 !important;
+            font-family: 'Outfit', sans-serif !important;
+            cursor: pointer !important;
+            transition: all var(--transition-speed) !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 6px !important;
+            box-shadow: none !important;
+            margin: 0 !important;
+        }
+
+        .filter-pill:hover, .filter-pill.active {
+            background: var(--accent-primary) !important;
+            color: #080812 !important;
+            border-color: var(--accent-primary) !important;
+            box-shadow: 0 0 12px var(--accent-glow) !important;
+            transform: none !important;
+        }
+
+        .stats-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-subtle);
+            border-radius: 20px;
+            padding: 8px 16px;
+            font-size: 0.88rem;
+            color: var(--text-main);
+            font-family: 'Outfit', sans-serif;
+            font-weight: 600;
+        }
+
+        .stats-badge strong {
+            color: var(--accent-primary);
+        }
+
+        /* Sounds Grid */
+        .sounds-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+        }
+
+        .sound-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            transition: transform var(--transition-speed), border-color var(--transition-speed), box-shadow var(--transition-speed);
+            box-shadow: var(--shadow);
+            position: relative;
+        }
+
+        .sound-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--accent-primary);
+            box-shadow: 0 12px 28px var(--accent-glow);
+        }
+
+        .sound-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .sound-icon-box {
+            width: 44px;
+            height: 44px;
+            border-radius: var(--radius-sm);
+            background: rgba(0, 240, 255, 0.1);
+            border: 1px solid var(--accent-glow);
+            color: var(--accent-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            flex-shrink: 0;
+            transition: transform 0.3s ease;
+        }
+
+        .sound-card:hover .sound-icon-box {
+            transform: rotate(15deg) scale(1.08);
+            background: var(--accent-gradient);
+            color: #080812;
+            box-shadow: 0 0 16px var(--accent-glow);
+        }
+
+        .sound-ext-badge {
+            background: rgba(8, 8, 18, 0.78);
+            border: 1px solid var(--border-color);
+            color: var(--accent-primary);
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .sound-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-bright);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin: 0;
+        }
+
+        .sound-folder {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .sound-folder i {
+            color: var(--accent-primary);
+            font-size: 0.8rem;
+        }
+
+        /* Modern Audio Player Styling */
+        .audio-wrapper {
+            margin: 4px 0;
+        }
+
+        audio {
+            width: 100%;
+            height: 38px;
+            border-radius: var(--radius-sm);
+            outline: none;
+            filter: invert(1) hue-rotate(180deg) brightness(1.2);
+            opacity: 0.9;
+            transition: opacity var(--transition-speed);
+        }
+
+        audio:hover {
+            opacity: 1;
+        }
+
+        .path-box {
+            background: var(--bg-code);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-sm);
+            padding: 6px 10px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.74rem;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            cursor: pointer;
+            transition: all var(--transition-speed);
+            user-select: none;
+        }
+
+        .path-box:hover {
+            border-color: var(--accent-primary);
+            color: var(--text-bright);
+            background: rgba(0, 240, 255, 0.05);
+        }
+
+        .path-text {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            flex: 1;
+            direction: rtl;
+            text-align: left;
+        }
+
+        .copy-icon {
+            font-size: 0.85rem;
+            color: var(--accent-primary);
+            flex-shrink: 0;
+            transition: color var(--transition-speed);
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: auto;
+            padding-top: 6px;
+        }
+
+        .card-actions .btn {
+            font-size: 0.84rem !important;
+            padding: 7px 14px !important;
+            margin: 0 !important;
+            flex: 1;
+        }
+
+        /* Empty State */
+        .empty-state {
+            background: var(--bg-card);
+            border: 1px dashed var(--border-color);
+            border-radius: var(--radius);
+            padding: 60px 20px;
+            text-align: center;
+            grid-column: 1 / -1;
+            display: none;
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+        }
+
+        .empty-state h3 {
+            color: var(--text-bright);
+            margin-bottom: 8px;
+        }
+
+        .empty-state p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        /* Toast notification */
+        .copy-toast {
+            position: fixed;
+            bottom: 74px;
+            right: 20px;
+            background: var(--bg-surface);
+            border: 1px solid var(--accent-primary);
+            color: var(--text-bright);
+            padding: 10px 18px;
+            border-radius: var(--radius-sm);
+            box-shadow: 0 8px 24px var(--accent-glow);
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 10000;
+            opacity: 0;
+            transform: translateY(12px);
+            transition: all 0.25s ease;
+            pointer-events: none;
+        }
+
+        .copy-toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+
+<div class="sounds-container">
+    <!-- Header -->
+    <div class="studio-header">
+        <h1>Static Sounds & MP3 Library</h1>
+        <p>Media Studio Audio Asset Browser, In-line Playback & File Inspector</p>
+    </div>
+
+    <!-- Navigation -->
+    <div class="studio-nav">
+        <a href="/" class="primary"><i class="fas fa-home"></i> Media Studio</a>
+        <a href="{{ url_for('gallery.static_images') }}"><i class="fas fa-images"></i> Images</a>
+        <a href="{{ url_for('gallery.static_videos') }}"><i class="fas fa-video"></i> Videos</a>
+        <a href="{{ url_for('gallery.static_sounds') }}"><i class="fas fa-music"></i> Sounds</a>
+        <a href="{{ url_for('gallery.static_sounds') }}"><i class="fas fa-sync-alt"></i> Sync & Refresh</a>
+        <a href="/clean_storage"><i class="fas fa-photo-film"></i> Image Processing</a>
+        <a href="/remember" target="remember_app"><i class="fas fa-database"></i> Remember DB</a>
+    </div>
+
+    <!-- Controls Panel -->
+    <div class="controls-panel">
+        <div class="search-wrapper">
+            <i class="fas fa-search"></i>
+            <input type="text" id="soundSearch" class="search-input" placeholder="Search by track name, folder, or file path..." autocomplete="off">
+        </div>
+
+        <div class="filter-pills" id="folderPills">
+            <button class="filter-pill active" data-folder="all" onclick="setFolderFilter('all', this)">
+                <i class="fas fa-music"></i> All Sounds
+            </button>
+            <button class="filter-pill" data-folder="mp3s" onclick="setFolderFilter('mp3s', this)">
+                <i class="fas fa-compact-disc"></i> mp3s
+            </button>
+            <button class="filter-pill" data-folder="voice" onclick="setFolderFilter('voice', this)">
+                <i class="fas fa-microphone"></i> voice
+            </button>
+            <button class="filter-pill" data-folder="audio" onclick="setFolderFilter('audio', this)">
+                <i class="fas fa-headphones"></i> audio
+            </button>
+        </div>
+
+        <div class="stats-badge">
+            <i class="fas fa-waveform-lines"></i>
+            <span>Showing <strong id="visibleCount">{{ sounds|length }}</strong> of <strong>{{ sounds|length }}</strong> Tracks</span>
+        </div>
+    </div>
+
+    <!-- Sounds Grid -->
+    <div class="sounds-grid" id="soundsGrid">
+        {% for snd in sounds %}
+        <div class="sound-card"
+             data-title="{{ snd.title|lower }}"
+             data-path="{{ snd.audio|lower }}"
+             data-folder="{{ (snd.caption or '')|lower }}">
+            <div class="sound-header">
+                <div class="sound-icon-box">
+                    <i class="fas fa-music"></i>
+                </div>
+                <div style="flex: 1; overflow: hidden;">
+                    <h3 class="sound-title" title="{{ snd.title }}">{{ snd.title }}</h3>
+                    <div class="sound-folder" title="Folder: static/{{ snd.caption }}">
+                        <i class="fas fa-folder-open"></i>
+                        <span>static/{{ snd.caption or '' }}</span>
+                    </div>
+                </div>
+                <span class="sound-ext-badge">{{ snd.audio.split('.')[-1] }}</span>
+            </div>
+
+            <!-- In-line Audio Player -->
+            <div class="audio-wrapper">
+                <audio controls preload="none" src="{{ url_for('static', filename=snd.audio) }}"></audio>
+            </div>
+
+            <!-- Path Box -->
+            <div class="path-box"
+                 title="Click to copy full absolute path"
+                 onclick="copyPath('{{ snd.full_path|e }}', this)">
+                <span class="path-text">{{ snd.audio }}</span>
+                <i class="fas fa-copy copy-icon"></i>
+            </div>
+
+            <div class="card-actions">
+                <a href="{{ url_for('gallery.show_sound', id=snd.id) }}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-up-right-from-square"></i> Inspect
+                </a>
+                <a href="{{ url_for('static', filename=snd.audio) }}" download class="btn btn-secondary" title="Download audio file">
+                    <i class="fas fa-download"></i> Save
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+
+        <div class="empty-state" id="emptyState">
+            <i class="fas fa-headphones"></i>
+            <h3>No matching audio tracks found</h3>
+            <p>Try searching for a different keyword or folder name.</p>
+        </div>
+    </div>
+</div>
+
+<!-- Copy Toast Notification -->
+<div class="copy-toast" id="copyToast">
+    <i class="fas fa-check-circle" style="color: var(--success-color);"></i>
+    <span id="toastMsg">Audio path copied to clipboard!</span>
+</div>
+
+<!-- Theme Switcher -->
+<button class="theme-switch-btn" onclick="toggleTheme()">
+    🎨 <span id="themeName">Theme</span>
+</button>
+
+<script>
+    // Live Search & Folder Filter
+    const searchInput = document.getElementById('soundSearch');
+    const cards = document.querySelectorAll('.sound-card');
+    const visibleCount = document.getElementById('visibleCount');
+    const emptyState = document.getElementById('emptyState');
+    let currentFolderFilter = 'all';
+
+    function setFolderFilter(folder, btn) {
+        currentFolderFilter = folder;
+        document.querySelectorAll('.filter-pill').forEach(b => b.classList.remove('active'));
+        if (btn) btn.classList.add('active');
+        applyFilters();
+    }
+
+    function applyFilters() {
+        const query = (searchInput ? searchInput.value : '').toLowerCase().trim();
+        let visible = 0;
+
+        cards.forEach(card => {
+            const title = card.getAttribute('data-title') || '';
+            const path = card.getAttribute('data-path') || '';
+            const folder = card.getAttribute('data-folder') || '';
+
+            const matchesFolder = (currentFolderFilter === 'all') || folder.includes(currentFolderFilter);
+            const matchesQuery = !query || title.includes(query) || path.includes(query) || folder.includes(query);
+
+            if (matchesFolder && matchesQuery) {
+                card.style.display = '';
+                visible++;
+            } else {
+                card.style.display = 'none';
+                // Pause audio if card gets hidden while playing
+                const audio = card.querySelector('audio');
+                if (audio && !audio.paused) {
+                    audio.pause();
+                }
+            }
+        });
+
+        if (visibleCount) {
+            visibleCount.textContent = visible;
+        }
+
+        if (emptyState) {
+            emptyState.style.display = visible === 0 ? 'block' : 'none';
+        }
+    }
+
+    if (searchInput) {
+        searchInput.addEventListener('input', applyFilters);
+    }
+
+    // Only allow one audio track to play at a time across the page
+    document.addEventListener('play', function(e) {
+        const audios = document.getElementsByTagName('audio');
+        for (let i = 0; i < audios.length; i++) {
+            if (audios[i] !== e.target) {
+                audios[i].pause();
+            }
+        }
+    }, true);
+
+    // Copy to clipboard with toast notification
+    function copyPath(text, el) {
+        navigator.clipboard.writeText(text).then(() => {
+            const toast = document.getElementById('copyToast');
+            const toastMsg = document.getElementById('toastMsg');
+            if (toast) {
+                toastMsg.textContent = 'Audio path copied to clipboard!';
+                toast.classList.add('show');
+                setTimeout(() => toast.classList.remove('show'), 2200);
+            }
+
+            if (el) {
+                const icon = el.querySelector('.copy-icon');
+                if (icon) {
+                    icon.className = 'fas fa-check copy-icon';
+                    icon.style.color = 'var(--success-color)';
+                    setTimeout(() => {
+                        icon.className = 'fas fa-copy copy-icon';
+                        icon.style.color = '';
+                    }, 1800);
+                }
+            }
+        }).catch(err => {
+            console.error('Copy failed:', err);
+        });
+    }
+</script>
+
+</body>
+</html>

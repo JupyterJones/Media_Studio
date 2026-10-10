@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search HTML Content</title>
+    <style>
+        .highlight {
+            background-color: yellow;
+        }
+        pre {
+            white-space: pre-wrap; /* Preserve line breaks */
+            word-wrap: break-word; /* Break long words */
+            font-family: monospace; /* Monospace font for better readability */
+        }
+    </style>
+</head>
+<body>
+    <div class="header sticky">
+        <h2>Search HTML Content</h2>
+        <input type="text" id="search_input" placeholder="Enter search term">
+        <button onclick="moveToNextOccurrence()">Find Next</button>
+    </div>
+
+    <div class="content">
+        <!-- Display the raw HTML content here inside <pre> to preserve formatting -->
+        <pre id="html_content">{{ txt_content }}</pre>
+    </div>
+
+    <script>
+        // Function to find and highlight the search string
+        function findString(str) {
+            if (!str) {
+                alert("Please enter a search term.");
+                return;
+            }
+
+            // Clear previous highlights
+            clearHighlights();
+
+            // Get the raw text content from the preformatted block
+            let content = document.getElementById("html_content").textContent;
+
+            // Use a regular expression to find the search term
+            let regex = new RegExp(str, 'gi');
+            let match;
+            let highlightedContent = content;
+
+            while ((match = regex.exec(content)) !== null) {
+                // Replace the matched term with a span to highlight it
+                highlightedContent = highlightedContent.replace(match[0], `<span class="highlight">${match[0]}</span>`);
+            }
+
+            // Replace the text in html_content with the highlighted content
+            document.getElementById("html_content").innerHTML = highlightedContent;
+        }
+
+        // Function to clear all highlights
+        function clearHighlights() {
+            document.querySelectorAll(".highlight").forEach(span => {
+                let parent = span.parentNode;
+                while (span.firstChild) {
+                    parent.insertBefore(span.firstChild, span);
+                }
+                parent.removeChild(span);
+            });
+        }
+
+        // Function to move cursor to the next occurrence
+        function moveToNextOccurrence() {
+            let searchInput = document.getElementById("search_input");
+            let searchValue = searchInput.value;
+            findString(searchValue);
+        }
+    </script>
+</body>
+</html>

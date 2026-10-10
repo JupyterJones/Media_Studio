@@ -1,0 +1,54 @@
+<!-- edit_youtube_videos.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit YouTube Videos</title>
+    <style>
+        textarea {
+            width: 100%;
+            height: 400px;
+            font-family: monospace;
+            font-size: 14px;
+        }
+        button {
+            margin-top: 10px;
+            padding: 10px 15px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Edit YouTube Videos JSON</h1>
+    <a href="/">Home</a>
+    
+    <a href="/youtube_videos">View Youtube Videos</a>
+    <form id="editForm">
+        <textarea name="json_data" id="json_data">{{ json_data }}</textarea>
+        <br>
+        <button type="button" onclick="saveJSON()">Save</button>
+    </form>
+    <div id="status"></div>
+    <script>
+        async function saveJSON() {
+            const formData = new FormData(document.getElementById("editForm"));
+            const response = await fetch("/save_youtube_videos", {
+                method: "POST",
+                body: formData
+            });
+            const statusDiv = document.getElementById("status");
+            if (response.ok) {
+                const result = await response.json();
+                statusDiv.textContent = result.message;
+                statusDiv.style.color = "green";
+            } else {
+                const error = await response.json();
+                statusDiv.textContent = error.error;
+                statusDiv.style.color = "red";
+            }
+        }
+    </script>
+</body>
+</html>

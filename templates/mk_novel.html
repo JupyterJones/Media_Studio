@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Novel Video Studio | Media Studio{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/themed.css') }}">
+    <link rel="icon" href="/favicon.ico?v=1">
+    <style>
+        :root {
+            --bg-body: #080812;
+            --bg-card: rgba(18, 18, 35, 0.85);
+            --border-card: rgba(255, 255, 255, 0.1);
+            --accent: #00f0ff;
+            --accent-purple: #b800ff;
+            --text-main: #e2e8f0;
+            --text-muted: #8a8fba;
+            --success: #00e676;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-size: 15px;
+            line-height: 1.5;
+            margin: 0;
+            padding: 0;
+        }
+
+        .layout-container {
+            max-width: 1250px;
+            margin: 0 auto;
+            padding: 24px 20px;
+        }
+
+        /* Top Sticky Header */
+        .novel-header {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: rgba(8, 8, 18, 0.92);
+            backdrop-filter: blur(14px);
+            border-bottom: 1px solid var(--border-card);
+            padding: 12px 20px;
+        }
+
+        .header-content {
+            max-width: 1250px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .nav-links a {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-card);
+            padding: 6px 14px;
+            border-radius: 6px;
+            color: var(--text-main);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .nav-links a:hover {
+            border-color: var(--accent);
+            background: rgba(0, 240, 255, 0.1);
+            color: #fff;
+        }
+
+        .nav-links a.active {
+            background: linear-gradient(135deg, rgba(0, 240, 255, 0.25), rgba(184, 0, 255, 0.25));
+            border-color: var(--accent);
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        .search-bar-form {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .search-bar-form input[type="text"] {
+            background: rgba(18, 18, 35, 0.8);
+            border: 1px solid var(--border-card);
+            border-radius: 6px;
+            padding: 6px 12px;
+            color: #fff;
+            font-size: 0.85rem;
+            outline: none;
+            width: 170px;
+            transition: border-color 0.2s;
+        }
+
+        .search-bar-form input[type="text"]:focus {
+            border-color: var(--accent);
+        }
+
+        .search-bar-form button {
+            background: linear-gradient(135deg, #00f0ff, #7000ff);
+            border: none;
+            border-radius: 6px;
+            color: #fff;
+            padding: 6px 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .search-bar-form button:hover {
+            opacity: 0.9;
+        }
+
+        /* Typography & Standard Elements */
+        h1, h2, h3 {
+            font-family: 'Outfit', sans-serif;
+            color: #ffffff;
+            margin-top: 0;
+        }
+
+        h1 {
+            font-size: 1.85rem;
+            background: linear-gradient(135deg, #00f0ff, #c084fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 6px;
+        }
+
+        h2 {
+            font-size: 1.3rem;
+            color: var(--accent);
+            margin-bottom: 12px;
+        }
+
+        p {
+            font-size: 0.95rem;
+            color: var(--text-main);
+            margin: 6px 0;
+            line-height: 1.5;
+        }
+
+        a {
+            color: var(--accent);
+            text-decoration: none;
+            font-size: 0.95rem;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-card);
+            border-radius: 12px;
+            padding: 22px;
+            backdrop-filter: blur(14px);
+            margin-bottom: 24px;
+        }
+
+        /* Responsive image grid for default block */
+        .image-gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 16px;
+            margin-top: 14px;
+        }
+
+        .image-card {
+            background: rgba(10, 12, 22, 0.75);
+            border: 1px solid var(--border-card);
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+            transition: border-color 0.2s, transform 0.2s;
+        }
+
+        .image-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        .image-card img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 6px;
+            display: block;
+        }
+
+        .image-name {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 8px;
+            word-break: break-all;
+        }
+
+        /* Footer */
+        .novel-footer {
+            border-top: 1px solid var(--border-card);
+            padding: 24px 20px;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-top: 40px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Header Navigation -->
+<header class="novel-header">
+    <div class="header-content">
+        <nav class="nav-links">
+            <a href="/">🏠 Media Studio Home</a>
+            <a href="/mk_novel">📖 Novel Studio</a>
+            <a href="/merge_novel_videos" class="{% if request.path == '/merge_novel_videos' %}active{% endif %}">🎞️ Merge Novel Videos</a>
+            <a href="/add_novel_caption">✍️ Add Caption</a>
+            <a href="/add_novel_text">📝 Add Text</a>
+            <a href="/text_to_mp3">🎙️ Kokoro Voice</a>
+            <a href="/upload_media">🎭 Avatar Studio</a>
+            <a href="/readlog">📋 Log</a>
+        </nav>
+
+        <!-- Search Form -->
+        <form action="{{ url_for('search') }}" method="post" class="search-bar-form">
+            <input type="text" name="search_terms" placeholder="Search novel terms..." required>
+            <button type="submit">🔍 Search</button>
+        </form>
+    </div>
+</header>
+
+<div class="layout-container">
+    <main>
+        {% block content %}
+        <!-- Default Content when mk_novel is viewed directly -->
+        <div class="card">
+            <h1>📖 Novel Video Studio</h1>
+            <p style="color: var(--text-muted); margin-bottom: 18px;">
+                Create, sequence, and stitch multi-scene novel video productions with synchronized speech and visual frames.
+            </p>
+
+            {% if image_paths %}
+            <h2>📸 Available Novel Frames (<code>static/novel_images/</code>)</h2>
+            <div class="image-gallery-grid">
+                {% for img in image_paths %}
+                <div class="image-card">
+                    <img src="{{ img }}" alt="Novel Image Frame" loading="lazy">
+                    <div class="image-name">{{ img.split('/')[-1] }}</div>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+        {% endblock %}
+    </main>
+</div>
+
+<footer class="novel-footer">
+    <p>Media Studio • Novel Video Sequencing & Concatenation Suite</p>
+</footer>
+
+</body>
+</html>

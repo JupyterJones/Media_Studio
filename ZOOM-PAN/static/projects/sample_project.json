@@ -1,0 +1,16 @@
+{
+  "project_name": "sample_project",
+  "image_filename": "sample.jpg",
+  "image_url": null,
+  "image_width": 1920,
+  "image_height": 1080,
+  "timestamp": "2026-08-03 02:26:45",
+  "points": [
+    {
+      "label": "Test Cabin",
+      "x": 500,
+      "y": 400,
+      "zoom": 3.0
+    }
+  ]
+}

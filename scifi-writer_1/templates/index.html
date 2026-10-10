@@ -1,0 +1,1894 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SciFi Vision Studio — Storyboard to MP4</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #070a13;
+      --bg-card: rgba(13, 20, 36, 0.85);
+      --bg-card-hover: rgba(18, 27, 48, 0.95);
+      --border-cyan: #00d9ff;
+      --border-subtle: rgba(0, 217, 255, 0.25);
+      --text-cyan: #00e5ff;
+      --text-amber: #ffb800;
+      --text-main: #e2e8f0;
+      --text-muted: #8899b0;
+      --accent-glow: rgba(0, 217, 255, 0.15);
+      --radius: 8px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(0, 217, 255, 0.05) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(255, 184, 0, 0.04) 0%, transparent 40%),
+        linear-gradient(rgba(7, 10, 19, 0.94), rgba(7, 10, 19, 0.94)),
+        repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0, 217, 255, 0.015) 2px, rgba(0, 217, 255, 0.015) 4px);
+      color: var(--text-main);
+      font-family: 'Rajdhani', -apple-system, BlinkMacSystemFont, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      background: rgba(10, 16, 30, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 2px solid var(--border-cyan);
+      padding: 16px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 20px rgba(0, 217, 255, 0.1);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .logo-icon {
+      font-size: 28px;
+      text-shadow: 0 0 10px var(--border-cyan);
+    }
+
+    h1 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 24px;
+      letter-spacing: 1.5px;
+      color: #fff;
+    }
+
+    h1 span {
+      color: var(--text-cyan);
+    }
+
+    .status-badges {
+      display: flex;
+      gap: 10px;
+    }
+
+    .badge {
+      background: rgba(0, 217, 255, 0.08);
+      border: 1px solid var(--border-subtle);
+      border-radius: 20px;
+      padding: 5px 14px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-cyan);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      letter-spacing: 0.5px;
+    }
+
+    .badge.green::before {
+      content: '';
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #00ff66;
+      box-shadow: 0 0 8px #00ff66;
+    }
+
+    .nav-tabs {
+      display: flex;
+      gap: 8px;
+      background: rgba(13, 20, 36, 0.7);
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 0 32px;
+    }
+
+    .tab-btn {
+      background: transparent;
+      border: none;
+      border-bottom: 3px solid transparent;
+      color: var(--text-muted);
+      padding: 14px 22px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 14px;
+      letter-spacing: 1px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .tab-btn:hover {
+      color: var(--text-cyan);
+      background: rgba(0, 217, 255, 0.05);
+    }
+
+    .tab-btn.active {
+      color: var(--text-cyan);
+      border-bottom-color: var(--text-cyan);
+      background: rgba(0, 217, 255, 0.08);
+      text-shadow: 0 0 8px rgba(0, 217, 255, 0.5);
+    }
+
+    main {
+      flex: 1;
+      padding: 28px 32px;
+      max-width: 1500px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+      animation: fadeIn 0.25s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Cards and Grids */
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius);
+      padding: 24px;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+      margin-bottom: 24px;
+      position: relative;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 30px;
+      height: 2px;
+      background: var(--border-cyan);
+    }
+
+    .card-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 18px;
+      letter-spacing: 1px;
+      color: var(--text-cyan);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    /* Buttons */
+    .btn {
+      background: linear-gradient(135deg, rgba(0, 217, 255, 0.2), rgba(0, 150, 220, 0.3));
+      border: 1px solid var(--border-cyan);
+      color: #fff;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+
+    .btn:hover {
+      background: linear-gradient(135deg, rgba(0, 217, 255, 0.4), rgba(0, 150, 220, 0.5));
+      box-shadow: 0 0 15px rgba(0, 217, 255, 0.4);
+      transform: translateY(-1px);
+    }
+
+    .btn-amber {
+      background: linear-gradient(135deg, rgba(255, 184, 0, 0.2), rgba(220, 120, 0, 0.3));
+      border-color: var(--text-amber);
+    }
+
+    .btn-amber:hover {
+      background: linear-gradient(135deg, rgba(255, 184, 0, 0.4), rgba(220, 120, 0, 0.5));
+      box-shadow: 0 0 15px rgba(255, 184, 0, 0.4);
+    }
+
+    .btn-large {
+      padding: 14px 28px;
+      font-size: 16px;
+    }
+
+    /* Workflow Wizard Steps */
+    .workflow-wizard {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(10, 18, 34, 0.95);
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 10px 32px;
+      gap: 12px;
+    }
+
+    .workflow-step-btn {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: 6px;
+      padding: 8px 16px;
+      cursor: pointer;
+      color: var(--text-muted);
+      transition: all 0.2s;
+    }
+
+    .workflow-step-btn:hover {
+      background: rgba(0, 217, 255, 0.08);
+      color: #fff;
+    }
+
+    .workflow-step-btn.active {
+      background: rgba(0, 217, 255, 0.15);
+      border-color: var(--border-cyan);
+      color: #fff;
+      box-shadow: 0 0 15px rgba(0, 217, 255, 0.2);
+    }
+
+    .step-num {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 700;
+      font-size: 13px;
+    }
+
+    .workflow-step-btn.active .step-num {
+      background: var(--text-cyan);
+      color: #040812;
+    }
+
+    .step-titles {
+      display: flex;
+      flex-direction: column;
+      text-align: left;
+    }
+
+    .step-label {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    .step-sub {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .workflow-arrow {
+      color: var(--border-subtle);
+      font-size: 16px;
+    }
+
+    /* Guidance Box */
+    .step-guide-box {
+      background: linear-gradient(90deg, rgba(0, 217, 255, 0.08), rgba(13, 20, 36, 0.6));
+      border-left: 4px solid var(--text-cyan);
+      border-radius: 4px;
+      padding: 12px 18px;
+      margin-bottom: 20px;
+      font-size: 14px;
+      line-height: 1.5;
+      color: #d8e6f5;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .step-guide-box strong {
+      color: #fff;
+    }
+
+    .nav-proceed-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 24px;
+      padding-top: 18px;
+      border-top: 1px dashed var(--border-subtle);
+    }
+
+    /* Inputs & Textareas */
+    textarea, input[type="text"], select {
+      width: 100%;
+      background: rgba(7, 10, 19, 0.85);
+      border: 1px solid var(--border-subtle);
+      border-radius: 4px;
+      padding: 12px 14px;
+      color: #fff;
+      font-family: 'Fira Code', monospace;
+      font-size: 14px;
+      outline: none;
+      transition: border 0.2s;
+    }
+
+    textarea:focus, input[type="text"]:focus, select:focus {
+      border-color: var(--border-cyan);
+      box-shadow: 0 0 10px rgba(0, 217, 255, 0.2);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 480px;
+      line-height: 1.5;
+    }
+
+    /* Director Panels Grid */
+    .panels-container {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .panel-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius);
+      padding: 20px;
+      display: grid;
+      grid-template-columns: 360px 1fr;
+      gap: 24px;
+      transition: all 0.2s;
+      position: relative;
+    }
+
+    .panel-card:hover {
+      border-color: var(--border-cyan);
+      box-shadow: 0 4px 25px rgba(0, 217, 255, 0.15);
+    }
+
+    .panel-preview-col {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .panel-img-box {
+      width: 100%;
+      height: 200px;
+      background: #04060a;
+      border: 1px solid var(--border-subtle);
+      border-radius: 4px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .panel-img-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .panel-content-col {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .panel-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 10px;
+    }
+
+    .panel-title-text {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 16px;
+      color: var(--text-cyan);
+      font-weight: 700;
+    }
+
+    .panel-layout-badge {
+      font-size: 12px;
+      color: var(--text-amber);
+      background: rgba(255, 184, 0, 0.1);
+      padding: 4px 10px;
+      border-radius: 4px;
+      border: 1px solid rgba(255, 184, 0, 0.3);
+    }
+
+    .voice-control-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .voice-select {
+      max-width: 220px;
+      padding: 8px 12px;
+    }
+
+    audio {
+      width: 100%;
+      height: 38px;
+      border-radius: 20px;
+      outline: none;
+    }
+
+    /* Progress bar */
+    .progress-bar-container {
+      width: 100%;
+      height: 14px;
+      background: rgba(0, 0, 0, 0.6);
+      border: 1px solid var(--border-cyan);
+      border-radius: 8px;
+      overflow: hidden;
+      margin: 16px 0;
+      display: none;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #00d9ff, #ffb800);
+      box-shadow: 0 0 10px #00d9ff;
+      transition: width 0.3s ease;
+    }
+
+    /* Video Player */
+    .video-hero-box {
+      width: 100%;
+      max-width: 1000px;
+      margin: 0 auto;
+      border: 2px solid var(--border-cyan);
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 10px 40px rgba(0, 217, 255, 0.25);
+      background: #000;
+    }
+
+    video {
+      width: 100%;
+      display: block;
+    }
+
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 16px;
+      margin-top: 20px;
+    }
+
+    .gallery-item {
+      border: 1px solid var(--border-subtle);
+      border-radius: 4px;
+      overflow: hidden;
+      background: #050810;
+    }
+
+    .gallery-item img {
+      width: 100%;
+      height: 140px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .gallery-item-caption {
+      padding: 8px 12px;
+      font-size: 12px;
+      color: var(--text-cyan);
+      font-weight: 600;
+    }
+
+    /* Prompt Box for Ollama */
+    .ai-prompt-box {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .ai-prompt-input {
+      flex: 1;
+      padding: 14px;
+      font-size: 15px;
+    }
+
+    /* Help Modal */
+    .help-modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(4, 7, 15, 0.88);
+      backdrop-filter: blur(8px);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .help-modal-overlay.active {
+      display: flex;
+      animation: fadeIn 0.2s ease;
+    }
+
+    .help-modal-box {
+      background: #090f1e;
+      border: 2px solid var(--border-cyan);
+      border-radius: 12px;
+      max-width: 860px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 0 50px rgba(0, 217, 255, 0.35);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .help-modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 24px;
+      background: rgba(13, 20, 36, 0.95);
+      border-bottom: 1px solid var(--border-subtle);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .help-close-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 26px;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+
+    .help-close-btn:hover {
+      color: #ff3366;
+    }
+
+    .help-steps-container {
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .help-step-card {
+      background: rgba(13, 20, 36, 0.75);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 16px 20px;
+      display: flex;
+      gap: 18px;
+      align-items: flex-start;
+      transition: border 0.2s;
+    }
+
+    .help-step-card:hover {
+      border-color: var(--border-cyan);
+    }
+
+    .help-step-badge {
+      background: var(--text-cyan);
+      color: #040812;
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 700;
+      font-size: 13px;
+      padding: 6px 12px;
+      border-radius: 20px;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+    }
+
+    .help-step-content {
+      flex: 1;
+    }
+
+    .help-modal-footer {
+      padding: 16px 24px;
+      background: rgba(13, 20, 36, 0.95);
+      border-top: 1px solid var(--border-subtle);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      position: sticky;
+      bottom: 0;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- DIRECTIONS & HELP POPUP MODAL -->
+  <div id="helpModal" class="help-modal-overlay" onclick="closeHelpOnBackdrop(event)">
+    <div class="help-modal-box">
+      <div class="help-modal-header">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <span style="font-size: 28px;">📖</span>
+          <div>
+            <h2 style="font-family: 'Orbitron', sans-serif; font-size: 20px; color: #ffb800; letter-spacing: 1px;">EXACT WORKFLOW DIRECTIONS</h2>
+            <div style="font-size: 13px; color: var(--text-cyan);">Follow these 4 steps to turn your storyboard into a finished 1080p MP4:</div>
+          </div>
+        </div>
+        <button class="help-close-btn" onclick="closeHelpModal()">✖</button>
+      </div>
+
+      <div class="help-steps-container">
+        <!-- STEP 1 -->
+        <div class="help-step-card">
+          <div class="help-step-badge">STEP 1</div>
+          <div class="help-step-content">
+            <h3 style="color: #00d9ff; font-family: 'Orbitron', sans-serif; font-size: 16px; margin-bottom: 6px;">Open the Director Studio</h3>
+            <p style="font-size: 14px; color: #e2e8f0; line-height: 1.5; margin-bottom: 8px;">
+              You have your generated template ready. Right below the AI box (or at the top bar), click the golden button:
+            </p>
+            <div style="background: rgba(255,184,0,0.15); border: 1px solid #ffb800; padding: 8px 14px; border-radius: 4px; font-family: 'Orbitron', sans-serif; font-size: 13px; color: #ffb800; display: inline-block;">
+              👉 Proceed to Step 2: Director Studio ➔
+            </div>
+            <div style="font-size: 12px; color: var(--text-muted); margin-top: 6px;">
+              (Or simply click the <strong>"2. DIRECTOR & ART"</strong> tab at the very top). This automatically parses your storyboard and shows all scene panels!
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 2 -->
+        <div class="help-step-card">
+          <div class="help-step-badge">STEP 2</div>
+          <div class="help-step-content">
+            <h3 style="color: #00d9ff; font-family: 'Orbitron', sans-serif; font-size: 16px; margin-bottom: 6px;">Generate Your Scene Images & Speech</h3>
+            <p style="font-size: 14px; color: #e2e8f0; line-height: 1.5; margin-bottom: 8px;">
+              Now you are looking at your scene panels:
+            </p>
+            <ul style="list-style: none; padding-left: 0; font-size: 14px; color: #e2e8f0; line-height: 1.6;">
+              <li>1. Click the button at the top: <strong style="color: #00d9ff;">👉 🎨 Generate All Panels (LCM)</strong> — Local Stable Diffusion will generate the image for every scene.</li>
+              <li>2. Click the button next to it: <strong style="color: #00d9ff;">👉 🎙️ Synthesize All Speech</strong> — Kokoro TTS will voice-act the spoken narration for every scene.</li>
+              <li>3. When both are done, click the golden button at the bottom: <strong style="color: #ffb800;">👉 Proceed to Step 3: Soundtrack ➔</strong></li>
+            </ul>
+            <div style="margin-top: 10px; background: rgba(0, 217, 255, 0.08); border-left: 3px solid #00d9ff; padding: 8px 12px; font-size: 13px; color: #e2e8f0; border-radius: 3px;">
+              💡 <strong>DIRECTOR PRO TIP:</strong> Never write only 1 sentence! Use <strong>2 to 4 sentences (30–50 words)</strong> per panel so voice narration lasts 12–25 seconds, giving enough time for the Ken Burns camera motion (zoom and pan) to be fully visible!
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 3 -->
+        <div class="help-step-card">
+          <div class="help-step-badge">STEP 3</div>
+          <div class="help-step-content">
+            <h3 style="color: #00d9ff; font-family: 'Orbitron', sans-serif; font-size: 16px; margin-bottom: 6px;">Pick Your Background Music</h3>
+            <p style="font-size: 14px; color: #e2e8f0; line-height: 1.5; margin-bottom: 8px;">
+              1. Select any sci-fi track from your <code>/home/jack/Desktop/mp3/</code> library in the dropdown.<br>
+              2. Click the golden button at the bottom:
+            </p>
+            <div style="background: rgba(255,184,0,0.15); border: 1px solid #ffb800; padding: 8px 14px; border-radius: 4px; font-family: 'Orbitron', sans-serif; font-size: 13px; color: #ffb800; display: inline-block;">
+              👉 Proceed to Step 4: Cinema Movie ➔
+            </div>
+            <div style="font-size: 12px; color: var(--text-cyan); margin-top: 6px;">
+              ✓ Auto Voice Ducking is enabled: Music softens automatically whenever Kokoro narrates!
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 4 -->
+        <div class="help-step-card" style="border-color: rgba(255,184,0,0.5);">
+          <div class="help-step-badge" style="background: #ffb800; color: #000;">STEP 4</div>
+          <div class="help-step-content">
+            <h3 style="color: #ffb800; font-family: 'Orbitron', sans-serif; font-size: 16px; margin-bottom: 6px;">Render & Watch Your 1080p Movie!</h3>
+            <p style="font-size: 14px; color: #e2e8f0; line-height: 1.5; margin-bottom: 8px;">
+              1. Click the big golden button:
+            </p>
+            <div style="background: rgba(255,184,0,0.25); border: 2px solid #ffb800; padding: 10px 18px; border-radius: 6px; font-family: 'Orbitron', sans-serif; font-size: 15px; color: #fff; font-weight: 700; display: inline-block; margin-bottom: 8px;">
+              🚀 RENDER CINEMATIC VIDEO
+            </div>
+            <p style="font-size: 13px; color: #e2e8f0; line-height: 1.5;">
+              2. Watch the live progress bar as FFmpeg stitches together:
+              <br>• Your generated images with dynamic Ken Burns camera choreography
+              <br>• Kokoro voice narration
+              <br>• Cyber HUD subtitle overlays
+              <br>• Soundtrack with auto voice ducking
+              <br>3. When it hits 100%, the <strong>master 1080p MP4 video will automatically play right on your screen!</strong>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="help-modal-footer">
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+          <button class="btn" onclick="goToStep('tab-editor'); closeHelpModal();">Go to Step 1</button>
+          <button class="btn" onclick="goToStep('tab-director'); closeHelpModal();">Go to Step 2</button>
+          <button class="btn" onclick="goToStep('tab-audio'); closeHelpModal();">Go to Step 3</button>
+          <button class="btn" onclick="goToStep('tab-cinema'); closeHelpModal();">Go to Step 4</button>
+        </div>
+        <button class="btn btn-amber btn-large" onclick="closeHelpModal()">
+          Got It! Close Guide ➔
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESOURCE PICKER MODAL -->
+  <div id="resourceModal" class="help-modal-overlay" onclick="closeResourceModalOnBackdrop(event)">
+    <div class="help-modal-box" style="max-width: 900px; width: 90vw;">
+      <div class="help-modal-header">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <span style="font-size: 28px;">📚</span>
+          <div>
+            <h2 style="font-family: 'Orbitron', sans-serif; font-size: 20px; color: #00ffa3; letter-spacing: 1px;">RESOURCES LIBRARY</h2>
+            <div style="font-size: 13px; color: var(--text-cyan);" id="resourceModalSubtitle">Choose an image from /resources/ for Panel:</div>
+          </div>
+        </div>
+        <button class="help-close-btn" onclick="closeResourceModal()">✖</button>
+      </div>
+
+      <div id="resourcesGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; max-height: 520px; overflow-y: auto; padding: 12px 0;">
+        <!-- Populated dynamically via JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Persistent Floating Help Button (Always on screen) -->
+  <button onclick="openHelpModal()" style="position: fixed; bottom: 24px; right: 24px; z-index: 999; background: linear-gradient(135deg, #ffb800, #ff8800); color: #040812; font-family: 'Orbitron', sans-serif; font-size: 13px; font-weight: 800; padding: 12px 20px; border-radius: 30px; border: 2px solid #fff; box-shadow: 0 4px 25px rgba(255, 184, 0, 0.7); cursor: pointer; display: flex; align-items: center; gap: 8px; letter-spacing: 0.5px;">
+    ❓ DIRECTIONS / HELP
+  </button>
+
+  <header>
+    <div class="brand">
+      <div class="logo-icon">🚀</div>
+      <div>
+        <h1>SCIFI <span>VISION STUDIO</span></h1>
+        <div style="font-size: 13px; color: var(--text-muted); letter-spacing: 1px;">DIRECTOR CORE // scifi-writer:1 & Kokoro-TTS</div>
+      </div>
+    </div>
+    
+    <!-- Unified Suite Navigation Links -->
+    <div style="display: flex; align-items: center; gap: 8px;">
+      <a href="/" class="btn" style="text-decoration: none; color: #00d9ff; border-color: rgba(0, 217, 255, 0.4); padding: 5px 10px; font-size: 12px; font-weight: 700; letter-spacing: 0.5px;">← Media Studio</a>
+      <a href="/zoompan" class="btn" style="text-decoration: none; color: #a78bfa; border-color: rgba(167, 139, 250, 0.4); padding: 5px 10px; font-size: 12px; font-weight: 700; letter-spacing: 0.5px;">ZoomPan</a>
+      <a href="/effects" class="btn" style="text-decoration: none; color: #38bdf8; border-color: rgba(56, 189, 248, 0.4); padding: 5px 10px; font-size: 12px; font-weight: 700; letter-spacing: 0.5px;">Effects</a>
+      <a href="/remember" class="btn" style="text-decoration: none; color: #ffb800; border-color: rgba(255, 184, 0, 0.4); padding: 5px 10px; font-size: 12px; font-weight: 700; letter-spacing: 0.5px;">Remember</a>
+      <a href="/kobold" target="kobold_studio" class="btn" style="text-decoration: none; color: #fbbf24; border-color: rgba(251, 191, 36, 0.4); padding: 5px 10px; font-size: 12px; font-weight: 700; letter-spacing: 0.5px;">🐉 Kobold AI</a>
+    </div>
+    
+    <!-- Active Storyboard Bar in Header -->
+    <div style="display: flex; align-items: center; gap: 10px; background: rgba(0, 217, 255, 0.08); border: 1px solid var(--border-subtle); padding: 6px 14px; border-radius: 6px;">
+      <span style="font-size: 12px; font-weight: 700; color: var(--text-cyan); font-family: 'Orbitron', sans-serif;">STORYBOARD:</span>
+      <select id="storyboardSelect" onchange="onSelectStoryboard(this.value)" style="width: auto; min-width: 200px; padding: 6px 10px; font-size: 13px;"></select>
+      <button class="btn btn-amber" onclick="promptCreateNewStory()" style="padding: 6px 12px; font-size: 12px;">+ New Story</button>
+      <button class="btn btn-amber" onclick="openHelpModal()" style="padding: 6px 14px; font-size: 12px; border-color: #ffb800; background: linear-gradient(135deg, rgba(255,184,0,0.4), rgba(255,140,0,0.5)); box-shadow: 0 0 10px rgba(255,184,0,0.4);">❓ HELP</button>
+    </div>
+
+    <div class="status-badges">
+      <div class="badge green">Ollama: 1000s+</div>
+      <div class="badge green">Kokoro TTS v1.0</div>
+      <div class="badge green">SD LCM Ready</div>
+      <div class="badge green">FFmpeg 1080p</div>
+    </div>
+  </header>
+
+  <!-- Step Wizard Workflow Bar -->
+  <div class="workflow-wizard">
+    <div class="workflow-step-btn active" id="wizard-step-editor" onclick="goToStep('tab-editor')">
+      <div class="step-num">1</div>
+      <div class="step-titles">
+        <span class="step-label">STORYBOARD</span>
+        <span class="step-sub">Select, Write or AI Prompt</span>
+      </div>
+    </div>
+    <div class="workflow-arrow">➔</div>
+    <div class="workflow-step-btn" id="wizard-step-director" onclick="goToStep('tab-director')">
+      <div class="step-num">2</div>
+      <div class="step-titles">
+        <span class="step-label">DIRECTOR & ART</span>
+        <span class="step-sub">LCM Panels & Speech Narration</span>
+      </div>
+    </div>
+    <div class="workflow-arrow">➔</div>
+    <div class="workflow-step-btn" id="wizard-step-audio" onclick="goToStep('tab-audio')">
+      <div class="step-num">3</div>
+      <div class="step-titles">
+        <span class="step-label">SOUNDTRACK</span>
+        <span class="step-sub">BGM Selection & Mix Levels</span>
+      </div>
+    </div>
+    <div class="workflow-arrow">➔</div>
+    <div class="workflow-step-btn" id="wizard-step-cinema" onclick="goToStep('tab-cinema')">
+      <div class="step-num">4</div>
+      <div class="step-titles">
+        <span class="step-label">CINEMA MOVIE</span>
+        <span class="step-sub">1080p Render & Master Preview</span>
+      </div>
+    </div>
+    <div class="workflow-arrow">|</div>
+    <a href="/effects" class="workflow-step-btn" style="text-decoration: none; border-color: rgba(255, 184, 0, 0.4); color: #ffb800;">
+      <div class="step-num" style="background: rgba(255, 184, 0, 0.2); color: #ffb800;">✨</div>
+      <div class="step-titles">
+        <span class="step-label" style="color: #ffb800;">VISUAL FX STUDIO</span>
+        <span class="step-sub">CRT, Glitch & Color Grading</span>
+      </div>
+    </a>
+  </div>
+
+  <main>
+
+    <!-- TAB 1: STORYBOARD MARKDOWN -->
+    <div id="tab-editor" class="tab-content active">
+      
+      <!-- Step 1 Guidance Box -->
+      <div class="step-guide-box">
+        <div style="font-size: 24px;">💡</div>
+        <div>
+          <strong>STEP 1: SELECT OR CREATE YOUR STORY</strong><br>
+          Select an existing story from the dropdown above, load a template, or enter a prompt below and click <strong>"⚡ Generate with AI"</strong> (Ollama generates a structured cinematic storyboard). When you are ready, click <strong>"Proceed to Step 2: Director Studio ➔"</strong>.
+          <div style="margin-top: 6px; font-size: 13px; color: var(--text-cyan);">
+            🔒 <em>Zero Overwrite Protection: Every story automatically uses its own dedicated asset folder (e.g. <code>assets/{story}_panels/</code>) — previous releases and panels are never overwritten!</em>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+          <span>✨ GENERATE STORYBOARD WITH LOCAL OLLAMA</span>
+          <span style="font-size: 11px; color: var(--text-cyan); font-family: 'Orbitron', sans-serif; font-weight: normal; background: rgba(0,217,255,0.12); border: 1px solid var(--border-subtle); padding: 4px 10px; border-radius: 4px;">⏱️ TIMEOUT: 1000s (STREAMING ENABLED)</span>
+        </div>
+        <div style="display: flex; gap: 10px; margin-bottom: 12px; align-items: center;">
+          <label style="font-size: 14px; color: var(--text-muted);">Select Ollama Model:</label>
+          <select id="ollamaModelSelect" style="width: auto; background: rgba(8,14,26,0.9); border: 1px solid var(--border-subtle); color: #fff; padding: 6px 12px; border-radius: 4px; font-family: 'Rajdhani', sans-serif; font-size: 15px;">
+            <option value="scifi-writer:1" selected>scifi-writer:1 (Sci-Fi Specialist)</option>
+            <option value="starcor-news:1">starcor-news:1 (Staacor News & Planetary Lore)</option>
+          </select>
+        </div>
+        <div class="ai-prompt-box" style="margin-bottom: 8px;">
+          <input type="text" id="aiPromptInput" class="ai-prompt-input" value="Discovery on Kepler-62f: an ancient alien sensor beacon has reactivated beneath the glacial ridge, sending an encrypted tachyon pulse into deep space." placeholder="Enter a scene idea or memory...">
+          <button class="btn btn-amber" id="btnGenerateOllama" onclick="generateWithOllama()">⚡ Generate with AI</button>
+        </div>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; align-items: center;">
+          <span style="font-size: 12px; color: var(--text-cyan); font-weight: 700;">💡 Quick Prompts:</span>
+          <button type="button" class="btn" style="padding: 4px 10px; font-size: 11px; background: rgba(0,217,255,0.1);" onclick="setSamplePrompt(0)">🪐 Kepler-62f Glacial Beacon</button>
+          <button type="button" class="btn" style="padding: 4px 10px; font-size: 11px; background: rgba(0,217,255,0.1);" onclick="setSamplePrompt(1)">🤖 Cybernetic Marine Drop</button>
+          <button type="button" class="btn" style="padding: 4px 10px; font-size: 11px; background: rgba(0,217,255,0.1);" onclick="setSamplePrompt(2)">🏛️ Staacor Lunar Statues</button>
+          <button type="button" class="btn" style="padding: 4px 10px; font-size: 11px; background: rgba(0,217,255,0.1);" onclick="setSamplePrompt(3)">🌌 Quantum Singularity Breach</button>
+        </div>
+        <div id="ollamaProgressMsg" style="display: none; font-size: 14px; color: var(--text-amber); margin-top: 8px;">
+          ⏳ Generating tokens with Ollama on CPU (timeout: 1000s streaming)... please allow 1–3 minutes.
+        </div>
+      </div>
+
+      <!-- Prominent Next Action Banner -->
+      <div style="background: linear-gradient(90deg, rgba(255, 184, 0, 0.2), rgba(0, 217, 255, 0.2)); border: 2px solid var(--text-amber); border-radius: 8px; padding: 18px 24px; margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; box-shadow: 0 0 25px rgba(255, 184, 0, 0.2);">
+        <div>
+          <div style="font-family: 'Orbitron', sans-serif; font-size: 18px; font-weight: 700; color: #ffb800; margin-bottom: 6px;">
+            👉 WHAT IS NEXT? (DIRECTIONS)
+          </div>
+          <div style="font-size: 15px; color: #ffffff; line-height: 1.5;">
+            1. Your generated storyboard is in the editor below.<br>
+            2. Click the golden button on the right: <strong>"Proceed to Step 2: Director Studio ➔"</strong>.<br>
+            3. In Step 2, you will generate the panel artwork and voice narration!
+          </div>
+        </div>
+        <button class="btn btn-amber btn-large" onclick="goToStep('tab-director')" style="font-size: 16px; padding: 14px 28px; box-shadow: 0 0 20px rgba(255, 184, 0, 0.6); cursor: pointer;">
+          Proceed to Step 2: Director Studio ➔
+        </button>
+      </div>
+
+      <div class="card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
+          <div class="card-title" style="margin-bottom: 0;">
+            📄 STORYBOARD EDITOR — <span id="currentLoadedFileName" style="color: var(--text-amber);">template.md</span>
+          </div>
+          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <button class="btn btn-amber" onclick="loadMarkdown('TEMPLATEv3.md')">⭐ Load TEMPLATEv3.md</button>
+            <button class="btn" onclick="loadMarkdown('TEMPLATEv2.md')">⭐ Load TEMPLATEv2.md</button>
+            <button class="btn" onclick="saveMarkdown()">💾 Save Changes</button>
+            <button class="btn btn-amber" onclick="saveAsNewMarkdown()">💾 Save As New...</button>
+            <button class="btn btn-amber" onclick="goToStep('tab-director')">🔍 Parse & Open Director</button>
+          </div>
+        </div>
+        <textarea id="markdownEditor" spellcheck="false"></textarea>
+
+        <div class="nav-proceed-row">
+          <div style="font-size: 14px; color: var(--text-muted);">
+            Ready to inspect scenes, images, and audio? ➔
+          </div>
+          <button class="btn btn-amber btn-large" onclick="goToStep('tab-director')">
+            Proceed to Step 2: Director Studio ➔
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: DIRECTOR STUDIO -->
+    <div id="tab-director" class="tab-content">
+      
+      <!-- Step 2 Guidance Box -->
+      <div class="step-guide-box">
+        <div style="font-size: 24px;">🎬</div>
+        <div>
+          <strong>STEP 2: REVIEW PANELS, GENERATE ART & SYNTHESIZE VOICES</strong><br>
+          Review each storyboard panel below. Click <strong>"🎨 Generate LCM Art"</strong> to generate the visual scene locally with Stable Diffusion LCM. Click <strong>"🎙️ Synthesize Speech"</strong> to hear Kokoro TTS narrate the scene. You can also upload custom images, edit dialogue, or pick different voice actors!
+          <div style="margin-top: 6px; font-size: 13px; color: #ffb800;">
+            ⚡ <em>Batch Automation: Use "🎨 Generate All Panels (LCM)" or "🎙️ Synthesize All Speech" to process the entire story in one click!</em>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px;">
+        <div>
+          <h2 id="directorStoryTitle" style="font-family: 'Orbitron'; color: #fff; font-size: 22px;">AURORA RISING</h2>
+          <div id="directorStoryMeta" style="color: var(--text-cyan); font-size: 14px; margin-top: 4px;">Recommended BGM: Deep Mystery & Tension</div>
+        </div>
+        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+          <button class="btn" id="btnGenAllLCM" onclick="generateAllPanelsLCM()">🎨 Generate All Panels (LCM)</button>
+          <button class="btn" id="btnSynthAllAudio" onclick="synthesizeAllPanelsAudio()">🎙️ Synthesize All Speech</button>
+          <button class="btn" onclick="parseCurrentMarkdown()">🔄 Refresh Panels</button>
+          <button class="btn btn-amber" onclick="goToStep('tab-audio')">🎵 Next: Soundtrack</button>
+        </div>
+      </div>
+
+      <div id="panelsList" class="panels-container">
+        <!-- Dynamically populated panel cards -->
+      </div>
+
+      <div class="nav-proceed-row" style="margin-top: 30px;">
+        <button class="btn" onclick="goToStep('tab-editor')">⬅️ Back to Step 1: Storyboard</button>
+        <button class="btn btn-amber btn-large" onclick="goToStep('tab-audio')">
+          Proceed to Step 3: Soundtrack ➔
+        </button>
+      </div>
+    </div>
+
+    <!-- TAB 3: SOUNDTRACK & AUDIO -->
+    <div id="tab-audio" class="tab-content">
+      
+      <!-- Step 3 Guidance Box -->
+      <div class="step-guide-box">
+        <div style="font-size: 24px;">🎵</div>
+        <div>
+          <strong>STEP 3: SELECT BACKGROUND MUSIC & SOUND MIX</strong><br>
+          Choose a sci-fi soundtrack from your library in <code>/home/jack/Desktop/mp3/</code> and preview it below. Adjust the BGM volume slider (default 0.22 is balanced with voice narration).
+          <div style="margin-top: 6px; font-size: 13px; color: var(--text-cyan);">
+            ✓ <em>Auto Voice Ducking is enabled: BGM volume drops automatically whenever Kokoro speaks narration so dialogue is crisp and clear!</em>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">🎵 BACKGROUND MUSIC TRACKS (/home/jack/Desktop/mp3/)</div>
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px; margin-top: 16px;">
+          <div>
+            <label style="display: block; margin-bottom: 8px; color: var(--text-muted);">Select Soundtrack:</label>
+            <select id="bgmSelect" onchange="previewSelectedBgm()" style="padding: 12px; font-size: 15px; margin-bottom: 16px;">
+              <!-- Dynamically populated from ~/Desktop/mp3/ -->
+            </select>
+            <audio id="bgmAudioPlayer" controls style="margin-top: 8px;"></audio>
+          </div>
+
+          <div style="background: rgba(7, 10, 19, 0.6); padding: 18px; border-radius: 6px; border: 1px solid var(--border-subtle);">
+            <div style="font-family: 'Orbitron'; font-size: 14px; color: var(--text-amber); margin-bottom: 14px;">MIXING PARAMETERS</div>
+            <div style="margin-bottom: 14px;">
+              <label style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 4px;">
+                <span>BGM Volume</span>
+                <span id="bgmVolLabel">0.22</span>
+              </label>
+              <input type="range" id="bgmVolumeSlider" min="0.05" max="0.6" step="0.01" value="0.22" oninput="document.getElementById('bgmVolLabel').innerText = this.value" style="width: 100%;">
+            </div>
+            <div style="font-size: 13px; color: var(--text-muted); line-height: 1.5;">
+              ✓ Auto Voice Ducking: Enabled<br>
+              ✓ 1.5s Soundtrack Fade-In<br>
+              ✓ 3.5s Outro Fade-Out
+            </div>
+          </div>
+        </div>
+
+        <div class="nav-proceed-row">
+          <button class="btn" onclick="goToStep('tab-director')">⬅️ Back to Step 2: Director Studio</button>
+          <button class="btn btn-amber btn-large" onclick="goToStep('tab-cinema')">
+            Proceed to Step 4: Cinema Movie ➔
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 4: CINEMA & EXPORT -->
+    <div id="tab-cinema" class="tab-content">
+      
+      <!-- Step 4 Guidance Box -->
+      <div class="step-guide-box">
+        <div style="font-size: 24px;">🎥</div>
+        <div>
+          <strong>STEP 4: RENDER & WATCH YOUR 1080P CINEMATIC MOVIE</strong><br>
+          Click <strong>"🚀 RENDER CINEMATIC VIDEO"</strong> below. The engine compiles all storyboard panels with Ken Burns camera motion, Kokoro voice narration, cyber HUD overlays, and background music into a pristine 1080p MP4. When complete, the master video will automatically play right here!
+        </div>
+      </div>
+
+      <div class="card" style="text-align: center; padding: 32px;">
+        <h2 style="font-family: 'Orbitron'; font-size: 24px; margin-bottom: 8px; color: #fff;">RENDER CINEMATIC VIDEO (1080P)</h2>
+        <p style="color: var(--text-muted); margin-bottom: 24px;">Compiles all storyboard panels with smooth Ken Burns motion, Kokoro narration, cyber HUD overlays, and soundtrack mixing.</p>
+        
+        <button class="btn btn-amber btn-large" id="renderBtn" onclick="triggerRenderVideo()">
+          🚀 RENDER VIDEO (science_1.mp4)
+        </button>
+
+        <div class="progress-bar-container" id="progressBarContainer">
+          <div class="progress-bar-fill" id="progressBarFill"></div>
+        </div>
+        <div id="renderStatusMsg" style="font-family: 'Orbitron'; font-size: 14px; color: var(--text-cyan); margin-top: 10px;"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title" id="cinemaCardTitle">🎥 MASTER PREVIEW // science_1.mp4</div>
+        <div class="video-hero-box">
+          <video id="mainVideoPlayer" controls preload="auto">
+            <source src="/video/science_1.mp4" type="video/mp4">
+            Your browser does not support HTML5 video.
+          </video>
+        </div>
+        <div style="display: flex; justify-content: center; flex-wrap: wrap; gap: 16px; margin-top: 20px;">
+          <a id="videoDownloadLink" href="/video/science_1.mp4" download="science_1.mp4" class="btn btn-amber">
+            💾 Download Video
+          </a>
+          <button class="btn" onclick="document.getElementById('mainVideoPlayer').load(); document.getElementById('mainVideoPlayer').play();">
+            ▶️ Replay Video
+          </button>
+          <a href="/effects" class="btn" style="border-color: #00d9ff; color: #00d9ff;">
+            ✨ Open in Visual FX Studio
+          </a>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">🖼️ CINEMATIC SNAPSHOTS FROM RENDERED VIDEO</div>
+        <div id="snapshotGalleryGrid" class="gallery-grid">
+          <!-- Dynamically populated from /api/get-snapshots -->
+        </div>
+      </div>
+
+      <div class="nav-proceed-row">
+        <button class="btn" onclick="goToStep('tab-audio')">⬅️ Back to Step 3: Soundtrack</button>
+        <a href="/effects" class="btn btn-amber" style="text-decoration: none;">
+          Open in Visual FX Studio ✨
+        </a>
+      </div>
+    </div>
+
+  </main>
+
+  <script>
+    const API_PREFIX = window.location.pathname.startsWith('/scifi') ? '/scifi' : '';
+
+    // Intercept native fetch so that relative /api, /assets, /bgm, /video, /resources paths route to API_PREFIX when mounted on unified server
+    const _origFetch = window.fetch;
+    window.fetch = function(url, options) {
+      if (typeof url === 'string') {
+        if (API_PREFIX && url.startsWith('/') && !url.startsWith(API_PREFIX)) {
+          url = API_PREFIX + url;
+        }
+      }
+      return _origFetch(url, options);
+    };
+
+    function fixAssetUrl(url) {
+      if (!url) return '';
+      if (API_PREFIX && url.startsWith('/') && !url.startsWith(API_PREFIX)) {
+        return API_PREFIX + url;
+      }
+      return url;
+    }
+
+    let currentStoryboard = null;
+    let currentActiveFile = 'template.md';
+    let pollTimer = null;
+
+    const availableVoices = [
+      { id: "af_nova", name: "af_nova (Research Scientist)" },
+      { id: "bm_george", name: "bm_george (Imperial Officer)" },
+      { id: "af_heart", name: "af_heart (Ship AI Core)" },
+      { id: "am_michael", name: "am_michael (Veteran Commander)" },
+      { id: "af_sarah", name: "af_sarah (Officer / Narrative)" },
+      { id: "am_adam", name: "am_adam (Tactical Specialist)" }
+    ];
+
+    function openHelpModal() {
+      const modal = document.getElementById('helpModal');
+      if (modal) modal.classList.add('active');
+    }
+
+    function closeHelpModal() {
+      const modal = document.getElementById('helpModal');
+      if (modal) modal.classList.remove('active');
+    }
+
+    function closeHelpOnBackdrop(e) {
+      if (e.target.id === 'helpModal') {
+        closeHelpModal();
+      }
+    }
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeHelpModal();
+    });
+
+    function goToStep(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+      const target = document.getElementById(tabId);
+      if (target) target.classList.add('active');
+
+      // Update wizard step buttons
+      document.querySelectorAll('.workflow-step-btn').forEach(el => el.classList.remove('active'));
+      if (tabId === 'tab-editor') {
+        document.getElementById('wizard-step-editor')?.classList.add('active');
+      } else if (tabId === 'tab-director') {
+        document.getElementById('wizard-step-director')?.classList.add('active');
+        parseCurrentMarkdown();
+      } else if (tabId === 'tab-audio') {
+        document.getElementById('wizard-step-audio')?.classList.add('active');
+      } else if (tabId === 'tab-cinema') {
+        document.getElementById('wizard-step-cinema')?.classList.add('active');
+        if (currentStoryboard) {
+          loadSnapshotsForStory(currentStoryboard.project_slug);
+        }
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function switchTab(tabId) {
+      goToStep(tabId);
+    }
+
+    async function loadStoryboardList() {
+      try {
+        const res = await fetch('/api/list-storyboards');
+        const data = await res.json();
+        if (data.success && data.files) {
+          const select = document.getElementById('storyboardSelect');
+          if (!select) return;
+          select.innerHTML = "";
+          data.files.forEach(f => {
+            const opt = document.createElement('option');
+            opt.value = f.filename;
+            opt.innerText = `${f.filename} (${f.title})`;
+            if (f.filename === currentActiveFile) {
+              opt.selected = true;
+            }
+            select.appendChild(opt);
+          });
+        }
+      } catch (err) {
+        console.error("Error listing storyboards:", err);
+      }
+    }
+
+    function onSelectStoryboard(filename) {
+      if (filename) {
+        loadMarkdown(filename);
+      }
+    }
+
+    async function promptCreateNewStory() {
+      const title = prompt("Enter a title for the new Sci-Fi Story (e.g., 'Martian Discovery'):");
+      if (!title || !title.trim()) return;
+      try {
+        const res = await fetch('/api/create-storyboard', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ title: title.trim() })
+        });
+        const data = await res.json();
+        if (data.success) {
+          currentActiveFile = data.filename;
+          await loadStoryboardList();
+          await loadMarkdown(data.filename);
+          alert(`New storyboard '${data.filename}' created! Edit your scenes in Step 1.`);
+          goToStep('tab-editor');
+        } else {
+          alert("Error creating storyboard: " + data.error);
+        }
+      } catch (err) {
+        alert("Error creating story: " + err);
+      }
+    }
+
+    async function saveAsNewMarkdown() {
+      const filename = prompt("Enter new filename to save as (e.g. 'alien_signal.md'):");
+      if (!filename || !filename.trim()) return;
+      const content = document.getElementById('markdownEditor').value;
+      try {
+        const res = await fetch('/api/save-markdown', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ content, filename: filename.trim() })
+        });
+        const data = await res.json();
+        if (data.success) {
+          currentActiveFile = data.filename;
+          await loadStoryboardList();
+          document.getElementById('currentLoadedFileName').innerText = data.filename;
+          document.getElementById('storyboardSelect').value = data.filename;
+          parseCurrentMarkdown();
+          alert(`Saved as ${data.filename}!`);
+        }
+      } catch (err) {
+        alert("Error saving file: " + err);
+      }
+    }
+
+    async function loadMarkdown(file = 'template.md') {
+      try {
+        const res = await fetch(`/api/load-markdown?file=${file}`);
+        const data = await res.json();
+        if (data.success) {
+          currentActiveFile = data.filename;
+          document.getElementById('markdownEditor').value = data.content;
+          const label = document.getElementById('currentLoadedFileName');
+          if (label) label.innerText = data.filename;
+          const select = document.getElementById('storyboardSelect');
+          if (select) select.value = data.filename;
+          parseCurrentMarkdown();
+        }
+      } catch (err) {
+        console.error("Error loading markdown:", err);
+      }
+    }
+
+    async function saveMarkdown() {
+      const content = document.getElementById('markdownEditor').value;
+      const res = await fetch('/api/save-markdown', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ content, filename: currentActiveFile })
+      });
+      const data = await res.json();
+      alert(data.message || `Markdown saved to ${currentActiveFile}!`);
+    }
+
+    const samplePrompts = [
+      "Discovery on Kepler-62f: an ancient alien sensor beacon has reactivated beneath the glacial ridge, sending an encrypted tachyon pulse into deep space.",
+      "Cybernetic marine squad drops through the burning upper atmosphere of a contested frontier colony to secure the orbital defense mainframe.",
+      "Archaeological team on the Staacor moon discovers twenty towering monolithic statues standing in a geometric perimeter, broadcasting an enigmatic hum.",
+      "Research vessel Event Horizon crosses the threshold of a localized quantum singularity, discovering an impossible mirrored universe."
+    ];
+
+    function setSamplePrompt(idx) {
+      const input = document.getElementById('aiPromptInput');
+      if (input && samplePrompts[idx]) {
+        input.value = samplePrompts[idx];
+      }
+    }
+
+    async function generateWithOllama() {
+      let prompt = document.getElementById('aiPromptInput').value.trim();
+      if (!prompt) {
+        prompt = samplePrompts[0];
+        document.getElementById('aiPromptInput').value = prompt;
+      }
+      const modelSelect = document.getElementById('ollamaModelSelect');
+      const model = modelSelect ? modelSelect.value : 'scifi-writer:1';
+      const progressMsg = document.getElementById('ollamaProgressMsg');
+      const btn = document.getElementById('btnGenerateOllama') || event.target;
+      const originalText = btn.innerText;
+      btn.innerText = "⏳ Generating...";
+      btn.disabled = true;
+      if (progressMsg) progressMsg.style.display = 'block';
+
+      try {
+        const res = await fetch('/api/generate-storyboard', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ prompt, model, timeout: 1000 })
+        });
+        const data = await res.json();
+        if (data.success) {
+          document.getElementById('markdownEditor').value = data.content;
+          parseCurrentMarkdown();
+          if (confirm(`🎉 Storyboard generated successfully by ${model}!\n\nClick OK to proceed immediately to Step 2: Director Studio to create panel art and voices.\n(Or Cancel to review the text in the editor).`)) {
+            goToStep('tab-director');
+          }
+        } else {
+          alert("Generation failed: " + data.error);
+        }
+      } catch (err) {
+        alert("Error connecting to Ollama: " + err);
+      } finally {
+        btn.innerText = originalText;
+        btn.disabled = false;
+        if (progressMsg) progressMsg.style.display = 'none';
+      }
+    }
+
+    async function parseCurrentMarkdown() {
+      const content = document.getElementById('markdownEditor').value;
+      const res = await fetch('/api/parse-storyboard', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ content })
+      });
+      const data = await res.json();
+      if (data.success) {
+        currentStoryboard = data.storyboard;
+        renderDirectorPanels(currentStoryboard);
+      }
+    }
+
+    function renderDirectorPanels(story) {
+      document.getElementById('directorStoryTitle').innerText = story.title || "UNTITLED STORY";
+      const targetVideo = story.output_filename || "science_1.mp4";
+      const slug = story.project_slug || "science_1";
+      document.getElementById('directorStoryMeta').innerText = `Recommended BGM: ${story.bgm || "Deep Mystery & Tension"} | 📁 Target Video: ${targetVideo} | 🎨 Assets Folder: assets/${slug}_panels/`;
+
+      const renderBtn = document.getElementById('renderBtn');
+      if (renderBtn) renderBtn.innerText = `🚀 RENDER VIDEO (${targetVideo})`;
+      const cardTitle = document.getElementById('cinemaCardTitle');
+      if (cardTitle) cardTitle.innerText = `🎥 MASTER PREVIEW // ${targetVideo}`;
+      const dlLink = document.getElementById('videoDownloadLink');
+      if (dlLink) {
+        dlLink.href = `/video/${targetVideo}`;
+        dlLink.download = targetVideo;
+        dlLink.innerText = `💾 Download ${targetVideo}`;
+      }
+
+      const container = document.getElementById('panelsList');
+      container.innerHTML = "";
+
+      story.panels.forEach((p, idx) => {
+        const card = document.createElement('div');
+        card.className = "panel-card";
+
+        let voiceOpts = availableVoices.map(v => 
+          `<option value="${v.id}" ${p.voice === v.id ? 'selected' : ''}>${v.name}</option>`
+        ).join("");
+
+        card.innerHTML = `
+          <div class="panel-preview-col">
+            <div class="panel-img-box">
+              <img id="img_preview_${p.index}" src="${fixAssetUrl(p.image_url || ('/assets/' + slug + '_panels/panel_' + p.index + '.jpg'))}?t=${Date.now()}" onerror="this.src=fixAssetUrl('/static/placeholder.jpg')">
+            </div>
+            <button class="btn" style="width:100%; justify-content:center;" onclick="generatePanelImage(this, ${p.index})">
+              🎨 Generate LCM Art
+            </button>
+            <button class="btn" style="width:100%; justify-content:center; border-color:#a855f7; color:#e9d5ff;" onclick="generatePanelImageGemini(this, ${p.index})">
+              ✨ Generate with Gemini
+            </button>
+            <label class="btn btn-amber" style="width:100%; justify-content:center; text-align:center; cursor:pointer;">
+              📁 Upload Image
+              <input type="file" accept="image/*" style="display:none;" onchange="uploadPanelImage(${p.index}, this)">
+            </label>
+            <button class="btn" style="width:100%; justify-content:center; border-color:#00ffa3; color:#00ffa3;" onclick="openResourcePicker(this, ${p.index})">
+              📚 Pick from Resources
+            </button>
+          </div>
+
+          <div class="panel-content-col">
+            <div class="panel-header-row">
+              <div class="panel-title-text">PANEL ${p.index}: ${p.header}</div>
+              <div class="panel-layout-badge">${p.layout}</div>
+            </div>
+
+            <div class="voice-control-row">
+              <label style="font-weight:600; color:var(--text-cyan);">Voice Actor:</label>
+              <select class="voice-select" id="voice_select_${p.index}" onchange="updatePanelVoice(${idx}, this.value)">
+                ${voiceOpts}
+              </select>
+              <button class="btn" onclick="synthesizeAudioForPanel(this, ${idx})">🎙️ Synthesize Speech</button>
+            </div>
+
+            <div>
+              <audio id="audio_player_${p.index}" controls src="${fixAssetUrl(p.audio_url || ('/assets/' + slug + '_audio/panel_' + p.index + '.wav'))}?t=${Date.now()}"></audio>
+            </div>
+
+            <div>
+              <label style="display:block; font-size:13px; color:var(--text-muted); margin-bottom:4px;">Narration & Dialogue:</label>
+              <textarea id="speech_text_${p.index}" style="min-height:75px; height:75px;" onchange="updatePanelText(${idx}, this.value)">${p.spoken_text || p.raw_text}</textarea>
+            </div>
+
+            <div style="font-size:12px; color:var(--text-muted);">
+              <strong>Prompt:</strong> ${p.image_prompt}
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function updatePanelVoice(idx, val) {
+      if (currentStoryboard && currentStoryboard.panels[idx]) {
+        currentStoryboard.panels[idx].voice = val;
+      }
+    }
+
+    function updatePanelText(idx, val) {
+      if (currentStoryboard && currentStoryboard.panels[idx]) {
+        currentStoryboard.panels[idx].spoken_text = val;
+      }
+    }
+
+    async function synthesizeAudioForPanel(btnEl, idx) {
+      if (typeof btnEl === 'number') {
+        idx = btnEl;
+        btnEl = null;
+      }
+      const panel = currentStoryboard.panels[idx];
+      panel.spoken_text = document.getElementById(`speech_text_${panel.index}`).value;
+      panel.voice = document.getElementById(`voice_select_${panel.index}`).value;
+
+      const btn = btnEl || (typeof event !== 'undefined' && event && event.target) || document.activeElement;
+      if (btn && btn.innerText) btn.innerText = "⏳ Synthesizing...";
+      if (btn) btn.disabled = true;
+
+      try {
+        const res = await fetch('/api/synthesize-audio', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ panel })
+        });
+        const data = await res.json();
+        if (data.success) {
+          const player = document.getElementById(`audio_player_${panel.index}`);
+          player.src = data.audio_path;
+          player.play();
+        } else {
+          alert("TTS failed: " + data.error);
+        }
+      } catch (err) {
+        alert("Error synthesizing audio: " + err);
+      } finally {
+        if (btn && btn.innerText) btn.innerText = "🎙️ Synthesize Speech";
+        if (btn) btn.disabled = false;
+      }
+    }
+
+    async function generatePanelImage(btnEl, panelIdx) {
+      if (typeof btnEl === 'number') {
+        panelIdx = btnEl;
+        btnEl = null;
+      }
+      const panel = currentStoryboard.panels[panelIdx - 1];
+      const prompt = panel.image_prompt;
+
+      const btn = btnEl || (typeof event !== 'undefined' && event && event.target) || document.activeElement;
+      if (btn && btn.innerText) btn.innerText = "⏳ Generating LCM...";
+      if (btn) btn.disabled = true;
+
+      try {
+        const res = await fetch('/api/generate-image', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            prompt,
+            panel_index: panelIdx,
+            image_path: panel.image_path,
+            project_slug: currentStoryboard.project_slug
+          })
+        });
+        const data = await res.json();
+        if (data.success) {
+          document.getElementById(`img_preview_${panelIdx}`).src = data.image_url;
+        } else {
+          alert("Image generation failed: " + data.error);
+        }
+      } catch (err) {
+        alert("Error: " + err);
+      } finally {
+        btn.innerText = "🎨 Generate LCM Art";
+        btn.disabled = false;
+      }
+    }
+
+    async function generateAllPanelsLCM() {
+      if (!currentStoryboard || !currentStoryboard.panels || currentStoryboard.panels.length === 0) {
+        alert("Please parse a storyboard first.");
+        return;
+      }
+      const btn = document.getElementById('btnGenAllLCM');
+      const originalText = btn.innerText;
+      btn.disabled = true;
+      const total = currentStoryboard.panels.length;
+
+      for (let i = 0; i < total; i++) {
+        const p = currentStoryboard.panels[i];
+        btn.innerText = `⏳ LCM Panel ${i + 1}/${total}...`;
+        try {
+          const res = await fetch('/api/generate-image', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              prompt: p.image_prompt,
+              panel_index: p.index,
+              image_path: p.image_path,
+              project_slug: currentStoryboard.project_slug
+            })
+          });
+          const data = await res.json();
+          if (data.success) {
+            const img = document.getElementById(`img_preview_${p.index}`);
+            if (img) img.src = data.image_url;
+          }
+        } catch (e) {
+          console.error("Error generating LCM panel:", e);
+        }
+      }
+      btn.innerText = "✅ All Art Generated!";
+      setTimeout(() => {
+        btn.innerText = originalText;
+        btn.disabled = false;
+      }, 3000);
+    }
+
+    async function synthesizeAllPanelsAudio() {
+      if (!currentStoryboard || !currentStoryboard.panels || currentStoryboard.panels.length === 0) {
+        alert("Please parse a storyboard first.");
+        return;
+      }
+      const btn = document.getElementById('btnSynthAllAudio');
+      const originalText = btn.innerText;
+      btn.disabled = true;
+      const total = currentStoryboard.panels.length;
+
+      for (let i = 0; i < total; i++) {
+        const p = currentStoryboard.panels[i];
+        btn.innerText = `⏳ Voicing ${i + 1}/${total}...`;
+        p.spoken_text = document.getElementById(`speech_text_${p.index}`)?.value || p.spoken_text;
+        p.voice = document.getElementById(`voice_select_${p.index}`)?.value || p.voice;
+        try {
+          const res = await fetch('/api/synthesize-audio', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ panel: p })
+          });
+          const data = await res.json();
+          if (data.success) {
+            const player = document.getElementById(`audio_player_${p.index}`);
+            if (player) player.src = data.audio_path;
+          }
+        } catch (e) {
+          console.error("Error voicing panel:", e);
+        }
+      }
+      btn.innerText = "✅ All Voices Done!";
+      setTimeout(() => {
+        btn.innerText = originalText;
+        btn.disabled = false;
+      }, 3000);
+    }
+
+    async function uploadPanelImage(panelIdx, input) {
+      if (!input.files || !input.files[0]) return;
+      const panel = currentStoryboard.panels[panelIdx - 1];
+      const formData = new FormData();
+      formData.append('image', input.files[0]);
+      formData.append('panel_index', panelIdx);
+      if (panel && panel.image_path) formData.append('image_path', panel.image_path);
+      if (currentStoryboard && currentStoryboard.project_slug) formData.append('project_slug', currentStoryboard.project_slug);
+
+      try {
+        const res = await fetch('/api/upload-image', {
+          method: 'POST',
+          body: formData
+        });
+        const data = await res.json();
+        if (data.success) {
+          document.getElementById(`img_preview_${panelIdx}`).src = data.image_url;
+        } else {
+          alert("Upload failed: " + data.error);
+        }
+      } catch (err) {
+        alert("Error uploading image: " + err);
+      }
+    }
+
+    async function generatePanelImageGemini(btnEl, panelIdx) {
+      if (typeof btnEl === 'number') {
+        panelIdx = btnEl;
+        btnEl = null;
+      }
+      const panel = currentStoryboard.panels[panelIdx - 1];
+      const prompt = panel.image_prompt;
+
+      const btn = btnEl || (typeof event !== 'undefined' && event && event.target) || document.activeElement;
+      if (btn && btn.innerText) btn.innerText = "⏳ Calling Gemini...";
+      if (btn) btn.disabled = true;
+
+      try {
+        const res = await fetch('/api/generate-image-gemini', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            prompt,
+            panel_index: panelIdx,
+            image_path: panel.image_path,
+            project_slug: currentStoryboard.project_slug
+          })
+        });
+        const data = await res.json();
+        if (data.success) {
+          document.getElementById(`img_preview_${panelIdx}`).src = data.image_url;
+        } else {
+          alert("Gemini Image generation note: " + data.error);
+        }
+      } catch (err) {
+        alert("Error calling Gemini API: " + err);
+      } finally {
+        if (btn && btn.innerText) btn.innerText = "✨ Generate with Gemini";
+        if (btn) btn.disabled = false;
+      }
+    }
+
+    let currentPickingPanelIdx = 1;
+
+    async function openResourcePicker(btnEl, panelIdx) {
+      if (typeof btnEl === 'number') {
+        panelIdx = btnEl;
+        btnEl = null;
+      }
+      currentPickingPanelIdx = panelIdx;
+      document.getElementById('resourceModalSubtitle').innerText = `Choose a curated image from /resources/ for Panel ${panelIdx}:`;
+      const modal = document.getElementById('resourceModal');
+      modal.classList.add('active');
+      await loadResourcesGrid();
+    }
+
+    function closeResourceModal() {
+      const modal = document.getElementById('resourceModal');
+      modal.classList.remove('active');
+    }
+
+    function closeResourceModalOnBackdrop(e) {
+      if (e.target.id === 'resourceModal') {
+        closeResourceModal();
+      }
+    }
+
+    async function loadResourcesGrid() {
+      const container = document.getElementById('resourcesGrid');
+      container.innerHTML = '<div style="color:var(--text-cyan); grid-column:1/-1; text-align:center; padding:30px;">Loading /resources/...</div>';
+      try {
+        const res = await fetch('/api/resources');
+        const data = await res.json();
+        if (!data.success || !data.resources || data.resources.length === 0) {
+          container.innerHTML = '<div style="color:var(--text-muted); grid-column:1/-1; text-align:center; padding:30px;">No images found in /home/jack/Desktop/scifi-writer_1/resources/</div>';
+          return;
+        }
+        container.innerHTML = '';
+        data.resources.forEach(r => {
+          const card = document.createElement('div');
+          card.style.cssText = 'background: rgba(14,21,33,0.95); border: 1px solid rgba(0,255,163,0.3); border-radius: 6px; padding: 10px; display: flex; flex-direction: column; gap: 8px; transition: all 0.2s;';
+          card.innerHTML = `
+            <div style="width: 100%; height: 125px; overflow: hidden; border-radius: 4px; background: #000; cursor: pointer;" onclick="selectResourceForPanel('${r.filename}')">
+              <img src="${r.url}" style="width:100%; height:100%; object-fit: cover; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'" alt="${r.filename}">
+            </div>
+            <div style="font-size: 11px; color: #e2e8f0; font-family: monospace; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;" title="${r.filename}">
+              ${r.filename}
+            </div>
+            <button class="btn" style="width: 100%; justify-content: center; font-size: 11px; padding: 6px 8px; border-color: #00ffa3; color: #00ffa3; font-weight: 600;" onclick="selectResourceForPanel('${r.filename}')">
+              ✅ Assign to Panel ${currentPickingPanelIdx}
+            </button>
+          `;
+          container.appendChild(card);
+        });
+      } catch (err) {
+        container.innerHTML = `<div style="color:#ff3366; grid-column:1/-1; padding:30px;">Error loading resources: ${err}</div>`;
+      }
+    }
+
+    async function selectResourceForPanel(filename) {
+      const panelIdx = currentPickingPanelIdx;
+      const panel = currentStoryboard.panels[panelIdx - 1];
+      try {
+        const res = await fetch('/api/assign-resource', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            filename: filename,
+            panel_index: panelIdx,
+            target_path: panel.image_path,
+            project_slug: currentStoryboard.project_slug
+          })
+        });
+        const data = await res.json();
+        if (data.success) {
+          document.getElementById(`img_preview_${panelIdx}`).src = data.image_url;
+          closeResourceModal();
+        } else {
+          alert("Failed to assign resource: " + data.error);
+        }
+      } catch (err) {
+        alert("Error: " + err);
+      }
+    }
+
+    async function loadBgmList() {
+      try {
+        const res = await fetch('/api/bgm-list');
+        const data = await res.json();
+        if (data.success && data.tracks) {
+          const select = document.getElementById('bgmSelect');
+          select.innerHTML = "";
+          data.tracks.forEach(track => {
+            const opt = document.createElement('option');
+            opt.value = track;
+            opt.innerText = track;
+            if (track.includes("Shadows")) {
+              opt.selected = true;
+            }
+            select.appendChild(opt);
+          });
+          previewSelectedBgm();
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    function previewSelectedBgm() {
+      const select = document.getElementById('bgmSelect');
+      const track = select.value;
+      const player = document.getElementById('bgmAudioPlayer');
+      player.src = fixAssetUrl(`/bgm/${track}`);
+    }
+
+    async function loadSnapshotsForStory(slug) {
+      try {
+        const res = await fetch(`/api/get-snapshots?slug=${slug || 'science_1'}`);
+        const data = await res.json();
+        const gallery = document.getElementById('snapshotGalleryGrid');
+        if (!gallery) return;
+        if (data.success && data.snapshots && data.snapshots.length > 0) {
+          gallery.innerHTML = "";
+          data.snapshots.forEach(s => {
+            const item = document.createElement('div');
+            item.className = "gallery-item";
+            item.innerHTML = `
+              <img src="${fixAssetUrl(s.url)}" alt="${s.caption}">
+              <div class="gallery-item-caption">${s.caption}</div>
+            `;
+            gallery.appendChild(item);
+          });
+        }
+      } catch (err) {
+        console.error("Error loading snapshots:", err);
+      }
+    }
+
+    async function triggerRenderVideo() {
+      const btn = document.getElementById('renderBtn');
+      const progressContainer = document.getElementById('progressBarContainer');
+      const progressFill = document.getElementById('progressBarFill');
+      const statusMsg = document.getElementById('renderStatusMsg');
+      const targetVideo = (currentStoryboard && currentStoryboard.output_filename) ? currentStoryboard.output_filename : "science_1.mp4";
+
+      btn.disabled = true;
+      btn.innerText = `⚙️ RENDERING ${targetVideo}...`;
+      progressContainer.style.display = "block";
+      progressFill.style.width = "5%";
+      statusMsg.innerText = `Starting render pipeline for ${targetVideo}...`;
+
+      const bgmTrack = document.getElementById('bgmSelect').value;
+      const bgmVol = parseFloat(document.getElementById('bgmVolumeSlider').value);
+
+      try {
+        const res = await fetch('/api/render-video', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            storyboard: currentStoryboard,
+            output_filename: targetVideo,
+            bgm_track: bgmTrack,
+            bgm_volume: bgmVol
+          })
+        });
+
+        const data = await res.json();
+        if (!data.success) {
+          alert("Render failed to start: " + data.error);
+          btn.disabled = false;
+          btn.innerText = `🚀 RENDER VIDEO (${targetVideo})`;
+          return;
+        }
+
+        // Poll status
+        if (pollTimer) clearInterval(pollTimer);
+        pollTimer = setInterval(async () => {
+          const sRes = await fetch('/api/render-status');
+          const sData = await sRes.json();
+          progressFill.style.width = `${sData.progress}%`;
+          statusMsg.innerText = sData.message;
+
+          if (sData.status === "completed") {
+            clearInterval(pollTimer);
+            btn.disabled = false;
+            btn.innerText = `🚀 RENDER AGAIN (${targetVideo})`;
+            statusMsg.innerText = `✅ Video rendered successfully: ${targetVideo}`;
+            const finalName = sData.output_file || targetVideo;
+            const video = document.getElementById('mainVideoPlayer');
+            video.src = fixAssetUrl(`/video/${finalName}?t=${Date.now()}`);
+            video.load();
+            video.play();
+            const dlLink = document.getElementById('videoDownloadLink');
+            if (dlLink) {
+              dlLink.href = fixAssetUrl(`/video/${finalName}`);
+              dlLink.download = finalName;
+              dlLink.innerText = `💾 Download ${finalName}`;
+            }
+            if (currentStoryboard) {
+              loadSnapshotsForStory(currentStoryboard.project_slug);
+            }
+          } else if (sData.status === "error") {
+            clearInterval(pollTimer);
+            btn.disabled = false;
+            btn.innerText = `🚀 RENDER VIDEO (${targetVideo})`;
+            statusMsg.innerText = "❌ Error: " + sData.error;
+          }
+        }, 1500);
+
+      } catch (err) {
+        alert("Error starting render: " + err);
+        btn.disabled = false;
+        btn.innerText = `🚀 RENDER VIDEO (${targetVideo})`;
+      }
+    }
+
+    // Initialize on page load
+    window.addEventListener('DOMContentLoaded', async () => {
+      await loadStoryboardList();
+      await loadMarkdown('template.md');
+      await loadBgmList();
+      loadSnapshotsForStory('marine');
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,156 @@
+<!-- mk_captions.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Caption Box Creator</title>
+    <style>
+        /* Style for the caption box */
+        #caption-box {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 10px;
+            border: 1px solid black;
+            margin-top: 10px;
+        }
+
+        /* Add the custom fonts */
+      @font-face {
+    font-family: 'DejaVuSans';
+    src: url('static/fonts/DejaVuSans-Bold.ttf');
+}
+
+@font-face {
+    font-family: 'xkcd-script';
+    src: url('static/fonts/xkcd-script.ttf');
+}
+
+@font-face {
+    font-family: 'MerriweatherSans';
+    src: url('static/fonts/MerriweatherSans-Bold.ttf');
+}
+a {
+    text-decoration: none;
+    color: navy;
+    font-weight: bold;
+    font-size: 26px;
+    
+}
+    </style>
+</head>
+<body>
+    <h1>Create Caption Box</h1>
+    <!-- link to index-->
+    <a href="/">Home</a>
+   <form id="caption-form">
+    <!-- Box Size -->
+    <label for="box_size">Box Size (e.g., 200x100):</label><br>
+    <input type="text" id="box_size" name="box_size" placeholder="Box Size (e.g., 200x100)" value="200x500" required><br><br>
+
+    <!-- Text -->
+    <label for="text">Enter Multi-line Text:</label><br>
+    <textarea id="text" name="text" placeholder="Enter multi-line text" rows="4" cols="30" required>Sample Text</textarea><br><br>
+
+    <!-- Background Color -->
+    <label for="background_color">Background Color:</label><br>
+    <input type="color" id="background_color" name="background_color" value="#ffffff" required><br><br>
+
+    <!-- Font Size -->
+    <label for="font_size">Font Size (e.g., 12):</label><br>
+    <input type="number" id="font_size" name="font_size" min="1" value="12" required><br><br>
+
+    <!-- Font Color -->
+    <label for="font_color">Font Color:</label><br>
+    <input type="color" id="font_color" name="font_color" value="#000000" required><br><br>
+
+    <!-- Font -->
+    <label for="font">Choose Font:</label><br>
+    <select id="font" name="font" required>
+        <option value="Arial" selected>Arial</option>
+        <option value="DejaVuSans">DejaVu Sans</option>
+        <option value="xkcd-script">xkcd-script</option>
+        <option value="MerriweatherSans">MerriweatherSans</option>
+    </select><br><br>
+
+    <!-- Submit Button -->
+    <button type="submit">Create Caption</button>
+</form>
+
+
+    <div id="caption-container">
+        <!-- Dynamically generated caption boxes will appear here -->
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas"></script>
+   <script>
+document.getElementById('caption-form').addEventListener('submit', function(event) {
+    event.preventDefault(); // Prevent the form from submitting normally
+
+    // Collect the form data into an object
+    const boxSize = document.getElementById('box_size').value.split('x');
+    const formData = {
+        width: parseInt(boxSize[0], 10),
+        height: parseInt(boxSize[1], 10),
+        text: document.getElementById('text').value,
+        background_color: document.getElementById('background_color').value,
+        font_size: document.getElementById('font_size').value + 'px',
+        font_color: document.getElementById('font_color').value,
+        font: document.getElementById('font').value
+    };
+
+    // Create and style the caption box
+    const captionBox = document.createElement('div');
+    captionBox.style.width = formData.width + 'px';
+    captionBox.style.height = formData.height + 'px';
+    captionBox.style.backgroundColor = formData.background_color;
+    captionBox.style.color = formData.font_color;
+    captionBox.style.fontSize = formData.font_size;
+    captionBox.style.fontFamily = formData.font;
+    captionBox.style.display = 'flex';
+    captionBox.style.justifyContent = 'center';
+    captionBox.style.alignItems = 'center';
+    captionBox.style.textAlign = 'center';
+    captionBox.style.border = '1px solid black';
+    captionBox.innerText = formData.text;
+
+    // Clear previous preview and append the new one
+    const container = document.getElementById('caption-container');
+    container.innerHTML = ''; // Clear previous content
+    container.appendChild(captionBox);
+
+    // Capture the dynamically created caption box using html2canvas
+    html2canvas(captionBox).then(canvas => {
+        // Convert the canvas to a base64 string
+        formData.imageData = canvas.toDataURL('image/png');
+
+        // Send the form data as JSON using fetch
+        fetch('/save_captions', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData) // Convert the form data to JSON
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Caption saved successfully!');
+            } else {
+                alert('Failed to save caption: ' + data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while saving the caption.');
+        });
+    }).catch(error => {
+        console.error('Error capturing the caption box:', error);
+        alert('An error occurred while capturing the caption box.');
+    });
+});
+
+</script>
+
+</body>
+</html>

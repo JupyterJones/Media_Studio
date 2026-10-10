@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Frame Overlay - ZoomPan Studio</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-base: #080b11;
+            --bg-surface: #0f1524;
+            --bg-card: rgba(22, 30, 49, 0.7);
+            --bg-card-hover: rgba(29, 40, 65, 0.85);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --border-glow: rgba(99, 102, 241, 0.25);
+            
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --primary-glow: rgba(99, 102, 241, 0.4);
+            
+            --secondary: #8b5cf6;
+            --accent: #14b8a6;
+            --accent-glow: rgba(20, 184, 166, 0.3);
+            
+            --success: #10b981;
+            --danger: #ef4444;
+            
+            --radius-sm: 8px;
+            --radius-md: 14px;
+            --radius-lg: 20px;
+            
+            --shadow-sm: 0 2px 8px -2px rgba(0,0,0,0.5);
+            --shadow-md: 0 10px 25px -5px rgba(0,0,0,0.6);
+            --shadow-lg: 0 20px 40px -10px rgba(0,0,0,0.8);
+            
+            --transition-fast: 0.15s ease;
+            --transition-normal: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-base);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(139, 92, 246, 0.08) 0%, transparent 40%);
+            background-attachment: fixed;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
+        header {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 2rem;
+            background-color: rgba(15, 21, 36, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .logo-icon {
+            width: 2.25rem;
+            height: 2.25rem;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            box-shadow: 0 0 15px var(--primary-glow);
+        }
+
+        .logo-text {
+            font-size: 1.1rem;
+            font-weight: 700;
+            background: linear-gradient(to right, #ffffff, #c7d2fe);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            overflow-x: auto;
+            max-width: 100%;
+            white-space: nowrap;
+            padding-bottom: 6px;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .nav-links::-webkit-scrollbar {
+            height: 8px;
+        }
+        .nav-links::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 4px;
+        }
+        .nav-links::-webkit-scrollbar-thumb {
+            background: linear-gradient(90deg, #6366f1, #a855f7);
+            border-radius: 4px;
+        }
+
+        .nav-btn {
+            color: var(--text-secondary);
+            text-decoration: none;
+            padding: 0.5rem 0.85rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: all var(--transition-fast);
+            border: 1px solid transparent;
+        }
+
+        .nav-btn:hover {
+            color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--border-color);
+        }
+
+        .nav-btn.active {
+            color: #fff;
+            background: rgba(99, 102, 241, 0.15);
+            border-color: rgba(99, 102, 241, 0.3);
+        }
+
+        main {
+            max-width: 1280px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+            display: grid;
+            grid-template-columns: 380px 1fr;
+            gap: 2rem;
+        }
+
+        @media (max-width: 900px) {
+            main { grid-template-columns: 1fr; }
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+        }
+
+        .card-title {
+            font-size: 1.15rem;
+            margin-bottom: 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: var(--text-primary);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding-bottom: 0.75rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-control {
+            width: 100%;
+            background: rgba(15, 21, 36, 0.8);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            color: var(--text-primary);
+            padding: 0.75rem;
+            font-family: inherit;
+            font-size: 0.9rem;
+            outline: none;
+            transition: border-color var(--transition-fast);
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+        }
+
+        .color-picker-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .color-picker-input {
+            width: 48px;
+            height: 40px;
+            padding: 0;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            background: none;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            border: none;
+            border-radius: var(--radius-md);
+            padding: 0.85rem 1.5rem;
+            font-family: inherit;
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: none;
+            box-shadow: 0 4px 15px var(--primary-glow);
+            transition: all var(--transition-normal);
+            width: 100%;
+        }
+
+        .btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.6);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-accent {
+            background: linear-gradient(135deg, var(--accent) 0%, #0d9488 100%);
+            box-shadow: 0 4px 15px var(--accent-glow);
+        }
+
+        .btn-accent:hover:not(:disabled) {
+            box-shadow: 0 6px 20px rgba(20, 184, 166, 0.5);
+        }
+
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.25rem;
+        }
+
+        .video-card {
+            background: rgba(15, 21, 36, 0.6);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 1rem;
+            transition: all var(--transition-normal);
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .video-card:hover {
+            border-color: var(--primary);
+            box-shadow: var(--shadow-md);
+        }
+
+        .video-card.selected {
+            border-color: var(--accent);
+            background: rgba(20, 184, 166, 0.08);
+        }
+
+        .video-card video {
+            width: 100%;
+            border-radius: var(--radius-sm);
+            background: #000;
+            max-height: 240px;
+            object-fit: contain;
+        }
+
+        .video-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .status-badge {
+            display: inline-block;
+            font-size: 0.75rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 12px;
+            font-weight: 600;
+        }
+
+        .status-badge.framed {
+            background: rgba(16, 185, 129, 0.15);
+            color: #34d399;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .status-badge.raw {
+            background: rgba(99, 102, 241, 0.15);
+            color: #a5b4fc;
+            border: 1px solid rgba(99, 102, 241, 0.3);
+        }
+
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 0.8s linear infinite;
+            display: none;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            padding: 1rem 1.5rem;
+            border-radius: var(--radius-md);
+            background: rgba(15, 21, 36, 0.95);
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-lg);
+            color: #fff;
+            font-size: 0.9rem;
+            display: none;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+
+        .toast.success { border-color: var(--success); }
+        .toast.error { border-color: var(--danger); }
+
+        @media (max-width: 900px) {
+            header {
+                flex-direction: column;
+                gap: 0.75rem;
+                padding: 0.75rem 1rem;
+                align-items: stretch;
+            }
+            .logo-container { justify-content: center; }
+            .nav-links {
+                display: flex;
+                overflow-x: auto;
+                white-space: nowrap;
+                padding-bottom: 4px;
+                -webkit-overflow-scrolling: touch;
+            }
+            .nav-btn { flex: 0 0 auto; }
+            main { grid-template-columns: 1fr; padding: 1rem 0.75rem; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="/" class="logo-container" style="text-decoration: none;">
+            <div class="logo-icon">🖼️</div>
+            <div>
+                <h1 class="logo-text">Video Frame Studio</h1>
+                <span style="font-size: 0.7rem; color: var(--text-muted);">ZOOMPAN TITLE OVERLAY</span>
+            </div>
+        </a>
+        <nav class="nav-links">
+            <a href="/" class="nav-btn" style="background: rgba(99,102,241,0.2); color: #fff;">🏠 Home</a>
+            <a href="/comic" class="nav-btn" style="background: linear-gradient(135deg, #ff6b6b, #c0392b); color: white;">💥 Comic Builder</a>
+            <a href="/projects" class="nav-btn">📁 Projects</a>
+            <a href="/trash" class="nav-btn" style="color: #ef4444;">🗑️ Trash Can</a>
+            <a href="/sequenced_video" class="nav-btn">🎬 Sequencer</a>
+            <a href="/sequenced_video" class="nav-btn">🎬 Sequencer</a>
+            <a href="/frame_video" class="nav-btn active">🖼️ Frame Video</a>
+            <a href="/video_gallery" class="nav-btn">📹 Video Gallery</a>
+            <a href="/generation" class="nav-btn">🎨 Image Gen</a>
+            <a href="/text_to_mp3" class="nav-btn">🗣️ Kokoro TTS</a>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Sidebar Controls -->
+        <aside class="card">
+            <div class="card-title">
+                <span>⚡ Frame Settings</span>
+            </div>
+
+            <div class="form-group">
+                <label for="select-video">Target Video (from static/videos)</label>
+                <select id="select-video" class="form-control">
+                    {% for mp4 in videos %}
+                    <option value="{{ mp4 }}" {% if mp4 == selected_video %}selected{% endif %}>{{ mp4 }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Frame Background Padding Color</label>
+                <div class="color-picker-wrapper">
+                    <input type="color" id="hex-color-picker" class="color-picker-input" value="#f9f0b4">
+                    <input type="text" id="hex-color-text" class="form-control" value="#f9f0b4" style="flex-grow:1;">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="select-asset">Title Frame Asset</label>
+                <select id="select-asset" class="form-control">
+                    <option value="static/assets/ZOOMPAN.png" selected>ZOOMPAN.png (Default)</option>
+                </select>
+                <div style="margin-top: 0.5rem; text-align: center;">
+                    <img src="/static/assets/ZOOMPAN.png" alt="Frame Asset Preview" style="max-height: 80px; border-radius: 4px; border: 1px solid var(--border-color);">
+                </div>
+            </div>
+
+            <button id="btn-apply-frame" class="btn btn-accent" style="margin-top: 1rem;">
+                <span id="btn-text">✨ Apply Frame to Video</span>
+                <div class="spinner" id="btn-spinner"></div>
+            </button>
+        </aside>
+
+        <!-- Main Video Gallery & Preview -->
+        <section style="display: flex; flex-direction: column; gap: 1.5rem;">
+            <!-- Result Preview -->
+            <div class="card" id="result-card" style="display: none;">
+                <div class="card-title">
+                    <span>🎉 Framed Video Preview</span>
+                    <span id="result-filename" style="font-size: 0.8rem; color: var(--accent);"></span>
+                </div>
+                <div style="width: 100%; text-align: center; background: #000; border-radius: var(--radius-sm); padding: 0.5rem;">
+                    <video id="result-player" controls style="max-height: 420px; max-width: 100%; display: block; margin: 0 auto;"></video>
+                </div>
+                <div style="margin-top: 1rem; display: flex; gap: 1rem;">
+                    <a id="download-framed-link" href="#" download class="btn" style="flex: 1; text-decoration: none;">
+                        📥 Download Framed Video
+                    </a>
+                </div>
+            </div>
+
+            <!-- Video Library Grid -->
+            <div class="card">
+                <div class="card-title">
+                    <span>📹 Available Videos (static/videos)</span>
+                    <span style="font-size: 0.8rem; color: var(--text-muted);">Total: {{ videos|length }} videos</span>
+                </div>
+
+                <div class="video-grid">
+                    {% for mp4 in videos %}
+                    <div class="video-card {% if mp4.startswith('framed_') %}selected{% endif %}" id="card-{{ loop.index }}">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span class="video-title" title="{{ mp4 }}">{{ mp4 }}</span>
+                            {% if mp4.startswith('framed_') %}
+                            <span class="status-badge framed">Framed</span>
+                            {% else %}
+                            <span class="status-badge raw">Source</span>
+                            {% endif %}
+                        </div>
+
+                        <video controls preload="metadata">
+                            <source src="/static/videos/{{ mp4 }}" type="video/mp4">
+                        </video>
+
+                        <button class="btn btn-accent" style="padding: 0.5rem; font-size: 0.8rem;" onclick="selectVideo('{{ mp4 }}')">
+                            👈 Select & Frame
+                        </button>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        const colorPicker = document.getElementById('hex-color-picker');
+        const colorText = document.getElementById('hex-color-text');
+        const selectVideo = document.getElementById('select-video');
+        const btnApply = document.getElementById('btn-apply-frame');
+        const btnText = document.getElementById('btn-text');
+        const btnSpinner = document.getElementById('btn-spinner');
+        const resultCard = document.getElementById('result-card');
+        const resultPlayer = document.getElementById('result-player');
+        const resultFilename = document.getElementById('result-filename');
+        const downloadLink = document.getElementById('download-framed-link');
+        const toast = document.getElementById('toast');
+
+        // Sync color inputs
+        colorPicker.addEventListener('input', (e) => colorText.value = e.target.value);
+        colorText.addEventListener('input', (e) => colorPicker.value = e.target.value);
+
+        function selectVideoName(name) {
+            selectVideo.value = name;
+            selectVideo.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            showToast(`Selected "${name}"`, 'success');
+        }
+
+        window.selectVideo = selectVideoName;
+
+        function showToast(msg, type = 'success') {
+            toast.textContent = msg;
+            toast.className = `toast ${type}`;
+            toast.style.display = 'block';
+            setTimeout(() => { toast.style.display = 'none'; }, 4000);
+        }
+
+        btnApply.addEventListener('click', async () => {
+            const videoFilename = selectVideo.value;
+            const hexColor = colorText.value.trim();
+
+            if (!videoFilename) {
+                showToast('Please select a video file first', 'error');
+                return;
+            }
+
+            btnApply.disabled = true;
+            btnText.textContent = 'Processing Frame Video...';
+            btnSpinner.style.display = 'inline-block';
+
+            try {
+                const response = await fetch('/api/add_title_image', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        video_filename: videoFilename,
+                        hex_color: hexColor,
+                        frame_path: document.getElementById('select-asset').value
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showToast('Framed video created successfully!', 'success');
+                    resultFilename.textContent = data.filename;
+                    resultPlayer.src = data.video_url;
+                    downloadLink.href = data.video_url;
+                    downloadLink.download = data.filename;
+                    resultCard.style.display = 'block';
+                    resultCard.scrollIntoView({ behavior: 'smooth' });
+                } else {
+                    showToast(data.error || 'Failed to generate framed video', 'error');
+                }
+            } catch (err) {
+                console.error(err);
+                showToast('Error connecting to server', 'error');
+            } finally {
+                btnApply.disabled = false;
+                btnText.textContent = '✨ Apply Frame to Video';
+                btnSpinner.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

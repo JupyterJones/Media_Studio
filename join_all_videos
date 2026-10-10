@@ -1,0 +1,378 @@
+#!/usr/bin/env python3
+"""
+join_all_videos
+Ultra-fast, multi-threaded native FFmpeg video joiner with intelligent audio detection.
+Replaces slow MoviePy frame-by-frame loops with direct FFmpeg normalization and stream-copy concat.
+Automatically detects silent videos (no audio track or muted audio) and fills them with
+random royalty-free music from static/music/ and static/mp3s/ with smooth fade-in/fade-out transitions.
+"""
+import os
+import sys
+import json
+import time
+import shutil
+import random
+import argparse
+import subprocess
+
+# Default settings
+DEFAULT_INPUT_DIR = "static/temp_exp/"
+DEFAULT_OUTPUT_FILE = "static/temp_exp/output_video.mp4"
+DEFAULT_WIDTH = 512
+DEFAULT_HEIGHT = 768
+DEFAULT_FPS = 25
+DEFAULT_MUSIC_DIRS = ["static/music", "static/mp3s"]
+DEFAULT_MUSIC_VOLUME = 0.80
+
+
+def get_media_duration(file_path):
+    """Retrieve media duration in seconds via ffprobe."""
+    try:
+        cmd = [
+            "ffprobe",
+            "-v",
+            "error",
+            "-show_entries",
+            "format=duration:stream=duration",
+            "-of",
+            "json",
+            file_path,
+        ]
+        out = json.loads(subprocess.check_output(cmd).decode("utf-8", errors="ignore"))
+        dur = out.get("format", {}).get("duration")
+        if dur and float(dur) > 0:
+            return float(dur)
+        for s in out.get("streams", []):
+            dur = s.get("duration")
+            if dur and float(dur) > 0:
+                return float(dur)
+    except Exception:
+        pass
+    return 0.0
+
+
+def is_silent_video(file_path):
+    """
+    Check if a video is silent:
+    - Returns True if it has no audio stream, or
+    - Returns True if its audio max_volume is below -45 dB (inaudible/empty audio track).
+    """
+    try:
+        cmd = [
+            "ffprobe",
+            "-v",
+            "error",
+            "-show_entries",
+            "stream=codec_type",
+            "-of",
+            "json",
+            file_path,
+        ]
+        out = json.loads(subprocess.check_output(cmd).decode("utf-8", errors="ignore"))
+        has_audio = any(s.get("codec_type") == "audio" for s in out.get("streams", []))
+        if not has_audio:
+            return True
+
+        # Probe volume of existing audio stream
+        vol_cmd = [
+            "ffmpeg",
+            "-i",
+            file_path,
+            "-af",
+            "volumedetect",
+            "-vn",
+            "-sn",
+            "-dn",
+            "-f",
+            "null",
+            "/dev/null",
+        ]
+        res = subprocess.run(vol_cmd, capture_output=True, text=True, errors="ignore")
+        for line in res.stderr.splitlines():
+            if "max_volume:" in line:
+                parts = line.split("max_volume:")
+                if len(parts) > 1:
+                    val = float(parts[1].strip().split()[0])
+                    if val < -45.0:
+                        return True
+        return False
+    except Exception:
+        return True
+
+
+def collect_music_tracks(music_dirs):
+    """Collect available music audio files (.mp3, .wav, .m4a, .ogg) from directories."""
+    tracks = []
+    valid_exts = (".mp3", ".wav", ".m4a", ".ogg", ".flac")
+    for d in music_dirs:
+        if os.path.exists(d):
+            for fname in os.listdir(d):
+                if fname.lower().endswith(valid_exts) and not fname.startswith((".", "_")):
+                    full_p = os.path.join(d, fname)
+                    if os.path.isfile(full_p) and os.path.getsize(full_p) > 1024:
+                        tracks.append(full_p)
+    return tracks
+
+
+def resize_and_concatenate_videos(
+    input_dir=DEFAULT_INPUT_DIR,
+    target_w=DEFAULT_WIDTH,
+    target_h=DEFAULT_HEIGHT,
+    out_file=DEFAULT_OUTPUT_FILE,
+    fps=DEFAULT_FPS,
+    music_dirs=None,
+    fill_silent_music=True,
+    music_volume=DEFAULT_MUSIC_VOLUME,
+):
+    t_start = time.time()
+    if music_dirs is None:
+        music_dirs = DEFAULT_MUSIC_DIRS
+
+    # Collect candidate files ending with X.mp4 (exclude the output file itself)
+    out_basename = os.path.basename(out_file)
+    all_files = sorted([
+        f
+        for f in os.listdir(input_dir)
+        if f.endswith("X.mp4") and f != out_basename and not f.startswith(("_", "."))
+    ])
+
+    if not all_files:
+        print(f"[-] No *X.mp4 files found in {input_dir} to join.")
+        return
+
+    print(
+        f"[*] Found {len(all_files)} video clips to join into {out_file} (Target: {target_w}x{target_h} @ {fps}fps)"
+    )
+
+    # Prepare music pool
+    music_pool = []
+    if fill_silent_music:
+        music_pool = collect_music_tracks(music_dirs)
+        if music_pool:
+            random.shuffle(music_pool)
+            print(f"[*] Loaded {len(music_pool)} music tracks for silent video fill.")
+        else:
+            print("[-] No music tracks found in music directories; falling back to silent audio.")
+
+    staging_dir = os.path.join(input_dir, "_norm_parts")
+    os.makedirs(staging_dir, exist_ok=True)
+    concat_list_file = os.path.join(staging_dir, "concat_list.txt")
+
+    norm_part_paths = []
+    music_index = 0
+
+    try:
+        with open(concat_list_file, "w") as f_list:
+            for idx, filename in enumerate(all_files, 1):
+                src_path = os.path.join(input_dir, filename)
+                norm_part = os.path.join(staging_dir, f"part_{idx:03d}.mp4")
+
+                silent = is_silent_video(src_path)
+                dur = get_media_duration(src_path)
+
+                vf = (
+                    f"scale={target_w}:{target_h}:force_original_aspect_ratio=decrease,"
+                    f"pad={target_w}:{target_h}:({target_w}-iw)/2:({target_h}-ih)/2,"
+                    f"setsar=1,fps={fps}"
+                )
+
+                cmd = ["ffmpeg", "-y", "-hide_banner", "-loglevel", "error", "-i", src_path]
+
+                if silent and fill_silent_music and music_pool:
+                    # Pick a music track from the pool
+                    music_file = music_pool[music_index % len(music_pool)]
+                    music_index += 1
+                    music_name = os.path.basename(music_file)
+
+                    # Calculate smooth fade-in and fade-out based on clip duration
+                    fade_in = min(0.6, dur * 0.15) if dur > 0 else 0.5
+                    fade_out = min(1.0, dur * 0.20) if dur > 0 else 1.0
+                    st_out = max(0.0, dur - fade_out) if dur > 0 else 0.0
+
+                    af = (
+                        f"afade=t=in:ss=0:d={fade_in:.2f},"
+                        f"afade=t=out:st={st_out:.2f}:d={fade_out:.2f},"
+                        f"volume={music_volume:.2f}"
+                    )
+
+                    cmd.extend([
+                        "-stream_loop",
+                        "-1",
+                        "-i",
+                        music_file,
+                        "-map",
+                        "0:v:0",
+                        "-map",
+                        "1:a:0",
+                        "-vf",
+                        vf,
+                        "-af",
+                        af,
+                        "-c:v",
+                        "libx264",
+                        "-preset",
+                        "veryfast",
+                        "-pix_fmt",
+                        "yuv420p",
+                        "-c:a",
+                        "aac",
+                        "-ar",
+                        "44100",
+                        "-ac",
+                        "2",
+                        "-b:a",
+                        "128k",
+                    ])
+                    if dur > 0:
+                        cmd.extend(["-t", f"{dur:.3f}"])
+                    else:
+                        cmd.append("-shortest")
+                    info_audio = f"silent -> added music '{music_name}'"
+
+                elif silent:
+                    # Fallback to silent stereo audio track
+                    cmd.extend([
+                        "-f",
+                        "lavfi",
+                        "-i",
+                        "anullsrc=channel_layout=stereo:sample_rate=44100",
+                        "-map",
+                        "0:v:0",
+                        "-map",
+                        "1:a:0",
+                        "-vf",
+                        vf,
+                        "-c:v",
+                        "libx264",
+                        "-preset",
+                        "veryfast",
+                        "-pix_fmt",
+                        "yuv420p",
+                        "-c:a",
+                        "aac",
+                        "-ar",
+                        "44100",
+                        "-ac",
+                        "2",
+                        "-b:a",
+                        "128k",
+                    ])
+                    if dur > 0:
+                        cmd.extend(["-t", f"{dur:.3f}"])
+                    else:
+                        cmd.append("-shortest")
+                    info_audio = "silent -> added silent track"
+
+                else:
+                    # Original audio preserved, normalized to stereo AAC 44.1kHz
+                    cmd.extend([
+                        "-vf",
+                        vf,
+                        "-c:v",
+                        "libx264",
+                        "-preset",
+                        "veryfast",
+                        "-pix_fmt",
+                        "yuv420p",
+                        "-c:a",
+                        "aac",
+                        "-ar",
+                        "44100",
+                        "-ac",
+                        "2",
+                        "-b:a",
+                        "128k",
+                    ])
+                    info_audio = "kept original audio"
+
+                cmd.append(norm_part)
+
+                t_sub = time.time()
+                subprocess.run(cmd, check=True)
+                dur_sub = time.time() - t_sub
+                print(f"[{idx}/{len(all_files)}] Normalized {filename} ({info_audio}) ({dur_sub:.1f}s)")
+
+                f_list.write(f"file '{os.path.abspath(norm_part)}'\n")
+                norm_part_paths.append(norm_part)
+
+        # Instant stream copy concat
+        print(f"[*] Merging {len(norm_part_paths)} parts with FFmpeg stream-copy...")
+        temp_out = os.path.join(input_dir, "_temp_joined.mp4")
+        concat_cmd = [
+            "ffmpeg",
+            "-y",
+            "-hide_banner",
+            "-loglevel",
+            "error",
+            "-f",
+            "concat",
+            "-safe",
+            "0",
+            "-i",
+            concat_list_file,
+            "-c",
+            "copy",
+            temp_out,
+        ]
+        subprocess.run(concat_cmd, check=True)
+        shutil.move(temp_out, out_file)
+
+        elapsed = time.time() - t_start
+        print(
+            f"[✓] Successfully joined {len(all_files)} clips in {elapsed:.1f} seconds! Saved as {out_file}"
+        )
+
+    finally:
+        # Cleanup temporary normalized parts
+        if os.path.exists(staging_dir):
+            shutil.rmtree(staging_dir, ignore_errors=True)
+
+
+def parse_args():
+    parser = argparse.ArgumentParser(
+        description="Fast native FFmpeg video joiner with silent video music auto-fill"
+    )
+    parser.add_argument(
+        "--input-dir", "-i", default=DEFAULT_INPUT_DIR, help="Directory with *X.mp4 files"
+    )
+    parser.add_argument(
+        "--output", "-o", default=DEFAULT_OUTPUT_FILE, help="Output joined video path"
+    )
+    parser.add_argument("--width", type=int, default=DEFAULT_WIDTH, help="Target width")
+    parser.add_argument("--height", type=int, default=DEFAULT_HEIGHT, help="Target height")
+    parser.add_argument("--fps", type=int, default=DEFAULT_FPS, help="Target FPS")
+    parser.add_argument(
+        "--no-music",
+        dest="fill_silent_music",
+        action="store_false",
+        help="Do not add music to silent videos (use pure silence)",
+    )
+    parser.add_argument(
+        "--music-volume",
+        type=float,
+        default=DEFAULT_MUSIC_VOLUME,
+        help="Music volume multiplier (default 0.80)",
+    )
+    parser.add_argument(
+        "--music-dir",
+        action="append",
+        dest="music_dirs",
+        help="Additional music directory to search for tracks",
+    )
+    return parser.parse_args()
+
+
+if __name__ == "__main__":
+    args = parse_args()
+    dirs = args.music_dirs if args.music_dirs else DEFAULT_MUSIC_DIRS
+    resize_and_concatenate_videos(
+        input_dir=args.input_dir,
+        target_w=args.width,
+        target_h=args.height,
+        out_file=args.output,
+        fps=args.fps,
+        music_dirs=dirs,
+        fill_silent_music=args.fill_silent_music,
+        music_volume=args.music_volume,
+    )
+

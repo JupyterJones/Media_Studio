@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Image Review and Keep</title>
+    <style>
+        body {
+            background-color: #2c2c2c;
+            color: #f5f5f5;
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            text-align: center!important;
+        }
+        .image-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        img {
+            margin: 10px;
+        }
+        .image-box {
+                margin: 10px;
+                text-align: center;
+            }
+            a {
+                color: #f5f5f5;
+                text-decoration: none;
+                font-size: 1.5em;
+            }
+            p {
+                font-size: 1.5em;
+                color: yellow;
+            }
+            .size {
+                font-size: 1.5em;
+                color: red;
+            }
+    </style>
+</head>
+<body>
+        <h1>Select a Video to Process / copy_frames.html</h1>
+        <a href="/">Go Home</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;  
+        <a href="/get_frames">Choose Another Video</a>
+        <hr>
+
+    <form action="/process_frames" method="post">
+        <label for="video">Choose a video:</label>
+        <select name="video" id="video">
+            {% for video in video_files %}
+                <option class="size" value="{{ video }}">{{ video }}</option>
+            {% endfor %}
+        </select>
+        <br><br>
+        <input type="submit" value="Process Video">
+    </form>
+    <h1>Review and Keep Images</h1>
+    <form action="/add_frames" method="post">
+        {% for frame in frames %}
+            <div style="display: inline-block; text-align: center; margin: 10px;">
+                <img src="{{ url_for('static', filename='frames/' + frame) }}" width="200">
+                <br>
+                <input type="checkbox" name="image" value="{{ frame }}"> Keep
+            </div>
+        {% endfor %}
+        <br><br>
+        <input type="submit" value="Keep Selected Images">
+    </form>
+    <br><br><h1>Images Kept</h1>
+    <p>These are kept in three directories:<br/>
+        'static/keepers_resourses'<br/>
+        'static/archived-images'<br/>
+        'static/archived-store'<br />.      'static/novel_resources'</p>
+
+    {% for image in video_images%}
+    <div style="display: inline-block; text-align: center; margin: 10px;">
+        <img class = "image-box" src="{{ image }}" width="200"><br/><br />  
+        {{ image[-15:-4] }}
+</div>
+    {% endfor %}
+
+</body>
+</html>

@@ -1,0 +1,49 @@
+{
+  "project_name": "zoom_TEST",
+  "image_filename": "0ddb3bf6-6257-42e7-85d1-819f9022aa65frame_248_1785698972_1785807592.jpg",
+  "image_url": null,
+  "image_width": 512,
+  "image_height": 768,
+  "timestamp": "2026-08-04 09:44:47",
+  "points": [
+    {
+      "id": "pt_1785807636165_988",
+      "x": 102,
+      "y": 440,
+      "label": "I hope this Dude is not mean !",
+      "bubble_style": "thought_right",
+      "zoom_enabled": true,
+      "zoom": 1.25,
+      "hold_duration": 1.5,
+      "transition_duration": 2,
+      "x_ratio": 0.199219,
+      "y_ratio": 0.572917
+    },
+    {
+      "id": "pt_1785807674721_670",
+      "x": 328,
+      "y": 138,
+      "label": "This guy is tiny with no gun, i will let him pass",
+      "bubble_style": "caption",
+      "zoom_enabled": true,
+      "zoom": 1.25,
+      "hold_duration": 1.5,
+      "transition_duration": 2,
+      "x_ratio": 0.640625,
+      "y_ratio": 0.179688
+    },
+    {
+      "id": "pt_1785807724979_67",
+      "x": 265,
+      "y": 351,
+      "label": "",
+      "bubble_style": "speech_left",
+      "zoom_enabled": true,
+      "zoom": 1.25,
+      "hold_duration": 1.5,
+      "transition_duration": 2,
+      "x_ratio": 0.517578,
+      "y_ratio": 0.457031
+    }
+  ]
+}

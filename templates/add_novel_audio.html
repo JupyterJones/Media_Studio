@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>add_novel_audio.html</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='dark.css') }}">
+    <style>
+        body {
+            background-color: var(--bg-card);
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+
+        .refresh-button {
+            display: inline-block;
+            padding: 5px;
+            margin: 10px;
+            font-size: 2em;
+            background-color: orange;
+            color: rgb(0, 0, 0);
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 1px;
+        }
+
+        .refresh-button:hover {
+            background-color: orange;
+        }
+
+        .sticky {
+            position: -webkit-sticky;
+            position: sticky;
+            top: 0;
+            background-color: orange;
+            padding: 10px 0;
+            z-index: 1000;
+        }
+
+        .video-gallery {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+        }
+
+        figure {
+            width: 20%;
+            height: auto;
+            margin: 10px;
+            text-align: center;
+        }
+
+        figcaption {
+            margin-top: 8px;
+            font-size: 1rem;
+            color: #cccccc;
+        }
+        pre {
+            color: white;
+            font-size: 24px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        p {
+            color: white;
+            font-size: 24px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+    img {
+        width: 275px;
+        height: auto;
+        display: block;
+        margin-bottom: 5px;
+        border-radius: 8px;
+    }
+        .sticky {
+        position: -webkit-sticky;
+        padding-top: 10px;
+        margin-left: auto;
+        margin-right: auto;
+        position: sticky;
+        height:auto;
+        top: 0;
+        text-align: center!important;
+        padding: 10px 0;
+        z-index: 1000;
+        width: 100%!important;
+        height:200px;
+    }   
+        .refresh-button2 {
+        display: inline-block;
+        padding: 2px;
+        margin: 10px;
+        font-size: 1.5em;
+        background-color: rgb(255, 225, 0);
+        color: rgb(0, 0, 0);
+        text-decoration: none;
+        border-radius: 5px;
+        margin: 1px;
+        }
+    a{
+        color:navy;
+    }
+    span {
+        background-color: yellow;
+        color: black;
+        padding: 2px;
+        border-radius: 5px;
+        font-size: 1em;
+    }
+
+    </style>
+    <title>Video Editor</title>
+</head>
+<body>
+    <h1>Video Editor</h1>
+
+    <!-- Video selection -->
+    <label for="videoSelect">Select Video:</label>
+    <select id="videoSelect">
+        {% for video in videos %}
+            <option value="{{ video }}">{{ video }}</option>
+        {% endfor %}
+    </select>
+    <br>
+
+    <!-- Audio upload -->
+    <label for="audioUpload">Upload Audio (.mp3):</label>
+    <input type="file" id="audioUpload" accept="audio/mp3">
+    <br>
+
+    <!-- Timing for audio insertion -->
+    <label for="startTime">Start Time (seconds):</label>
+    <input type="number" id="startTime" min="0" step="0.1">
+    <button id="addAudioBtn">Add Audio</button>
+    <br><br>
+
+    <!-- Video Player for preview -->
+    <h2>Preview</h2>
+    <video id="videoPlayer" width="640" controls></video>
+    <br>
+
+    <script>
+        const videoSelect = document.getElementById("videoSelect");
+        const audioUpload = document.getElementById("audioUpload");
+        const startTimeInput = document.getElementById("startTime");
+        const videoPlayer = document.getElementById("videoPlayer");
+        const addAudioBtn = document.getElementById("addAudioBtn");
+
+        // Load selected video into the player
+        videoSelect.addEventListener("change", () => {
+            const videoUrl = `/get_video/${videoSelect.value}`;
+            videoPlayer.src = videoUrl;
+        });
+
+        // Send request to add audio
+        addAudioBtn.addEventListener("click", async () => {
+            const videoFile = videoSelect.value;
+            const audioFile = audioUpload.files[0];
+            const startTime = startTimeInput.value;
+
+            if (!videoFile || !audioFile || startTime === "") {
+                alert("Please select a video, upload an audio file, and specify the start time.");
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append("video_file", videoFile);
+            formData.append("start_time", startTime);
+
+            // Upload audio file
+            const audioFormData = new FormData();
+            audioFormData.append("file", audioFile);
+            const uploadResponse = await fetch("/upload_audio", {
+                method: "POST",
+                body: audioFormData
+            });
+            const uploadResult = await uploadResponse.json();
+            if (uploadResult.error) {
+                alert(uploadResult.error);
+                return;
+            }
+
+            // Add audio to video
+            formData.append("audio_file", uploadResult.filename);
+            const response = await fetch("/add_audio", {
+                method: "POST",
+                body: formData
+            });
+            const result = await response.json();
+            if (result.error) {
+                alert(result.error);
+            } else {
+                videoPlayer.src = result.output_url;
+                videoPlayer.play();
+            }
+        });
+    </script>
+</body>
+</html>

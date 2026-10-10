@@ -1,0 +1,302 @@
+sed -i -E 's/^[[:space:]]*[0-9]+[[:space:]]+//' ALL_full_jsonl.txt
+sed -i -E 's/^[[:space:]]*[0-9]+[[:space:]]+//' FFMPEG.txt
+history |grep ffmpeg >MPEG.txt |sed -i -E 's/^[[:space:]]*[0-9]+[[:space:]]+//' MPEG.txt
+echo "history |grep ffmpeg >MPEG.txt |sed -i -E 's/^[[:space:]]*[0-9]+[[:space:]]+//' MPEG.txt" >HISTORY
+
+
+
+ollama run deepseek-slerp:2 "Create a 5-stage time-lapse sequence for a tiny acorn growing into a majestic oak tree."
+
+agy --conversation=13cc087d-68c4-4de8-926c-70c57c1e923f
+
+
+tail -f /home/jack/.gemini/antigravity-cli/brain/b5453549-c615-403f-bfc9-034b596f959a/.system_generated/tasks/task-75.log
+
+
+tail -f /home/jack/.gemini/antigravity-cli/brain/e5e8de65-5a3a-4ecd-b451-26154f8c18a6/.system_generated/tasks/task-281.log
+
+#scp -c jack@192.168.1.30:/home/jack/Desktop/voicebox .
+#scp jack@192.168.1.30:/home/jack/Desktop/voicebox /home/jack/Desktop
+#scp -r jack@192.168.1.30:/home/jack/Desktop/voicebox /home/jack/Desktop
+#scp -r jack@192.168.1.30:/home/jack/Desktop/MISC/MediaStudio/templates /home/jack/Desktop/AI_CONVERSATIONS/
+#scp -r jack@192.168.1.30:/home/jack/Desktop/AI_CONVERSATIONS/static/no_dups_history.txt file:///home/jack/Desktop/SCRIPTS/no_dups_history.txt
+#scp -r jack@192.168.1.30:/home/jack/Desktop/AI_CONVERSATIONS/static/no_dups_history.txt /home/jack/Desktop/SCRIPTS/no_dups_history.txt
+#scp -r jack@192.168.1.30:/home/jack/hidden /home/jack/Desktop/SCRIPTS/
+#scp -r jack@192.168.1.30:/usr/local/bin /home/jack/Desktop/.
+#scp -r jack@192.168.1.30:/home/jack/.bashrc /home/jack/Desktop/.
+#scp -r jack@192.168.1.30:/home/jack/Desktop/AI_CONVERSATIONS/STREAM /home/jack/Desktop/
+#scp jack@192.168.1.30:/home/jack/hidden/en_us_hifi_jets_cpu.addon /home/jack/hidden/en_us_hifi_jets_cpu.addon
+scp -r jack@192.168.1.30:/home/jack/Desktop/TENSORFLOw/*.safetensors .
+
+scp -r jack@192.168.1.30:/home/jack/Desktop/TENSORFLOW/lora*.py .
+
+
+scp -r jack@192.168.1.30:/home/jack/Desktop/TENSORFLOW/control_v11p_sd15_openpose.pth .
+
+scp -r jack@192.168.1.30:/home/jack/Desktop/TENSORFLOW/control_v11p_sd15_scribble.pth .
+
+
+
+ls -rant /home/jack/.gemini/antigravity-cli/brain/
+total 516
+drwxr-xr-x   3 1000 1000  4096 Jun  9 19:29 6a05fdf7-b04f-422f-8a5c-dd8cfb15810d
+drwxr-xr-x   3 1000 1000  4096 Jun 11 08:10 3e489658-f5b5-4c68-94ef-7531dd31c9d2
+drwxr-xr-x   4 1000 1000  4096 Jun 11 12:35 748b78cc-d00a-4127-93b9-582a73caf6e2
+drwxr-xr-x   3 1000 1000  4096 Jun 13 10:34 6becac73-ad3c-4db4-95d6-1695109994bd
+drwxr-xr-x   5 1000 1000  4096 Jun 15 00:03 03445a07-c27a-4a91-aba5-d4a90490e256
+drwxr-xr-x   3 1000 1000  4096 Jun 15 08:24 d1c7b67f-657c-4b16-a9c7-263d548a1ad2
+drwxr-xr-x   4 1000 1000  4096 Jun 16 08:01 b1329e56-851e-4919-8e2b-4802227e1972
+drwxr-xr-x   4 1000 1000  4096 Jun 16 13:58 fb71f059-5cc4-4fcc-be37-9def9c9b9bc7
+drwxr-xr-x   5 1000 1000  4096 Jun 17 00:54 0dc914f9-4d30-4dfc-9e70-05e2a009e449
+drwxr-xr-x   3 1000 1000  4096 Jun 17 14:12 7895ccfc-4e20-4d29-9f50-cac81fa68d57
+drwxr-xr-x   4 1000 1000  4096 Jun 18 00:59 88b32b42-2e74-48cb-835b-c9c9ce27cebb
+drwxr-xr-x   3 1000 1000  4096 Jun 19 08:55 530bea9d-ceb0-433a-885c-ebacdbe89ffd
+drwxr-xr-x   4 1000 1000  4096 Jun 20 23:49 3688cb06-b780-48b8-a20f-2fe03a61e20d
+drwxr-xr-x   3 1000 1000  4096 Jun 21 07:58 4be25c53-c809-4784-8264-b116b90d13f2
+drwxr-xr-x   3 1000 1000  4096 Jun 22 15:06 47061e8b-ee31-4f6d-b9ab-731e935af702
+drwxr-xr-x   3 1000 1000  4096 Jun 23 07:42 0d654ad6-89cd-4672-a314-89f95c197714
+drwxr-xr-x   3 1000 1000  4096 Jun 23 12:24 2f5b2dbc-fe58-446f-98ba-f590a4e8b6c5
+drwxr-xr-x   3 1000 1000  4096 Jun 24 02:19 1ff04d89-0e55-4871-b26c-5dc418ad8bbb
+drwxr-xr-x   3 1000 1000  4096 Jun 24 09:02 8e36a072-ed14-491a-be79-6c938c8cc453
+drwxr-xr-x   3 1000 1000  4096 Jun 24 09:06 51327a85-3f60-44de-b9eb-0aa0d207cd73
+drwxr-xr-x   3 1000 1000  4096 Jun 24 13:47 49ad942f-e3a3-4b82-bb15-fa8a682dd18f
+drwxr-xr-x   4 1000 1000  4096 Jun 25 03:01 4b622b87-7439-408e-b85a-09dbb7ceed8a
+drwxr-xr-x   3 1000 1000  4096 Jun 25 07:52 6f383f9a-4bdb-44bc-854f-a86234746f5e
+drwxr-xr-x   3 1000 1000  4096 Jun 26 05:02 a26a6458-099f-4226-83c1-78db1d19bb3c
+drwxr-xr-x   4 1000 1000  4096 Jun 26 06:53 75f6e5a5-caf5-441c-a0d3-91f73c34a0ec
+drwxr-xr-x   3 1000 1000  4096 Jun 27 06:08 1cccb0fd-cd18-463b-ad71-37a51cda7dbe
+drwxr-xr-x   3 1000 1000  4096 Jun 27 07:51 3410ca21-0156-440d-9530-a4619584b8a9
+drwxr-xr-x   3 1000 1000  4096 Jun 27 14:09 cd1e7d10-182b-457c-9487-809f5bb38958
+drwxr-xr-x   3 1000 1000  4096 Jun 27 16:54 eac5e39c-e00b-4d6e-ac95-2dcd22de4713
+drwxr-xr-x   3 1000 1000  4096 Jun 28 05:11 8698a6b6-c5e2-4605-9644-869d1716cb56
+drwxr-xr-x   3 1000 1000  4096 Jun 28 09:50 6aeec978-b58e-4aa6-af83-b57d6aef4f51
+drwxr-xr-x   3 1000 1000  4096 Jun 28 17:37 6d289dcc-2a02-46d2-9636-dfbeff3c0252
+drwxr-xr-x   3 1000 1000  4096 Jun 29 07:53 45c7a923-34fa-4f95-8eb1-1fc1a009dfd9
+drwxr-xr-x   3 1000 1000  4096 Jun 29 13:18 d57733c3-48b9-4808-82fb-88fc4e6a25f2
+drwxr-xr-x   3 1000 1000  4096 Jun 30 07:34 4f4217e7-093d-45a0-84de-694f4d202290
+drwxr-xr-x   3 1000 1000  4096 Jul  1 02:33 a9e634d1-4a22-4c08-b850-492a571c2bd9
+drwxr-xr-x   3 1000 1000  4096 Jul  1 07:14 bfc6a00c-3a72-4529-8c17-a87452494109
+drwxr-xr-x   3 1000 1000  4096 Jul  1 09:20 96c33e52-9e15-4f9b-b462-4f3edf2b7e05
+drwxr-xr-x   3 1000 1000  4096 Jul  1 23:57 a4da7988-2420-4e35-bb3d-de1c01947720
+drwxr-xr-x   4 1000 1000  4096 Jul  6 11:28 2d8e13bb-6ca6-48fb-bb5f-6ffc2ed4bffa
+drwxr-xr-x   4 1000 1000  4096 Jul  6 11:39 386a51f6-7c3e-499b-9bad-41c8360b11c9
+drwxr-xr-x   4 1000 1000  4096 Jul  6 13:32 d37dbd19-353b-42a3-8a85-72069112613c
+drwxr-xr-x   4 1000 1000  4096 Jul  7 17:49 fd54c69d-fad6-40c4-82da-60b78c7df0de
+drwxr-xr-x   4 1000 1000  4096 Jul  8 00:09 ac461f8b-1b7c-4810-a519-d8688aa106d7
+drwxr-xr-x   4 1000 1000  4096 Jul  8 03:55 c484631f-778a-4f8b-8edf-5dd8dbf336ee
+drwxr-xr-x   4 1000 1000  4096 Jul  8 15:29 b534bf97-39a2-42b5-b0af-b3aab4687653
+drwxr-xr-x   5 1000 1000  4096 Jul  8 17:11 1d0374a1-4bbc-4cb2-a840-e0f915b2ebf4
+drwxr-xr-x   5 1000 1000  4096 Jul  9 15:21 28bf409e-56df-4156-90db-f763693bb4df
+drwxr-xr-x   5 1000 1000  4096 Jul 10 17:02 f70a12b6-883e-400b-baaf-2b9566a0644d
+drwxr-xr-x   5 1000 1000  4096 Jul 10 17:37 440e0593-da77-4628-9e40-087db307c3a2
+drwxr-xr-x   5 1000 1000  4096 Jul 11 03:39 8efe9d23-71dc-41a5-bcb8-4d144c30c073
+drwxr-xr-x   6 1000 1000  4096 Jul 13 13:06 c6cb0cb9-3e0a-4e1c-a891-658840c8e013
+drwxr-xr-x   5 1000 1000  4096 Jul 15 19:20 9ecfc2e7-c661-4481-8af8-020d984f89da
+drwxr-xr-x   5 1000 1000  4096 Jul 16 06:11 70399de4-e42f-4d42-982e-094910f03e57
+drwxr-xr-x   4 1000 1000  4096 Jul 18 17:23 e06a6f84-711c-46eb-8904-86104cb22e75
+drwxr-xr-x   4 1000 1000  4096 Jul 18 18:53 403c9134-24cc-4e3b-bcd4-098abda0433b
+drwxr-xr-x   4 1000 1000  4096 Jul 19 09:32 301b5b55-8630-4224-82a2-f0d82b1baf38
+drwxr-xr-x   5 1000 1000  4096 Jul 19 13:08 8c46237e-d082-467a-b17b-7fe12bd6da93
+drwxr-xr-x   4 1000 1000  4096 Jul 20 20:31 ee2af482-7cf3-4f92-a129-b677438632c1
+drwxr-xr-x   4 1000 1000  4096 Jul 21 07:55 6de412a8-8948-4ab3-b869-6bc15247acc7
+drwxr-xr-x   4 1000 1000  4096 Jul 21 09:26 fb3d1ba5-37b9-464b-aa2d-dd56c18aff1f
+drwxr-xr-x   4 1000 1000  4096 Jul 21 10:05 5b7f9d05-5144-4836-941e-b830d78342b2
+drwxr-xr-x   4 1000 1000  4096 Jul 21 15:46 885159f5-d1c2-49dd-86ea-e68258d739a2
+drwxr-xr-x   5 1000 1000  4096 Jul 22 11:05 12e6486b-fed6-41ad-a902-35e77a9da353
+drwxr-xr-x   4 1000 1000  4096 Jul 23 07:36 272d0e2f-61fb-4ffd-b833-15fb09bf8957
+drwxr-xr-x   4 1000 1000  4096 Jul 24 12:31 bbf16031-13ce-42a7-bbaa-63070dd49d23
+drwxr-xr-x   5 1000 1000  4096 Jul 24 19:56 225e5a29-29d4-48a8-8e22-6e97de97215c
+drwxr-xr-x   5 1000 1000  4096 Jul 24 22:26 06e522af-f185-4c40-a5ab-a1a0e8cd7e1f
+drwxr-xr-x   4 1000 1000  4096 Jul 25 07:33 1224bd67-4af5-437c-ad49-1d449aea9172
+drwxr-xr-x   4 1000 1000  4096 Jul 26 07:43 71aed837-05f8-45ff-b174-20b66bfab67f
+drwxr-xr-x   5 1000 1000  4096 Jul 27 03:41 b74d8fef-2914-4b03-bb18-2e6312105613
+drwxr-xr-x   5 1000 1000  4096 Jul 28 03:34 4797f554-884b-4c21-9b82-fa7b3d4f343c
+drwxr-xr-x   5 1000 1000  4096 Jul 28 19:48 542d6444-d4bc-43a2-b2f7-af30a1ee7e63
+drwxr-xr-x   5 1000 1000  4096 Jul 30 10:16 9d6c4230-1083-41fc-a287-36b58b2314ca
+drwxr-xr-x   5 1000 1000  4096 Jul 31 09:14 fd65642a-1a68-417c-94fc-15be652a3067
+drwxr-xr-x   5 1000 1000  4096 Jul 31 11:20 4ec08b18-3ec5-462a-8aa9-0ef554be7089
+drwxr-xr-x   5 1000 1000  4096 Jul 31 14:44 6e6de238-3525-4411-873a-8db2012363a2
+drwxr-xr-x   5 1000 1000  4096 Aug  1 09:38 0c3ce953-3200-4733-b46d-f8a082c29689
+drwxr-xr-x   5 1000 1000  4096 Aug  2 09:31 db7e9ff2-3914-4512-acf4-94ad4aadb734
+drwxr-xr-x   5 1000 1000  4096 Aug  3 02:25 e2660b7e-6bf5-4ecb-98bb-fb5ab600a54e
+drwxr-xr-x   5 1000 1000  4096 Aug  4 10:36 f60b00b1-8dae-4634-b360-98e448bae953
+drwxr-xr-x   5 1000 1000  4096 Aug  4 15:51 59f85e07-9927-41d1-912e-b929ab3bd9d3
+drwxr-xr-x   5 1000 1000  4096 Aug  5 05:35 82b9bcf6-92df-4ca7-8f3e-326c28ba1ac6
+drwxr-xr-x   5 1000 1000  4096 Aug  7 10:35 75b21e1b-acd7-459d-96a5-e241452a7dfa
+drwxr-xr-x   5 1000 1000  4096 Aug  8 12:40 fdcc4861-b7cf-4fcf-8a3b-205aff6d5b96
+drwxr-xr-x   5 1000 1000  4096 Aug  8 22:31 fbcc6d92-f5cc-4a92-908a-539acf70a540
+drwxr-xr-x   5 1000 1000  4096 Aug  9 11:40 6a6ead23-9bac-423a-a8db-0ac6fe1e2cb2
+drwxr-xr-x   5 1000 1000  4096 Aug  9 23:01 9598c902-63c2-4048-8a83-5b8959f9fda0
+drwxr-xr-x   5 1000 1000  4096 Aug 10 16:54 8c984f96-a3c0-4e3c-81bc-66c5d145a80d
+drwxr-xr-x   6 1000 1000  4096 Aug 10 17:45 d3ac0065-8ed9-4650-a645-163967bc0b86
+drwxr-xr-x   5 1000 1000  4096 Aug 11 13:10 d3dceb5b-26b9-45b9-89d5-446a6a71e280
+drwxr-xr-x   5 1000 1000  4096 Aug 11 22:35 15818def-1b8e-4b39-ac13-8316a6532e15
+drwxr-xr-x   5 1000 1000  4096 Aug 12 11:03 f4413c17-f8c1-41f1-b4c6-27431414e9af
+drwxr-xr-x   5 1000 1000  4096 Aug 13 00:18 6677e8c8-604c-4d3f-b779-762e10fae223
+drwxr-xr-x   5 1000 1000  4096 Aug 13 10:23 df60bad1-1974-4b9a-b1f8-a6c2a83b8a8d
+drwxr-xr-x   5 1000 1000  4096 Aug 13 14:02 4aca85eb-aa62-4599-acb8-5f971d5019e4
+drwxr-xr-x   5 1000 1000  4096 Aug 13 19:51 d4504295-68fb-439b-af1d-b8035bf3ad9d
+drwxr-xr-x   5 1000 1000  4096 Aug 13 19:58 6d408083-1c00-45da-9a97-ed225a89d4ea
+drwxr-xr-x   5 1000 1000  4096 Aug 13 20:12 75d3148e-372a-4c8c-9286-261927f2e492
+drwxr-xr-x   5 1000 1000  4096 Aug 15 00:03 5ce65030-925a-446f-a856-44b0afad8317
+drwxr-xr-x   5 1000 1000  4096 Aug 16 15:12 cd536f54-c1f2-441c-845a-0b7917c28aae
+drwxr-xr-x   5 1000 1000  4096 Aug 18 21:31 9dc91535-49db-4ddc-9083-1c9ef9025b5b
+drwxr-xr-x   5 1000 1000  4096 Aug 18 21:53 112430c0-74d2-4bfe-9608-b4e1c11bce35
+drwxr-xr-x   5 1000 1000  4096 Aug 20 12:06 e1ceb531-9189-4677-ba60-58391401024a
+drwxr-xr-x   5 1000 1000  4096 Aug 21 08:43 c445d7d9-6fd1-4fcc-bfbe-a34802c84eef
+drwxr-xr-x   5 1000 1000  4096 Aug 21 14:59 3c113ae1-25a6-4712-926c-e6cbf3dc5903
+drwxr-xr-x   5 1000 1000  4096 Aug 21 20:05 e2ce15d4-6750-493f-b8ce-8bad590a6197
+drwxr-xr-x   5 1000 1000  4096 Aug 23 12:52 0c57723e-07a1-4ef0-97df-9c2f59013b08
+drwxr-xr-x   5 1000 1000  4096 Aug 23 22:12 890f7a0f-25d7-44ff-8a3d-460c04b70043
+drwxr-xr-x   5 1000 1000  4096 Aug 24 12:15 15e4702d-cb01-4fa8-9b83-02baae94dfe6
+drwxr-xr-x   5 1000 1000  4096 Aug 27 03:58 a8b41c81-4c7e-437f-b5b7-f2e4d1f1d7b5
+drwxr-xr-x   5 1000 1000  4096 Aug 27 19:11 cec2da60-d05a-4ec1-9ac9-b7389053d0eb
+drwxr-xr-x   5 1000 1000  4096 Aug 28 07:27 8ff733df-f4f1-42fc-9026-daba7815d9ce
+drwxr-xr-x   5 1000 1000  4096 Aug 28 11:14 6f8cf669-28bf-4571-ab1c-20cfc6936c20
+drwxr-xr-x   5 1000 1000  4096 Aug 28 21:18 f98282e4-5be3-436d-b881-a4dfc13afd0b
+drwxr-xr-x   6 1000 1000  4096 Aug 29 07:06 350f2804-7ec3-411c-9ac3-c8c6713892d7
+drwxr-xr-x   5 1000 1000  4096 Aug 30 00:35 d9120723-eb22-4756-b3d9-6cc5243df834
+drwxr-xr-x   5 1000 1000  4096 Aug 30 05:48 3dd68728-6b0e-4613-aa04-7939630690cb
+drwxr-xr-x   6 1000 1000  4096 Aug 31 08:21 53b79b19-0391-4a15-9a64-2f902e408517
+drwxr-xr-x   6 1000 1000  4096 Aug 31 23:09 115e4bb6-192c-4aea-ad23-b9e765233f4d
+drwxr-xr-x   6 1000 1000  4096 Sep  1 06:24 b5453549-c615-403f-bfc9-034b596f959a
+drwxr-xr-x   5 1000 1000  4096 Sep  1 12:36 6b761557-d46e-402b-b091-6cb4ac8d1b76
+drwxr-xr-x   6 1000 1000  4096 Sep  2 01:30 e5e8de65-5a3a-4ecd-b451-26154f8c18a6
+drwxr-xr-x   5 1000 1000  4096 Sep  2 06:41 eeae2315-fe2a-45b5-a009-42515a6fe9a4
+drwxr-xr-x 127 1000 1000 12288 Sep  2 07:28 .
+drwxr-xr-x   5 1000 1000  4096 Sep  2 07:28 663355c6-8652-49b2-9ced-d63bcf6d5a2c
+drwxr-xr-x  14 1000 1000  4096 Sep  2 07:28 ..
+(venv) jack@jack-A520MHP:~/Desktop$ 
+
+ls -rant /home/jack/.gemini/antigravity-cli/brain/663355c6-8652-49b2-9ced-d63bcf6d5a2c
+total 28
+drwxr-xr-x 127 1000 1000 12288 Sep  2 07:28 ..
+drwxr-xr-x   2 1000 1000  4096 Sep  2 07:28 scratch
+drwxr-xr-x   2 1000 1000  4096 Sep  2 07:28 .user_uploaded
+drwxr-xr-x   5 1000 1000  4096 Sep  2 07:28 .
+drwxr-xr-x   6 1000 1000  4096 Sep  2 07:29 .system_generated
+
+ls -rant /home/jack/.gemini/antigravity-cli/brain/663355c6-8652-49b2-9ced-d63bcf6d5a2c/.system_generated
+total 24
+drwxr-xr-x  5 1000 1000 4096 Sep  2 07:28 ..
+drwxr-xr-x  3 1000 1000 4096 Sep  2 07:28 logs
+drwxr-xr-x  6 1000 1000 4096 Sep  2 07:29 .
+drwxr-xr-x  2 1000 1000 4096 Sep  2 07:40 tasks
+drwxr-xr-x  3 1000 1000 4096 Sep  2 08:01 messages
+drwxr-xr-x 62 1000 1000 4096 Sep  2 08:01 steps
+
+
+ls -rant /home/jack/.gemini/antigravity-cli/brain/663355c6-8652-49b2-9ced-d63bcf6d5a2c/.system_generated/logs
+total 488
+drwxr-xr-x 4 1000 1000   4096 Sep  2 07:28 chunks
+drwxr-xr-x 3 1000 1000   4096 Sep  2 07:28 .
+drwxr-xr-x 6 1000 1000   4096 Sep  2 07:29 ..
+-rw-r--r-- 1 1000 1000 218723 Sep  2 08:04 transcript.jsonl
+-rw-r--r-- 1 1000 1000 255147 Sep  2 08:04 transcript_full.jsonl
+
+ls /home/jack/.gemini/antigravity-cli/brain/663355c6-8652-49b2-9ced-d63bcf6d5a2c/.system_generated/logs/transcript_full.jsonl
+
+cp /home/jack/.gemini/antigravity-cli/brain/663355c6-8652-49b2-9ced-d63bcf6d5a2c/.system_generated/logs/transcript_full.jsonl d63bcf6d5a2c_transcript_full.jsonl
+
+
+
+
+
+
+
+
+
+
+
+ls -rant /home/jack/.gemini/antigravity-cli/brain/
+drwxr-xr-x   6 1000 1000  4096 Sep  1 06:24 b5453549-c615-403f-bfc9-034b596f959a
+drwxr-xr-x   5 1000 1000  4096 Sep  1 12:36 6b761557-d46e-402b-b091-6cb4ac8d1b76
+drwxr-xr-x   6 1000 1000  4096 Sep  2 01:30 e5e8de65-5a3a-4ecd-b451-26154f8c18a6
+drwxr-xr-x   5 1000 1000  4096 Sep  2 06:41 eeae2315-fe2a-45b5-a009-42515a6fe9a4
+drwxr-xr-x 127 1000 1000 12288 Sep  2 07:28 .
+drwxr-xr-x   5 1000 1000  4096 Sep  2 07:28 663355c6-8652-49b2-9ced-d63bcf6d5a2c
+drwxr-xr-x  14 1000 1000  4096 Sep  2 07:28 ..
+
+ls -rant /home/jack/.gemini/antigravity-cli/brain/663355c6-8652-49b2-9ced-d63bcf6d5a2c
+total 28
+drwxr-xr-x 127 1000 1000 12288 Sep  2 07:28 ..
+drwxr-xr-x   2 1000 1000  4096 Sep  2 07:28 scratch
+drwxr-xr-x   2 1000 1000  4096 Sep  2 07:28 .user_uploaded
+drwxr-xr-x   5 1000 1000  4096 Sep  2 07:28 .
+drwxr-xr-x   6 1000 1000  4096 Sep  2 07:29 .system_generated
+
+ls -rant /home/jack/.gemini/antigravity-cli/brain/663355c6-8652-49b2-9ced-d63bcf6d5a2c/.system_generated
+total 24
+drwxr-xr-x  5 1000 1000 4096 Sep  2 07:28 ..
+drwxr-xr-x  3 1000 1000 4096 Sep  2 07:28 logs
+drwxr-xr-x  6 1000 1000 4096 Sep  2 07:29 .
+drwxr-xr-x  2 1000 1000 4096 Sep  2 07:40 tasks
+drwxr-xr-x  3 1000 1000 4096 Sep  2 08:01 messages
+drwxr-xr-x 62 1000 1000 4096 Sep  2 08:01 steps
+
+
+ls -rant /home/jack/.gemini/antigravity-cli/brain/663355c6-8652-49b2-9ced-d63bcf6d5a2c/.system_generated/logs
+total 488
+drwxr-xr-x 4 1000 1000   4096 Sep  2 07:28 chunks
+drwxr-xr-x 3 1000 1000   4096 Sep  2 07:28 .
+drwxr-xr-x 6 1000 1000   4096 Sep  2 07:29 ..
+-rw-r--r-- 1 1000 1000 218723 Sep  2 08:04 transcript.jsonl
+-rw-r--r-- 1 1000 1000 255147 Sep  2 08:04 transcript_full.jsonl
+
+ls /home/jack/.gemini/antigravity-cli/brain/663355c6-8652-49b2-9ced-d63bcf6d5a2c/.system_generated/logs/transcript_full.jsonl
+
+cp /home/jack/.gemini/antigravity-cli/brain/663355c6-8652-49b2-9ced-d63bcf6d5a2c/.system_generated/logs/transcript_full.jsonl d63bcf6d5a2c_transcript_full.jsonl
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

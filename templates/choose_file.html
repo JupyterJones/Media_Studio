@@ -1,0 +1,101 @@
+<!-- This is the HTML file that allows the user to choose_file.html file to edit. -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Choose HTML File</title>
+   
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dark.css') }}">
+</head>
+<body>
+    <h1>Choose HTML File / choose_html.html</h1>
+<a href="/"index><button>Home</button></a><br/>
+    <form id="editForm" action="/edit_html" method="post">
+        <label for="selected_file">Select an HTML file:</label>
+        <select name="selected_file" id="selected_file">
+            {% for file in files %}
+                <option value="{{ file }}">{{ file }}</option>
+            {% endfor %}
+        </select>
+        <br>
+
+        <button type="button" onclick="loadFile()">Load File</button>
+        <br>
+
+        <label for="edited_content">Edit the HTML content:</label><br/>
+        <textarea name="edited_content" id="edited_content" rows="80" cols="80"></textarea>
+        <br>
+        <input type="submit" value="Save Changes">
+    </form>
+
+    <script>
+        function loadFile() {
+            var selectedFile = document.getElementById("selected_file").value;
+
+            // Make an AJAX request to load the content of the selected file
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    var response = JSON.parse(xhr.responseText);
+                    // Update the textarea with the loaded content
+                    document.getElementById("edited_content").value = response.html_content;
+                }
+            };
+            xhr.open("POST", "/edit_html", true);
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            xhr.send("load_file=true&selected_file=" + encodeURIComponent(selectedFile));
+        }
+    </script>
+</body>
+</html>
+
+
+
+<!--DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Choose HTML File</title>
+</head>
+<body>
+    <h1>Choose HTML File</h1>
+
+    <form action="/edit_html" method="post">
+        <label for="selected_file">Select an HTML file:</label>
+        <select name="selected_file" id="selected_file">
+            {% for file in files %}
+                <option value="{{ file }}">{{ file }}</option>
+            {% endfor %}
+        </select>
+        <br>
+
+        
+        <button type="button" onclick="loadFile()">Load File</button>
+        <br>
+
+        <label for="edited_content">Edit the HTML content:</label>
+        <textarea name="edited_content" id="edited_content" rows="10" cols="80"></textarea>
+        <br>
+        <input type="submit" value="Save Changes">
+    </form>
+
+    <script>
+        function loadFile() {
+            var selectedFile = document.getElementById("selected_file").value;
+
+            // Make an AJAX request to load the content of the selected file
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    // Update the textarea with the loaded content
+                    document.getElementById("edited_content").value = JSON.parse(xhr.responseText)['html_content'];
+                }
+            };
+            xhr.open("GET", "/load_file?file=" + selectedFile, true);
+            xhr.send();
+        }
+    </script>
+</body>
+</html-->

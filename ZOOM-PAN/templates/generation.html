@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stable Diffusion & LoRA Studio</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-base: #0f0f13;
+            --surface: #1a1a23;
+            --surface-hover: #22222e;
+            --border: #2a2a3a;
+            --text: #e0e0e8;
+            --text-dim: #8888a0;
+            --accent: #7c5cff;
+            --accent-hover: #9374ff;
+            --accent-glow: rgba(124, 92, 255, 0.35);
+            --danger: #ff4d6d;
+            --success: #4dff88;
+            --radius: 10px;
+            --shadow: 0 4px 20px rgba(0,0,0,0.4);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+            background: var(--bg-base);
+            color: var(--text);
+            min-height: 100vh;
+            line-height: 1.5;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border);
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+        .logo-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 0 0 auto;
+        }
+        h1 { font-family: 'Outfit', sans-serif; font-size: 1.6rem; font-weight: 700; letter-spacing: -0.5px; }
+        .nav-links {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            overflow-x: auto;
+            max-width: 100%;
+            white-space: nowrap;
+            padding-bottom: 8px;
+            -webkit-overflow-scrolling: touch;
+            flex: 1 1 auto;
+        }
+        .nav-btn {
+            color: var(--text-dim);
+            text-decoration: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            border: 1px solid var(--border);
+            background: var(--surface);
+            transition: all 0.2s;
+            flex: 0 0 auto;
+        }
+        .nav-links::-webkit-scrollbar {
+            height: 8px;
+        }
+        .nav-links::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 4px;
+        }
+        .nav-links::-webkit-scrollbar-thumb {
+            background: linear-gradient(90deg, var(--accent), #ff6b6b);
+            border-radius: 4px;
+        }
+        .nav-links::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(90deg, #9b82ff, #ff8e8e);
+        }
+        .nav-btn:hover { color: var(--text); border-color: var(--accent); }
+        .badge {
+            font-size: 0.75rem;
+            padding: 4px 10px;
+            border-radius: 20px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--text-dim);
+        }
+        .badge.ok { border-color: var(--success); color: var(--success); }
+        .layout {
+            display: grid;
+            grid-template-columns: 400px 1fr;
+            gap: 24px;
+        }
+        @media (max-width: 960px) {
+            .layout { grid-template-columns: 1fr; }
+        }
+        .panel {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px;
+            box-shadow: var(--shadow);
+        }
+        .panel h2 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.1rem;
+            margin-bottom: 16px;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .form-group { margin-bottom: 16px; }
+        label {
+            display: block;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--text-dim);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        input[type="text"],
+        input[type="number"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 10px 12px;
+            background: var(--bg-base);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            font-size: 0.95rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            font-family: inherit;
+        }
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(124,92,255,0.15);
+        }
+        textarea { resize: vertical; min-height: 110px; line-height: 1.45; }
+        .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .hint {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            margin-top: 4px;
+        }
+        .btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            background: linear-gradient(135deg, var(--accent) 0%, #9374ff 100%);
+            color: white;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s, box-shadow 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 4px 15px var(--accent-glow);
+        }
+        .btn:hover { transform: translateY(-1px); box-shadow: 0 6px 20px var(--accent-glow); }
+        .btn:active { transform: scale(0.98); }
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .spinner {
+            width: 18px; height: 18px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .results {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 16px;
+        }
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+        .card:hover {
+            transform: translateY(-2px);
+            border-color: var(--accent);
+        }
+        .card img {
+            width: 100%;
+            height: 320px;
+            object-fit: cover;
+            display: block;
+            background: var(--bg-base);
+        }
+        .card-body { padding: 14px; }
+        .card-prompt {
+            font-size: 0.85rem;
+            color: var(--text);
+            margin-bottom: 8px;
+            line-height: 1.45;
+            word-break: break-word;
+            white-space: pre-wrap;
+            max-height: 240px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+        .card-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            font-size: 0.72rem;
+            color: var(--text-dim);
+        }
+        .tag {
+            background: var(--bg-base);
+            padding: 2px 8px;
+            border-radius: 4px;
+            border: 1px solid var(--border);
+        }
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-dim);
+        }
+        .empty-state svg {
+            width: 64px; height: 64px;
+            margin-bottom: 16px;
+            opacity: 0.4;
+        }
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            padding: 14px 20px;
+            border-radius: 8px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--text);
+            box-shadow: var(--shadow);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+        .toast.show { transform: translateY(0); opacity: 1; }
+        .toast.error { border-color: var(--danger); }
+        .toast.success { border-color: var(--success); }
+        .section-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-dim);
+            margin: 24px 0 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .model-info-box {
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 16px;
+            font-size: 0.8rem;
+            color: var(--text-dim);
+            line-height: 1.6;
+        }
+        .model-info-box strong { color: var(--text); }
+
+        @media (max-width: 768px) {
+            .container { padding: 12px; }
+            header {
+                flex-direction: column;
+                gap: 12px;
+                align-items: stretch;
+            }
+            .logo-group { justify-content: center; }
+            .nav-links {
+                display: flex;
+                overflow-x: auto;
+                white-space: nowrap;
+                padding-bottom: 6px;
+                -webkit-overflow-scrolling: touch;
+            }
+            .nav-btn { flex: 0 0 auto; }
+            .layout { grid-template-columns: 1fr; }
+            .row { grid-template-columns: 1fr; }
+            .results { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <a href="/" class="logo-group" style="text-decoration: none;">
+                <h1>🎨 Stable Diffusion & LoRA Studio</h1>
+                <span class="badge ok" id="statusBadge">{% if model_path %}Model Loaded{% else %}No Model Loaded{% endif %}</span>
+            </a>
+            <nav class="nav-links">
+                <a class="nav-btn" href="/" style="background: rgba(124,92,255,0.2); color: white;">🏠 Home</a>
+                <a class="nav-btn" href="/comic" style="background: linear-gradient(135deg, #ff6b6b, #c0392b); color: white;">💥 Comic Builder</a>
+                <a class="nav-btn" href="/projects">📁 Projects</a>
+                <a class="nav-btn" href="/trash" style="color: #ef4444;">🗑️ Trash Can</a>
+                <a class="nav-btn" href="/sequenced_video">🎬 Sequencer</a>
+                <a class="nav-btn" href="/frame_video">🖼️ Frame Video</a>
+                <a class="nav-btn" href="/video_gallery">📹 Video Gallery</a>
+                <a class="nav-btn" href="/generation" style="border-color: var(--accent); color: white;">🎨 Image Gen</a>
+                <a class="nav-btn" href="/text_to_mp3">🗣️ Kokoro TTS</a>
+            </nav>
+        </header>
+
+        <div class="layout">
+            <!-- Sidebar: Controls -->
+            <aside>
+                <div class="panel">
+                    <h2>
+                        <span>⚡ Model & Generation Controls</span>
+                    </h2>
+
+                    <!-- Generation Mode Toggle -->
+                    <div class="form-group">
+                        <label for="gen_mode">Generation Mode</label>
+                        <select id="gen_mode" onchange="toggleGenMode()">
+                            <option value="txt2img" selected>✨ Text-to-Image (Free Generate)</option>
+                            <option value="img2img">🖼️ Image-to-Image (Dream & Restyle Page)</option>
+                        </select>
+                    </div>
+
+                    <!-- Image-to-Image Controls -->
+                    <div id="img2img-group" style="display: none; background: rgba(0,0,0,0.25); padding: 14px; border-radius: 10px; border: 1px dashed rgba(255,255,255,0.15); margin-bottom: 16px;">
+                        <div class="form-group">
+                            <label for="init_image_select">1. Select Base Image from Dropdown</label>
+                            
+                            <select id="init_image_select" onchange="pickUploadImage(this.value)" style="margin-bottom: 10px; width: 100%;">
+                                <option value="">-- Choose Image to Preview --</option>
+                                {% for img in uploads %}
+                                <option value="/static/uploads/{{ img }}">{{ img }}</option>
+                                {% endfor %}
+                            </select>
+
+                            <label style="font-size: 0.75rem; color: #94a3b8; display: block; margin-bottom: 6px;">2. Or Click Any Visual Thumbnail Below:</label>
+                            <div id="visual-thumbnail-grid" style="display: flex; gap: 8px; overflow-x: auto; padding: 6px 0 10px 0; -webkit-overflow-scrolling: touch; max-height: 120px;">
+                                {% for img in uploads[:30] %}
+                                <img src="/static/uploads/{{ img }}" alt="{{ img }}" 
+                                     onclick="pickUploadImage('/static/uploads/{{ img }}', this)" 
+                                     class="thumb-pick-item" 
+                                     style="width: 75px; height: 75px; object-fit: cover; border-radius: 6px; border: 2px solid rgba(255,255,255,0.15); cursor: pointer; flex-shrink: 0; transition: all 0.2s;"
+                                     title="{{ img }}">
+                                {% endfor %}
+                            </div>
+
+                            <div style="display: flex; gap: 6px; margin-top: 8px;">
+                                <input type="text" id="init_image" placeholder="Image path or URL..." oninput="updateImagePreview()" onchange="updateImagePreview()" style="flex-grow: 1;">
+                                <input type="file" id="camera-upload-input" accept="image/*" style="display: none;" onchange="handleCameraPhotoUpload(this)">
+                                <button type="button" onclick="document.getElementById('camera-upload-input').click()" class="btn" style="background: linear-gradient(135deg, #10b981, #059669); color: white; white-space: nowrap; width: auto; padding: 8px 14px;">📷 Upload</button>
+                            </div>
+                            
+                            <!-- Base Image Preview -->
+                            <div id="init-image-preview-container" style="display: none; margin-top: 12px; text-align: center; background: rgba(0,0,0,0.4); padding: 12px; border-radius: 8px; border: 1px solid var(--accent);">
+                                <label style="font-size: 0.8rem; color: #a7f3d0; font-weight: 700; display: block; margin-bottom: 6px;">✨ Active Selected Base Image:</label>
+                                <img id="init-image-preview" src="" alt="Base Image Preview" style="max-height: 240px; max-width: 100%; border-radius: 6px; border: 1px solid rgba(255,255,255,0.3); object-fit: contain; box-shadow: 0 4px 15px rgba(0,0,0,0.5);">
+                                <div id="init-image-name-tag" style="font-size: 0.75rem; color: #cbd5e1; margin-top: 6px; word-break: break-all;"></div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="strength">Image Denoising Strength: <span id="strength-val">0.30</span></label>
+                            <input type="range" id="strength" min="0.05" max="0.95" step="0.05" value="0.30" oninput="document.getElementById('strength-val').textContent = parseFloat(this.value).toFixed(2)">
+                            <div class="hint" style="color: #4facfe;">💡 Low Denoise (0.15 - 0.35) keeps layout & camera zooms matching 100%!</div>
+                        </div>
+                    </div>
+
+                    <!-- Model Checkpoint Dropdown -->
+                    <div class="form-group">
+                        <label for="model_select">Safetensor Checkpoint Model *</label>
+                        <select id="model_select">
+                            {% for ckpt in checkpoints %}
+                            <option value="{{ ckpt }}" {% if ckpt == current_model_name %}selected{% endif %}>{{ ckpt }}</option>
+                            {% endfor %}
+                        </select>
+                        <div class="hint">Select Stable Diffusion 1.5 / LCM checkpoint</div>
+                    </div>
+
+                    <!-- LoRA Selection & Weight -->
+                    <div class="row">
+                        <div class="form-group" style="grid-column: span 2;">
+                            <label for="lora_select">LoRA Model</label>
+                            <select id="lora_select">
+                                <option value="none" {% if not current_lora_name %}selected{% endif %}>-- None (No LoRA) --</option>
+                                {% for lora in loras %}
+                                <option value="{{ lora }}" {% if lora == current_lora_name %}selected{% endif %}>{{ lora }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="lora_scale">LoRA Scale / Weight</label>
+                        <input type="number" id="lora_scale" value="0.15" min="0.0" max="2.0" step="0.05">
+                        <div class="hint">Recommended: 0.15 to 0.75</div>
+                    </div>
+
+                    <!-- Prompt Input -->
+                    <div class="form-group">
+                        <label for="prompt">Prompt *</label>
+                        <textarea id="prompt" placeholder="Describe what you want to generate...">a beautiful comic book page illustration, highly detailed, vibrant colors, masterpiece, 8k</textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="negative_prompt">Negative Prompt</label>
+                        <textarea id="negative_prompt">blurry, out of focus, text, captions, low quality, pixelated, worst quality</textarea>
+                    </div>
+
+                    <div class="row">
+                        <div class="form-group">
+                            <label for="width">Width</label>
+                            <select id="width">
+                                <option value="512" selected>512</option>
+                                <option value="768">768</option>
+                                <option value="1024">1024</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="height">Height</label>
+                            <select id="height">
+                                <option value="512">512</option>
+                                <option value="768" selected>768</option>
+                                <option value="1024">1024</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="form-group">
+                            <label for="steps">Steps</label>
+                            <input type="number" id="steps" value="5" min="1" max="50">
+                            <div class="hint">LCM: 4-8 | SD1.5: 25-40</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="guidance">CFG Scale</label>
+                            <input type="number" id="guidance" value="1.5" min="1" max="20" step="0.1">
+                            <div class="hint">LCM: 1-2 | SD1.5: 7-9</div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="form-group">
+                            <label for="seed">Seed</label>
+                            <input type="number" id="seed" value="-1" min="-1">
+                            <div class="hint">-1 = random</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="num_images">Count</label>
+                            <input type="number" id="num_images" value="1" min="1" max="8">
+                        </div>
+                    </div>
+
+                    <button class="btn" id="generateBtn" onclick="generate()">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                        Generate Image
+                    </button>
+
+                    <div class="model-info-box">
+                        <strong>Current Checkpoint:</strong> <span id="currentModelDisplay">{{ current_model_name | default("None") }}</span><br>
+                        <strong>Active LoRA:</strong> <span id="currentLoraDisplay">{{ current_lora_name | default("None") }}</span><br>
+                        <strong>Target Device:</strong> {{ device | default("Auto") }}
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Main: Results -->
+            <main>
+                <div class="panel" id="resultPanel">
+                    <h2>
+                        <span>🖼️ Generated Canvas Results</span>
+                    </h2>
+                    <div id="resultsArea">
+                        <div class="empty-state">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+                            <p>No images generated in this session yet.</p>
+                            <p style="font-size:0.85rem; margin-top:4px;">Select your checkpoint & LoRA, enter a prompt, and click Generate.</p>
+                        </div>
+                    </div>
+                </div>
+
+                {% if history %}
+                <div class="section-title">📜 Generation History</div>
+                <div class="results" id="historyArea">
+                    {% for run in history %}
+                    <div class="card">
+                        <a href="{{ run.url }}" target="_blank">
+                            <img src="{{ run.url }}" alt="Generated image" loading="lazy"
+                                 onerror="this.style.display='none'">
+                        </a>
+                        <div class="card-body">
+                            <div class="card-prompt">{{ run.prompt }}</div>
+                            <div class="card-meta">
+                                <span class="tag">{{ run.width }}x{{ run.height }}</span>
+                                <span class="tag">Steps: {{ run.steps }}</span>
+                                <span class="tag">CFG: {{ run.guidance_scale }}</span>
+                                <span class="tag">Seed: {{ run.seed }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </main>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        function showToast(message, type = 'error') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = 'toast ' + type;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 4000);
+        }
+
+        function createCard(img) {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.innerHTML = `
+                <a href="${img.url}" target="_blank">
+                    <img src="${img.url}" alt="Generated image" onload="this.style.opacity=1" style="opacity:0;transition:opacity 0.4s">
+                </a>
+                <div class="card-body">
+                    <div class="card-prompt">${escapeHtml(img.prompt)}</div>
+                    <div class="card-meta">
+                        <span class="tag">${img.width}x${img.height}</span>
+                        <span class="tag">Steps: ${img.steps}</span>
+                        <span class="tag">CFG: ${img.guidance_scale}</span>
+                        <span class="tag">Seed: ${img.seed}</span>
+                    </div>
+                </div>
+            `;
+            return card;
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function toggleGenMode() {
+            const mode = document.getElementById('gen_mode').value;
+            const group = document.getElementById('img2img-group');
+            group.style.display = (mode === 'img2img') ? 'block' : 'none';
+        }
+
+        function getCleanImageUrl(val) {
+            if (!val) return '';
+            val = val.trim();
+            if (val.startsWith('http://') || val.startsWith('https://')) return val;
+            if (val.startsWith('/static/uploads/')) return val;
+            if (val.startsWith('static/uploads/')) return '/' + val;
+            const filename = val.split('/').pop().split('\\').pop();
+            return '/static/uploads/' + filename;
+        }
+
+        function pickUploadImage(url, el) {
+            if (!url) return;
+            document.getElementById('init_image').value = url;
+            const selectEl = document.getElementById('init_image_select');
+            if (selectEl && selectEl.value !== url) selectEl.value = url;
+
+            document.querySelectorAll('.thumb-pick-item').forEach(img => {
+                img.style.borderColor = 'rgba(255,255,255,0.15)';
+                img.style.transform = 'none';
+                img.style.boxShadow = 'none';
+            });
+
+            if (el) {
+                el.style.borderColor = 'var(--accent)';
+                el.style.transform = 'scale(1.08)';
+                el.style.boxShadow = '0 0 12px var(--accent-glow)';
+            }
+
+            const nameTag = document.getElementById('init-image-name-tag');
+            if (nameTag) {
+                const filename = url.split('/').pop();
+                nameTag.textContent = filename;
+            }
+
+            updateImagePreview();
+        }
+
+        function updateImagePreview() {
+            const rawVal = document.getElementById('init_image').value.trim();
+            const container = document.getElementById('init-image-preview-container');
+            const imgEl = document.getElementById('init-image-preview');
+
+            if (!rawVal) {
+                container.style.display = 'none';
+                return;
+            }
+
+            const cleanUrl = getCleanImageUrl(rawVal);
+            imgEl.src = cleanUrl;
+            container.style.display = 'block';
+
+            const nameTag = document.getElementById('init-image-name-tag');
+            if (nameTag && !nameTag.textContent) {
+                nameTag.textContent = cleanUrl.split('/').pop();
+            }
+        }
+
+        async function handleCameraPhotoUpload(input) {
+            if (!input.files || !input.files[0]) return;
+            const file = input.files[0];
+            const formData = new FormData();
+            formData.append('image', file);
+
+            try {
+                showToast('Uploading & Resizing Camera Photo...', 'info');
+                const response = await fetch('/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                const res = await response.json();
+                if (response.ok && res.filename) {
+                    document.getElementById('init_image').value = res.filename;
+                    updateImagePreview();
+                    showToast('Photo uploaded & resized successfully!', 'success');
+                } else {
+                    showToast(res.error || 'Photo upload failed', 'error');
+                }
+            } catch (err) {
+                showToast('Error uploading photo', 'error');
+                console.error(err);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(window.location.search);
+            const modeParam = params.get('mode');
+            const initImgParam = params.get('init_image');
+
+            if (modeParam === 'img2img') {
+                document.getElementById('gen_mode').value = 'img2img';
+                toggleGenMode();
+            }
+            if (initImgParam) {
+                document.getElementById('init_image').value = initImgParam;
+                updateImagePreview();
+            }
+
+            const initInput = document.getElementById('init_image');
+            if (initInput) {
+                initInput.addEventListener('keyup', (e) => {
+                    if (e.key === 'Enter') {
+                        updateImagePreview();
+                    }
+                });
+            }
+        });
+
+        async function generate() {
+            const btn = document.getElementById('generateBtn');
+            const prompt = document.getElementById('prompt').value.trim();
+
+            if (!prompt) {
+                showToast('Please enter a prompt.', 'error');
+                return;
+            }
+
+            const selectedModel = document.getElementById('model_select').value;
+            const selectedLora = document.getElementById('lora_select').value;
+            const loraScale = parseFloat(document.getElementById('lora_scale').value);
+            const genMode = document.getElementById('gen_mode').value;
+            const initImage = document.getElementById('init_image').value.trim();
+            const strength = parseFloat(document.getElementById('strength').value);
+
+            if (genMode === 'img2img' && !initImage) {
+                showToast('Please enter a base image filename for Image-to-Image mode.', 'error');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = '<div class="spinner"></div> Loading Model & Generating...';
+
+            const payload = {
+                prompt: prompt,
+                negative_prompt: document.getElementById('negative_prompt').value,
+                model: selectedModel,
+                lora: selectedLora,
+                lora_scale: loraScale,
+                mode: genMode,
+                init_image: initImage,
+                strength: strength,
+                width: parseInt(document.getElementById('width').value),
+                height: parseInt(document.getElementById('height').value),
+                steps: parseInt(document.getElementById('steps').value),
+                guidance: parseFloat(document.getElementById('guidance').value),
+                seed: parseInt(document.getElementById('seed').value),
+                num_images: parseInt(document.getElementById('num_images').value)
+            };
+
+            try {
+                const res = await fetch('/api/generate_image', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+
+                if (!data.success) {
+                    showToast(data.error || 'Generation failed.', 'error');
+                    return;
+                }
+
+                document.getElementById('currentModelDisplay').textContent = selectedModel;
+                document.getElementById('currentLoraDisplay').textContent = selectedLora === 'none' ? 'None' : selectedLora;
+
+                const resultsArea = document.getElementById('resultsArea');
+                if (resultsArea.querySelector('.empty-state')) {
+                    resultsArea.innerHTML = '<div class="results" id="newResults"></div>';
+                }
+                const grid = document.getElementById('newResults');
+
+                data.images.forEach(img => {
+                    grid.prepend(createCard(img));
+                });
+
+                showToast(`Generated ${data.images.length} image(s) using ${selectedModel}!`, 'success');
+
+            } catch (err) {
+                showToast('Network error: ' + err.message, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> Generate Image`;
+            }
+        }
+
+        document.getElementById('prompt').addEventListener('keydown', e => {
+            if (e.ctrlKey && e.key === 'Enter') generate();
+        });
+    </script>
+</body>
+</html>

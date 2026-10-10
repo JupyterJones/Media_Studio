@@ -1,0 +1,118 @@
+<!--index_prompts.html-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prompt Generator</title>
+    <!-- CSS only link to static/css/dark.css-->
+    <!--link rel="stylesheet" href="{{ url_for('static', filename='css/dark.css') }}"-->
+</head>
+<style>
+       body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        p {
+            text-align: center;
+            color: #333;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            text-align: center;
+        }
+        li {
+            background-color: #fff;
+            padding: 10px;
+            margin: 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        form {
+            text-align: center;
+        }
+        input {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #555;
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+        }   
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            border-radius: 5px;
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+
+        }
+        a {
+            margin: 10px;
+            margin-left: auto;
+            margin-right: auto;
+            text-decoration: none;
+            color: white;
+            background-color: red;
+            padding: 5px 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }        
+
+</style>
+<body>
+    <h1>Prompt Generator / index_prompts.html</h1>
+    <!--Refresh reload page-->
+    <audio controls>
+    <source src="static/assets/Fprompt_narration.mp3" type="audio/mpeg">
+    Your browser does not support the audio element.
+</audio>
+
+    <br/><br/>
+    <h2>Generated Prompts</h2>
+    <div class="container">
+        <p>TEST: {{text3}}</p>
+    {{ top_text }}
+
+        {% for prompt in generated_prompts %}
+{{ prompt }}
+        {% endfor %}
+   . , Bottom Caption: &nbsp;{{ bottom_text }}
+    </div>
+    <br/> 
+    <h2>Add a New Prompt</h2>
+
+    <form method="POST">
+        <input type="text" name="prompt_text" required placeholder="Enter your prompt here">
+        <button type="submit">Add Prompt</button>
+        <a href="{{ url_for('home') }}">Refresh</a>
+    </form>
+    <div class="container">
+
+    <h2>Generated Prompts</h2>
+    {{ text }}
+    </div>
+</body>
+</html>

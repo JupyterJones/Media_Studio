@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Combine Sound to Video</title>
+    <style>
+        /* Style for centering and displaying the videos and audios side by side */
+        .media-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px; /* Spacing between elements */
+        }
+
+        .media-item {
+            width: 25%; /* Each item takes up 25% of the width */
+            text-align: center;
+        }
+
+        video, audio {
+            width: 100%; /* Make the video/audio take up the full width of its container */
+            height: auto;
+        }
+
+        .media-label {
+            margin-top: 10px;
+            display: block;
+        }
+
+        /* Button styling */
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        /* Style for output video */
+        #output-video-section {
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Sound to Video / sound_to_avatar.html</h1>
+    <a href="/"><button>Home</button></a>
+
+    <form id="video-audio-form">
+        <h2>Select a Video</h2>
+        <div class="media-container">
+            {% for video in video_files %}
+                <div class="media-item">
+                    <label>
+                        <input type="radio" name="video" value="{{ video }}">
+                        <video controls>
+                            <source src="/static/temp_exp/{{ video }}" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                        <span class="media-label">{{ video }}</span>
+                    </label>
+                </div>
+            {% endfor %}
+        </div>
+
+        <h2>Preview and Select an Audio</h2>
+        
+
+        <!-- Audio Files -->
+        
+        <div class="media-container">
+            {% for audio in audio_files %}
+                <div class="media-item">
+                    <label>
+                        <!-- Preview Button for MP3 -->
+                        <button type="button" onclick="playAudio('{{ audio }}')">Preview</button>
+                        <audio id="audio_{{ audio }}" controls style="display: none;">
+                            <source src="/static/audio_mp3/{{ audio }}" type="audio/mpeg">
+                            Your browser does not support the audio element.
+                        </audio>
+                        <br>
+                        <input type="radio" name="audio" value="{{ audio }}">{{ audio }}
+                    </label>
+                </div>
+            {% endfor %}
+        </div>
+
+        <button type="button" id="create-video">Create Video</button>
+    </form>
+
+    <h2>Output Video</h2>
+    <div id="output-video-section"></div>
+
+    <script>
+        // Function to play the selected MP3
+        function playAudio(audioFile) {
+            const audioElement = document.getElementById(`audio_${audioFile}`);
+            
+            // Stop any other audio that's currently playing
+            const audios = document.querySelectorAll('audio');
+            audios.forEach(audio => {
+                if (!audio.paused) {
+                    audio.pause();
+                    audio.currentTime = 0; // Reset to the start
+                }
+            });
+
+            // Play the selected audio
+            audioElement.style.display = 'block'; // Show the hidden audio control
+            audioElement.play();
+        }
+
+        document.getElementById('create-video').addEventListener('click', function() {
+            const form = document.getElementById('video-audio-form');
+            const formData = new FormData(form);
+
+            fetch('/combine', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('output-video-section').innerHTML = `
+                        <h3>Combined Video:</h3>
+                        <video width="200" controls>
+                            <source src="/static/output_videos/${data.output_video}" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    `;
+                } else {
+                    alert(data.error);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    </script>
+        <div class="media-container"></div>
+                        <video style="width:200px;height:auto" controls>
+                            <source src="/static/temp_exp/text2videoX.mp4" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                        <span class="media-label">static/temp_exp/text2videoX.mp4</span>
+                    </label>
+                </div>
+
+</body>
+</html>
